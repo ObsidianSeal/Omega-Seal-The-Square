@@ -26,12 +26,13 @@ const regions = [
 	"purple",
 ];
 
-announceOnline = false;
+announceOnline = true;
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
 
 client.once("ready", () => {
 	console.log("Omega Seal is now online!");
+
 	if (announceOnline) {
 		const channel = client.channels.cache.get("755782484117160006");
 		channel.send("<@960236750830194688> is now online!");
@@ -46,6 +47,7 @@ client.on("interactionCreate", async (interaction) => {
 	if (commandName === "ping") {
 		await interaction.reply(`**Pong!**\n\`${client.ws.ping}ms\``);
 	}
+
 	if (commandName === "join") {
 		const string = interaction.options.getString("region");
 		const member = interaction.member;
@@ -225,6 +227,7 @@ client.on("interactionCreate", async (interaction) => {
 			});
 		}
 	}
+
 	if (commandName === "leave") {
 		try {
 			const member = interaction.member;
@@ -380,6 +383,7 @@ client.on("interactionCreate", async (interaction) => {
 			console.log(error);
 		}
 	}
+
 	if (commandName === "stop") {
 		try {
 			const user = interaction.member.user;
@@ -387,9 +391,11 @@ client.on("interactionCreate", async (interaction) => {
 			if (user.id == "390612175137406978") {
 				await interaction.reply({ content: "Stopping...", ephemeral: true });
 				console.log(`${user.username} stopped the bot.`);
+
 				process.exit(0);
 			} else {
 				await interaction.reply({ content: "Only Obsidian_Seal can use this command!", ephemeral: true });
+
 				console.log(`${user.username} tried to stop the bot.`);
 				const me = await client.users.fetch("390612175137406978");
 				me.send(`**ALERT:** ${user} tried to use /stop.`);
@@ -400,4 +406,5 @@ client.on("interactionCreate", async (interaction) => {
 		}
 	}
 });
+
 client.login(token);
