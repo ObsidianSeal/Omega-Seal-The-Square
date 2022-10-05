@@ -1,3 +1,5 @@
+// THIS FOLDER IS A GITHUB TEST
+
 const { Client, GatewayIntentBits, Partials, InteractionType } = require("discord.js");
 const { token } = require("./config.json");
 
