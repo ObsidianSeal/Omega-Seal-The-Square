@@ -1,6 +1,6 @@
 # Omega Seal (The Square)
 
-Obsidian_Seal's personal Discord bot (made with [discord](https://discord.js.org/).js).
+Obsidian_Seal's personal Discord bot (made with [discord.js](https://discord.js.org/))
 
 ### Files not uploaded:
 
