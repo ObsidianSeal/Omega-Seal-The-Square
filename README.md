@@ -1,11 +1,11 @@
 # Omega Seal (The Square)
 
-Obsidian_Seal's personal Discord bot.
+Obsidian_Seal's personal Discord bot; made with Discord.js!
 
 ### Files not uploaded:
 
-node_modules (bulky node folder -- see package.json)
-config.json
+-    node_modules (bulky node folder -- see package.json)
+-    config.json (contains top secret API key)
 
 ### What does the bot do?
 
