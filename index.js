@@ -1,5 +1,3 @@
-// THIS FOLDER IS A GITHUB TEST
-
 const { Client, GatewayIntentBits, Partials, InteractionType } = require("discord.js");
 const { token } = require("./config.json");
 
@@ -403,5 +401,3 @@ client.on("interactionCreate", async (interaction) => {
 	}
 });
 client.login(token);
-
-// so, if I add a comment here, it will show up on github
