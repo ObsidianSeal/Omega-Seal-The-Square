@@ -21,12 +21,12 @@ const regions = [
 	"magenta",
 	"fuchsia",
 	"pink",
-	"lavendar",
+	"lavender",
 	"violet",
 	"purple",
 ];
 
-announceOnline = true;
+announceOnline = false;
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
 
@@ -202,7 +202,7 @@ client.on("interactionCreate", async (interaction) => {
 				if (string == "pink") {
 					role = member.guild.roles.cache.find((role) => role.id === "998317010729570424");
 				}
-				if (string == "lavendar") {
+				if (string == "lavender") {
 					role = member.guild.roles.cache.find((role) => role.id === "998317027364175872");
 				}
 				if (string == "violet") {
@@ -353,7 +353,7 @@ client.on("interactionCreate", async (interaction) => {
 				role2 = member.guild.roles.cache.find((role2) => role2.id === "998317027364175872");
 				member.roles.remove(role2);
 				hasCitizenRole = true;
-				region = "lavendar";
+				region = "lavender";
 			}
 			if (member.roles.cache.has("998317032804200539")) {
 				role2 = member.guild.roles.cache.find((role2) => role2.id === "998317032804200539");
