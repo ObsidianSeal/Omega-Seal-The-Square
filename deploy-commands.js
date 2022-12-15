@@ -11,6 +11,10 @@ const commands = [
 		.addStringOption((option) => option.setName("region").setDescription("The region you would like to move to and the colour you want your name to be.").setRequired(true)),
 	new SlashCommandBuilder().setName("leave").setDescription("Leave The Square. (Remove name colour.)"),
 	new SlashCommandBuilder().setName("stop").setDescription("Stop the bot."),
+	new SlashCommandBuilder()
+		.setName("text")
+		.setDescription("Send a message on my website.")
+		.addStringOption((option) => option.setName("message").setDescription("The text you want to send.").setRequired(true)),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: "9" }).setToken(token);

@@ -1,5 +1,21 @@
 const { Client, GatewayIntentBits, Partials, InteractionType } = require("discord.js");
-const { token } = require("./config.json");
+const { token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId } = require("./config.json");
+
+const { initializeApp } = require("firebase/app");
+const { getDatabase, ref, push, set } = require("firebase/database");
+
+const firebaseConfig = {
+	apiKey: fApiKey,
+	authDomain: fAuthDomain,
+	databaseURL: fDatabaseURL,
+	projectId: fProjectId,
+	storageBucket: fStorageBucket,
+	messagingSenderId: fMessagingSenderId,
+	appId: fAppId,
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
 const regions = [
 	"dark-red",
@@ -389,7 +405,7 @@ client.on("interactionCreate", async (interaction) => {
 			const user = interaction.member.user;
 
 			if (user.id == "390612175137406978") {
-				await interaction.reply({ content: "Stopping...", ephemeral: true });
+				await interaction.reply("Stopping...");
 				console.log(`${user.username} stopped the bot.`);
 
 				process.exit(0);
@@ -400,6 +416,62 @@ client.on("interactionCreate", async (interaction) => {
 				const me = await client.users.fetch("390612175137406978");
 				me.send(`**ALERT:** ${user} tried to use /stop.`);
 			}
+		} catch (error) {
+			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
+			console.log(error);
+		}
+	}
+
+	if (commandName === "text") {
+		try {
+			const text = interaction.options.getString("message");
+			const date = new Date();
+			let year = date.getFullYear();
+			let month = date.getMonth() + 1;
+			let day = date.getDate();
+			let hours = date.getUTCHours();
+			let minutes = date.getMinutes();
+			if (month < 10) month = `0${month}`;
+			if (day < 10) day = `0${day}`;
+
+			/*
+			var textRef = database.ref("/text");
+			var autoId = textRef.push().key;
+			textRef.child(autoId).set({
+				date: {
+					year: year,
+					month: month,
+					day: day,
+				},
+				time: {
+					hours: hours,
+					minutes: minutes,
+				},
+				data: {
+					text: text,
+					id: autoId,
+				},
+			});
+			*/
+			const db = getDatabase();
+			const textRef = ref(db, "text");
+			const autoId = push(textRef).key;
+			set(ref(db, "text/" + autoId), {
+				date: {
+					year: year,
+					month: month,
+					day: day,
+				},
+				time: {
+					hours: hours,
+					minutes: minutes,
+				},
+				data: {
+					text: text,
+					id: autoId,
+				},
+			});
+			await interaction.reply("Message sent.");
 		} catch (error) {
 			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
 			console.log(error);
