@@ -457,6 +457,7 @@ client.on("interactionCreate", async (interaction) => {
 			const textRef = ref(db, "text");
 			const autoId = push(textRef).key;
 			set(ref(db, "text/" + autoId), {
+				text: text,
 				date: {
 					year: year,
 					month: month,
@@ -465,10 +466,6 @@ client.on("interactionCreate", async (interaction) => {
 				time: {
 					hours: hours,
 					minutes: minutes,
-				},
-				data: {
-					text: text,
-					id: autoId,
 				},
 			});
 			await interaction.reply("Message sent.");
