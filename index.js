@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits, Partials, InteractionType } = require("discor
 const { token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId } = require("./config.json");
 
 const { initializeApp } = require("firebase/app");
-const { getDatabase, ref, push, set } = require("firebase/database");
+const { getDatabase, ref, push, set, onValue } = require("firebase/database");
 
 const firebaseConfig = {
 	apiKey: fApiKey,
@@ -474,6 +474,14 @@ client.on("interactionCreate", async (interaction) => {
 			console.log(error);
 		}
 	}
+});
+
+const db = getDatabase();
+const statusRef = ref(db, "omega-seal");
+onValue(statusRef, (snapshot) => {
+	set(statusRef, {
+		status: "online",
+	});
 });
 
 client.login(token);
