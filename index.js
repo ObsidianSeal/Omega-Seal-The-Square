@@ -1,6 +1,5 @@
-const { Client, GatewayIntentBits, Partials, InteractionType } = require("discord.js");
 const { token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId } = require("./config.json");
-
+const { Client, GatewayIntentBits, Partials, InteractionType } = require("discord.js");
 const { initializeApp } = require("firebase/app");
 const { getDatabase, ref, push, set, onValue } = require("firebase/database");
 
@@ -13,9 +12,13 @@ const firebaseConfig = {
 	messagingSenderId: fMessagingSenderId,
 	appId: fAppId,
 };
+initializeApp(firebaseConfig);
 
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
+
+client.once("ready", () => {
+	console.log("Omega Seal is now online!\n---");
+});
 
 const regions = [
 	"dark-red",
@@ -42,205 +45,204 @@ const regions = [
 	"purple",
 ];
 
-announceOnline = false;
-
-const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
-
-client.once("ready", () => {
-	console.log("Omega Seal is now online!");
-
-	if (announceOnline) {
-		const channel = client.channels.cache.get("755782484117160006");
-		channel.send("<@960236750830194688> is now online!");
-	}
-});
-
 client.on("interactionCreate", async (interaction) => {
 	if (!interaction.type === InteractionType.ApplicationCommand) return;
-
 	const { commandName } = interaction;
 
 	if (commandName === "ping") {
-		await interaction.reply(`**Pong!**\n\`${client.ws.ping}ms\``);
+		try {
+			await interaction.reply(`**Pong!**\n\`${client.ws.ping}ms\``);
+			console.log("> /ping");
+		} catch (error) {
+			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
+			console.log(error);
+		}
 	}
 
 	if (commandName === "join") {
-		const string = interaction.options.getString("region");
-		const member = interaction.member;
-		var role;
-		var role2;
+		try {
+			const string = interaction.options.getString("region");
+			const member = interaction.member;
+			var role;
+			var role2;
 
-		if (regions.includes(string)) {
-			try {
-				if (member.roles.cache.has("998315343753789552")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998315343753789552");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998314840785420309")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998314840785420309");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998315847288377455")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998315847288377455");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998316318786854993")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998316318786854993");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998316074762256515")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998316074762256515");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998317045684904038")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998317045684904038");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998316871122161784")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998316871122161784");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998316954253262939")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998316954253262939");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998316961094176839")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998316961094176839");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998316966454505624")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998316966454505624");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998316971823206421")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998316971823206421");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998316981088440341")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998316981088440341");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998316992593412156")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998316992593412156");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998316986650079312")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998316986650079312");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998317000117993542")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998317000117993542");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998317005105008783")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998317005105008783");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998317015334924471")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998317015334924471");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998317021450223747")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998317021450223747");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998317010729570424")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998317010729570424");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998317027364175872")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998317027364175872");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998317032804200539")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998317032804200539");
-					member.roles.remove(role2);
-				}
-				if (member.roles.cache.has("998317040538497044")) {
-					role2 = member.guild.roles.cache.find((role2) => role2.id === "998317040538497044");
-					member.roles.remove(role2);
-				}
+			if (regions.includes(string)) {
+				try {
+					if (member.roles.cache.has("998315343753789552")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998315343753789552");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998314840785420309")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998314840785420309");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998315847288377455")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998315847288377455");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998316318786854993")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998316318786854993");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998316074762256515")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998316074762256515");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998317045684904038")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998317045684904038");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998316871122161784")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998316871122161784");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998316954253262939")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998316954253262939");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998316961094176839")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998316961094176839");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998316966454505624")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998316966454505624");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998316971823206421")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998316971823206421");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998316981088440341")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998316981088440341");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998316992593412156")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998316992593412156");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998316986650079312")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998316986650079312");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998317000117993542")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998317000117993542");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998317005105008783")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998317005105008783");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998317015334924471")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998317015334924471");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998317021450223747")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998317021450223747");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998317010729570424")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998317010729570424");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998317027364175872")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998317027364175872");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998317032804200539")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998317032804200539");
+						member.roles.remove(role2);
+					}
+					if (member.roles.cache.has("998317040538497044")) {
+						role2 = member.guild.roles.cache.find((role2) => role2.id === "998317040538497044");
+						member.roles.remove(role2);
+					}
 
-				if (string == "dark-red") {
-					role = member.guild.roles.cache.find((role) => role.id === "998315343753789552");
-				}
-				if (string == "red") {
-					role = member.guild.roles.cache.find((role) => role.id === "998314840785420309");
-				}
-				if (string == "orange") {
-					role = member.guild.roles.cache.find((role) => role.id === "998315847288377455");
-				}
-				if (string == "dark-yellow") {
-					role = member.guild.roles.cache.find((role) => role.id === "998316318786854993");
-				}
-				if (string == "yellow") {
-					role = member.guild.roles.cache.find((role) => role.id === "998316074762256515");
-				}
-				if (string == "gold") {
-					role = member.guild.roles.cache.find((role) => role.id === "998317045684904038");
-				}
-				if (string == "lime") {
-					role = member.guild.roles.cache.find((role) => role.id === "998316871122161784");
-				}
-				if (string == "green") {
-					role = member.guild.roles.cache.find((role) => role.id === "998316954253262939");
-				}
-				if (string == "dark-green") {
-					role = member.guild.roles.cache.find((role) => role.id === "998316961094176839");
-				}
-				if (string == "olive") {
-					role = member.guild.roles.cache.find((role) => role.id === "998316966454505624");
-				}
-				if (string == "teal") {
-					role = member.guild.roles.cache.find((role) => role.id === "998316971823206421");
-				}
-				if (string == "turquoise") {
-					role = member.guild.roles.cache.find((role) => role.id === "998316981088440341");
-				}
-				if (string == "light-blue") {
-					role = member.guild.roles.cache.find((role) => role.id === "998316992593412156");
-				}
-				if (string == "cyan") {
-					role = member.guild.roles.cache.find((role) => role.id === "998316986650079312");
-				}
-				if (string == "blue") {
-					role = member.guild.roles.cache.find((role) => role.id === "998317000117993542");
-				}
-				if (string == "dark-blue") {
-					role = member.guild.roles.cache.find((role) => role.id === "998317005105008783");
-				}
-				if (string == "magenta") {
-					role = member.guild.roles.cache.find((role) => role.id === "998317015334924471");
-				}
-				if (string == "fuchsia") {
-					role = member.guild.roles.cache.find((role) => role.id === "998317021450223747");
-				}
-				if (string == "pink") {
-					role = member.guild.roles.cache.find((role) => role.id === "998317010729570424");
-				}
-				if (string == "lavender") {
-					role = member.guild.roles.cache.find((role) => role.id === "998317027364175872");
-				}
-				if (string == "violet") {
-					role = member.guild.roles.cache.find((role) => role.id === "998317032804200539");
-				}
-				if (string == "purple") {
-					role = member.guild.roles.cache.find((role) => role.id === "998317040538497044");
-				}
+					if (string == "dark-red") {
+						role = member.guild.roles.cache.find((role) => role.id === "998315343753789552");
+					}
+					if (string == "red") {
+						role = member.guild.roles.cache.find((role) => role.id === "998314840785420309");
+					}
+					if (string == "orange") {
+						role = member.guild.roles.cache.find((role) => role.id === "998315847288377455");
+					}
+					if (string == "dark-yellow") {
+						role = member.guild.roles.cache.find((role) => role.id === "998316318786854993");
+					}
+					if (string == "yellow") {
+						role = member.guild.roles.cache.find((role) => role.id === "998316074762256515");
+					}
+					if (string == "gold") {
+						role = member.guild.roles.cache.find((role) => role.id === "998317045684904038");
+					}
+					if (string == "lime") {
+						role = member.guild.roles.cache.find((role) => role.id === "998316871122161784");
+					}
+					if (string == "green") {
+						role = member.guild.roles.cache.find((role) => role.id === "998316954253262939");
+					}
+					if (string == "dark-green") {
+						role = member.guild.roles.cache.find((role) => role.id === "998316961094176839");
+					}
+					if (string == "olive") {
+						role = member.guild.roles.cache.find((role) => role.id === "998316966454505624");
+					}
+					if (string == "teal") {
+						role = member.guild.roles.cache.find((role) => role.id === "998316971823206421");
+					}
+					if (string == "turquoise") {
+						role = member.guild.roles.cache.find((role) => role.id === "998316981088440341");
+					}
+					if (string == "light-blue") {
+						role = member.guild.roles.cache.find((role) => role.id === "998316992593412156");
+					}
+					if (string == "cyan") {
+						role = member.guild.roles.cache.find((role) => role.id === "998316986650079312");
+					}
+					if (string == "blue") {
+						role = member.guild.roles.cache.find((role) => role.id === "998317000117993542");
+					}
+					if (string == "dark-blue") {
+						role = member.guild.roles.cache.find((role) => role.id === "998317005105008783");
+					}
+					if (string == "magenta") {
+						role = member.guild.roles.cache.find((role) => role.id === "998317015334924471");
+					}
+					if (string == "fuchsia") {
+						role = member.guild.roles.cache.find((role) => role.id === "998317021450223747");
+					}
+					if (string == "pink") {
+						role = member.guild.roles.cache.find((role) => role.id === "998317010729570424");
+					}
+					if (string == "lavender") {
+						role = member.guild.roles.cache.find((role) => role.id === "998317027364175872");
+					}
+					if (string == "violet") {
+						role = member.guild.roles.cache.find((role) => role.id === "998317032804200539");
+					}
+					if (string == "purple") {
+						role = member.guild.roles.cache.find((role) => role.id === "998317040538497044");
+					}
 
-				member.roles.add(role);
+					member.roles.add(role);
 
-				await interaction.reply(`You are now a citizen of \`${string}\`.`);
-				console.log(`${member.displayName} is now a citizen of ${string}.`);
-			} catch (error) {
-				await interaction.reply({ content: "Something went wrong...", ephemeral: true });
-				console.log(error);
+					await interaction.reply(`You are now a citizen of \`${string}\`.`);
+					console.log(`${member.displayName} is now a citizen of ${string}.`);
+				} catch (error) {
+					await interaction.reply({ content: "Something went wrong...", ephemeral: true });
+					console.log(error);
+				}
+			} else {
+				await interaction.reply({
+					content: `\`${string}\` is not one of [The Square](https://pinniped.page/images/the-square.png)'s regions. Visit https://pinniped.page/projects/the-square for more information.`,
+					ephemeral: true,
+				});
 			}
-		} else {
-			await interaction.reply({
-				content: `\`${string}\` is not one of [The Square](https://pinniped.page/images/the-square.png)'s regions. Visit https://pinniped.page/projects/the-square for more information.`,
-				ephemeral: true,
-			});
+
+			console.log("> /join");
+		} catch (error) {
+			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
+			console.log(error);
 		}
 	}
 
@@ -385,7 +387,7 @@ client.on("interactionCreate", async (interaction) => {
 			}
 			if (hasCitizenRole == false) {
 				await interaction.reply({
-					content: `You haven't joined one of [The Square](https://pinniped.page/images/the-square.png)'s regions and thus cannot leave one. Visit https://pinniped.page/projects/the-square for more information.`,
+					content: `You have to join [The Square](https://pinniped.page/images/the-square.png) before you can leave! Visit https://pinniped.page/projects/the-square for more information.`,
 					ephemeral: true,
 				});
 
@@ -394,6 +396,8 @@ client.on("interactionCreate", async (interaction) => {
 
 			await interaction.reply(`You are no longer a citizen of \`${region}\`.`);
 			console.log(`${member.displayName} is no longer a citizen of ${region}.`);
+
+			console.log("> /leave");
 		} catch (error) {
 			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
 			console.log(error);
@@ -416,6 +420,8 @@ client.on("interactionCreate", async (interaction) => {
 				const me = await client.users.fetch("390612175137406978");
 				me.send(`**ALERT:** ${user} tried to use /stop.`);
 			}
+
+			console.log("> /stop");
 		} catch (error) {
 			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
 			console.log(error);
@@ -425,37 +431,21 @@ client.on("interactionCreate", async (interaction) => {
 	if (commandName === "text") {
 		try {
 			const text = interaction.options.getString("message");
+
 			const date = new Date();
 			let year = date.getFullYear();
 			let month = date.getMonth() + 1;
 			let day = date.getDate();
 			let hours = date.getUTCHours();
 			let minutes = date.getMinutes();
+
 			if (month < 10) month = `0${month}`;
 			if (day < 10) day = `0${day}`;
 
-			/*
-			var textRef = database.ref("/text");
-			var autoId = textRef.push().key;
-			textRef.child(autoId).set({
-				date: {
-					year: year,
-					month: month,
-					day: day,
-				},
-				time: {
-					hours: hours,
-					minutes: minutes,
-				},
-				data: {
-					text: text,
-					id: autoId,
-				},
-			});
-			*/
 			const db = getDatabase();
 			const textRef = ref(db, "text");
 			const autoId = push(textRef).key;
+
 			set(ref(db, "text/" + autoId), {
 				text: text,
 				date: {
@@ -468,7 +458,9 @@ client.on("interactionCreate", async (interaction) => {
 					minutes: minutes,
 				},
 			});
+
 			await interaction.reply("Message sent.");
+			console.log("> /text");
 		} catch (error) {
 			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
 			console.log(error);
@@ -476,12 +468,23 @@ client.on("interactionCreate", async (interaction) => {
 	}
 });
 
+client.login(token);
+
 const db = getDatabase();
 const statusRef = ref(db, "omega-seal");
-onValue(statusRef, (snapshot) => {
+let firstPing = true;
+
+onValue(statusRef, () => {
+	if (firstPing) {
+		firstPing = false;
+	} else {
+		console.log("> Firebase ping");
+		firstPing = true;
+	}
+
 	set(statusRef, {
 		status: "online",
 	});
 });
 
-client.login(token);
+// the join, leave, and stop commands have not been edited yet
