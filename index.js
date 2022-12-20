@@ -17,7 +17,7 @@ initializeApp(firebaseConfig);
 const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
 
 client.once("ready", () => {
-	console.log("Omega Seal is now online!\n---");
+	console.log("\x1b[36mOmega Seal is now online!\n\x1b[37m---");
 });
 
 const regions = [
@@ -46,13 +46,14 @@ const regions = [
 ];
 
 client.on("interactionCreate", async (interaction) => {
-	if (!interaction.type === InteractionType.ApplicationCommand) return;
+	if (interaction.type !== InteractionType.ApplicationCommand) return;
 	const { commandName } = interaction;
 
 	if (commandName === "ping") {
 		try {
-			await interaction.reply(`**Pong!**\n\`${client.ws.ping}ms\``);
-			console.log("> /ping");
+			let ping = client.ws.ping;
+			await interaction.reply(`**Pong!**\n\`${ping}ms\``);
+			console.log(`\x1b[35m> /ping\x1b[37m — ${ping}ms`);
 		} catch (error) {
 			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
 			console.log(error);
@@ -239,7 +240,7 @@ client.on("interactionCreate", async (interaction) => {
 				});
 			}
 
-			console.log("> /join");
+			console.log("\x1b[35m> /join");
 		} catch (error) {
 			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
 			console.log(error);
@@ -397,7 +398,7 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.reply(`You are no longer a citizen of \`${region}\`.`);
 			console.log(`${member.displayName} is no longer a citizen of ${region}.`);
 
-			console.log("> /leave");
+			console.log("\x1b[35m> /leave");
 		} catch (error) {
 			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
 			console.log(error);
@@ -410,18 +411,16 @@ client.on("interactionCreate", async (interaction) => {
 
 			if (user.id == "390612175137406978") {
 				await interaction.reply("Stopping...");
-				console.log(`${user.username} stopped the bot.`);
+				console.log(`\x1b[35m> /stop\x1b[37m — ${user.id == "390612175137406978"} | ${user.username}`);
 
 				process.exit(0);
 			} else {
 				await interaction.reply({ content: "Only Obsidian_Seal can use this command!", ephemeral: true });
+				console.log(`\x1b[35m> /stop\x1b[37m — ${user.id == "390612175137406978"} | ${user.username}`);
 
-				console.log(`${user.username} tried to stop the bot.`);
 				const me = await client.users.fetch("390612175137406978");
 				me.send(`**ALERT:** ${user} tried to use /stop.`);
 			}
-
-			console.log("> /stop");
 		} catch (error) {
 			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
 			console.log(error);
@@ -460,7 +459,7 @@ client.on("interactionCreate", async (interaction) => {
 			});
 
 			await interaction.reply("Message sent.");
-			console.log("> /text");
+			console.log(`\x1b[35m> /text\x1b[37m — "${text}"`);
 		} catch (error) {
 			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
 			console.log(error);
@@ -478,7 +477,8 @@ onValue(statusRef, () => {
 	if (firstPing) {
 		firstPing = false;
 	} else {
-		console.log("> Firebase ping");
+		//console.log("\x1b[33m> Firebase ping");
+		console.log("\x1b[31m> Firebase ping");
 		firstPing = true;
 	}
 
@@ -487,4 +487,4 @@ onValue(statusRef, () => {
 	});
 });
 
-// the join, leave, and stop commands have not been edited yet
+// join & leave still need to be simplified
