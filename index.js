@@ -214,6 +214,19 @@ client.on("interactionCreate", async (interaction) => {
 			console.log(error);
 		}
 	}
+
+	if (commandName === "text-space") {
+		try {
+			const text = interaction.options.getString("text");
+			const newText = text.split("").join(" ");
+
+			await interaction.reply(newText);
+			console.log(`\x1b[35m> /text-space\x1b[37m — "${newText}"`);
+		} catch (error) {
+			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
+			console.log(error);
+		}
+	}
 });
 
 client.login(token);
