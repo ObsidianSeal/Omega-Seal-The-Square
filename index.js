@@ -1,5 +1,5 @@
 const { token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId } = require("./config.json");
-const { Client, GatewayIntentBits, Partials, InteractionType } = require("discord.js");
+const { Client, GatewayIntentBits, Partials, InteractionType, EmbedBuilder } = require("discord.js");
 const { initializeApp } = require("firebase/app");
 const { getDatabase, ref, push, set, onValue } = require("firebase/database");
 
@@ -222,6 +222,22 @@ client.on("interactionCreate", async (interaction) => {
 
 			await interaction.reply(newText);
 			console.log(`\x1b[35m> /text-space\x1b[37m — "${newText}"`);
+		} catch (error) {
+			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
+			console.log(error);
+		}
+	}
+
+	if (commandName === "embed") {
+		try {
+			const title = interaction.options.getString("title");
+			const description = interaction.options.getString("description");
+			const colour = interaction.options.getString("colour");
+
+			const embed = new EmbedBuilder().setTitle(title).setDescription(description).setColor(colour);
+
+			await interaction.reply({ embeds: [embed] });
+			console.log(`\x1b[35m> /embed\x1b[37m — "${title}", "${description}"`);
 		} catch (error) {
 			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
 			console.log(error);

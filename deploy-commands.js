@@ -19,6 +19,12 @@ const commands = [
 		.setName("text-space")
 		.setDescription("Give your text some s p a c e.")
 		.addStringOption((option) => option.setName("text").setDescription("The text you want to space out.").setRequired(true)),
+	new SlashCommandBuilder()
+		.setName("embed")
+		.setDescription("Send a custom embed.")
+		.addStringOption((option) => option.setName("title").setDescription("Embed title.").setRequired(true))
+		.addStringOption((option) => option.setName("description").setDescription("Embed description.").setRequired(true))
+		.addStringOption((option) => option.setName("colour").setDescription("Embed colour (hex code).").setRequired(false)),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: "9" }).setToken(token);
