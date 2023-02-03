@@ -243,6 +243,16 @@ client.on("interactionCreate", async (interaction) => {
 			console.log(error);
 		}
 	}
+
+	if (commandName === "help") {
+		try {
+			await interaction.reply("https://pinniped.page/projects/the-square#commands");
+			console.log(`\x1b[35m> /help`);
+		} catch (error) {
+			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
+			console.log(error);
+		}
+	}
 });
 
 client.login(token);
@@ -264,3 +274,5 @@ onValue(statusRef, () => {
 		status: "online",
 	});
 });
+
+// waiting for new config.json........

@@ -25,6 +25,7 @@ const commands = [
 		.addStringOption((option) => option.setName("title").setDescription("Embed title.").setRequired(true))
 		.addStringOption((option) => option.setName("description").setDescription("Embed description.").setRequired(true))
 		.addStringOption((option) => option.setName("colour").setDescription("Embed colour (hex code).").setRequired(false)),
+	new SlashCommandBuilder().setName("help").setDescription("Get the URL to Omega Seal's list of commands and other information."),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: "9" }).setToken(token);
