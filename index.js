@@ -274,5 +274,3 @@ onValue(statusRef, () => {
 		status: "online",
 	});
 });
-
-// waiting for new config.json........
