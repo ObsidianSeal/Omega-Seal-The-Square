@@ -18,7 +18,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Part
 
 client.once("ready", () => {
 	console.log("\x1b[36mOmega Seal is now online!\n\x1b[37m---");
-	client.user.setActivity({ name: "VALORANT", type: ActivityType.Watching });
+	client.user.setActivity({ name: "YOU", type: ActivityType.Watching });
 });
 
 const regions = [
