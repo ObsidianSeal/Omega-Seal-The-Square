@@ -1,12 +1,12 @@
-# Omega Seal (The Square)
+# Omega Seal
 
-Obsidian_Seal's personal Discord bot (made with [discord.js](https://discord.js.org/))
+Obsidian_Seal’s personal Discord bot; made with [`discord.js`](https://discord.js.org/)
 
-### Files not uploaded:
+### Files ignored by GitHub
 
--    **node_modules** (bulky node folder -- see package.json)
--    **config.json** (contains top secret API key)
+-    **node_modules** (bulky **node** folder — see package.json)
+-    **config.json** (contains my top-secret Discord API key and other secret stuff)
 
-### Bot features:
+### Documentation
 
--    [https://pinniped.page/projects/the-square](https://pinniped.page/projects/the-square)
+-    [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal)

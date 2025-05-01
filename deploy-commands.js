@@ -1,35 +1,52 @@
+// IMPORT THINGS
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
-const { clientId, guildId, token } = require("./config.json");
+const { clientID, guildID, token } = require("./config.json");
 
+// MAKE COMMANDS
 const commands = [
-	new SlashCommandBuilder().setName("ping").setDescription("See Omega Seal's ping."),
+	// "/ping"
+	new SlashCommandBuilder().setName("ping").setDescription("Latency information."),
+
+	// "/join"
 	new SlashCommandBuilder()
 		.setName("join")
-		.setDescription("Join one of The Square's regions and change the colour of your name.")
+		.setDescription("Join one of The Square’s regions and change the colour of your name.")
 		.addStringOption((option) => option.setName("region").setDescription("The region you want to move to and the colour you want your name to be.").setRequired(true)),
+
+	// "/leave"
 	new SlashCommandBuilder().setName("leave").setDescription("Leave The Square and reset the colour of your name."),
-	new SlashCommandBuilder().setName("stop").setDescription("Stop the bot."),
+
+	// "/stop"
+	new SlashCommandBuilder().setName("stop").setDescription("Stop Omega Seal — DEPRECATED."),
+
+	// "/text"
 	new SlashCommandBuilder()
 		.setName("text")
-		.setDescription("Send a message on my website.")
+		.setDescription("Send a message on my website’s chat page.")
 		.addStringOption((option) => option.setName("message").setDescription("The text you want to send.").setRequired(true)),
+
+	// "/text-space"
 	new SlashCommandBuilder()
 		.setName("text-space")
-		.setDescription("Give your text some s p a c e.")
-		.addStringOption((option) => option.setName("text").setDescription("The text you want to space out.").setRequired(true)),
+		.setDescription("Put a space between every character in some text.")
+		.addStringOption((option) => option.setName("text").setDescription("The text you want to add spaces to.").setRequired(true)),
+
+	// "/embed"
 	new SlashCommandBuilder()
 		.setName("embed")
 		.setDescription("Send a custom embed.")
-		.addStringOption((option) => option.setName("title").setDescription("Embed title.").setRequired(true))
-		.addStringOption((option) => option.setName("description").setDescription("Embed description.").setRequired(true))
-		.addStringOption((option) => option.setName("colour").setDescription("Embed colour (hex code).").setRequired(false)),
-	new SlashCommandBuilder().setName("help").setDescription("Get the URL to Omega Seal's list of commands and other information."),
+		.addStringOption((option) => option.setName("title").setDescription("The embed’s title.").setRequired(true))
+		.addStringOption((option) => option.setName("description").setDescription("The embed’s description.").setRequired(true))
+		.addStringOption((option) => option.setName("colour").setDescription("The embed’s accent colour.").setRequired(false)),
+
+	// "/help"
+	new SlashCommandBuilder().setName("help").setDescription("Send this command if you don’t know how to use the bot or if you just want to learn more about it."),
 ].map((command) => command.toJSON());
 
-const rest = new REST({ version: "9" }).setToken(token);
-
-rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
-	.then(() => console.log("Successfully registered application commands."))
+// SEND THE COMMANDS TO DISCORD
+const rest = new REST().setToken(token);
+rest.put(Routes.applicationCommands(clientID), { body: commands }) // use "body: []" to remove all; requires re-adding the bot to servers after commands are restored
+	.then(() => console.log("\x1b[36mOmega Seal’s “application commands” have successfully been registered with Discord."))
 	.catch(console.error);

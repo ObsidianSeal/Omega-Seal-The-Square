@@ -1,8 +1,10 @@
-const { token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId } = require("./config.json");
-const { Client, GatewayIntentBits, Partials, InteractionType, EmbedBuilder, ActivityType } = require("discord.js");
+// IMPORT THINGS
+const { clientID, guildID, token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId } = require("./config.json");
+const { Client, GatewayIntentBits, Partials, InteractionType, EmbedBuilder, ActivityType, MessageFlags } = require("discord.js");
 const { initializeApp } = require("firebase/app");
 const { getDatabase, ref, push, set, onValue } = require("firebase/database");
 
+// FIREBASE CONFIGURATION
 const firebaseConfig = {
 	apiKey: fApiKey,
 	authDomain: fAuthDomain,
@@ -14,13 +16,17 @@ const firebaseConfig = {
 };
 initializeApp(firebaseConfig);
 
+// MAKE THE CLIENT
 const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
 
+// START THE CLIENT
+client.login(token);
 client.once("ready", () => {
 	console.log("\x1b[36mOmega Seal is now online!\n\x1b[37m---");
-	client.user.setActivity({ name: "YOU", type: ActivityType.Watching });
+	client.user.setActivity({ name: "Obsidian_Seal", type: ActivityType.Watching }); // custom statuses are not yet supported :(
 });
 
+// REGION LIST ("THE SQUARE")
 const regions = [
 	"dark-red",
 	"red",
@@ -45,6 +51,8 @@ const regions = [
 	"violet",
 	"purple",
 ];
+
+// ROLE LIST ("THE SQUARE")
 const roles = [
 	"998315343753789552",
 	"998314840785420309",
@@ -70,25 +78,43 @@ const roles = [
 	"998317040538497044",
 ];
 
+// RESPOND TO SLASH COMMANDS
 client.on("interactionCreate", async (interaction) => {
 	if (interaction.type !== InteractionType.ApplicationCommand) return;
 	const { commandName } = interaction;
 
+	// "/ping" - send latency information
 	if (commandName === "ping") {
 		try {
-			let ping = client.ws.ping;
-			await interaction.reply(`**Pong!**\n\`${ping}ms\``);
-			console.log(`\x1b[35m> /ping\x1b[37m — ${ping}ms`);
+			const member = interaction.member;
+
+			let botPing = Date.now() - interaction.createdTimestamp;
+			let wsPing = client.ws.ping;
+
+			await interaction.reply(`**Pong!**\nbot ping: \`${botPing}\`ms\nAPI ping: \`${wsPing}\`ms`);
+
+			logMessage(commandName, `${botPing} & ${wsPing}`, member);
 		} catch (error) {
-			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
-			console.log(error);
+			errorMessage(interaction, commandName, error);
 		}
 	}
 
+	// "/join" - ...
 	if (commandName === "join") {
 		try {
-			const string = interaction.options.getString("region");
 			const member = interaction.member;
+
+			const string = interaction.options.getString("region").toLowerCase().replaceAll(/ /g, "");
+
+			if (interaction.guild.id != guildID) {
+				await interaction.reply({
+					content: `This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/projects/the-square](https://pinniped.page/projects/the-square) for more information.`,
+					flags: MessageFlags.Ephemeral,
+				});
+				logMessage(commandName, `!!! (not Seal Squad)`, member);
+				return;
+			}
+
 			var role;
 
 			if (regions.includes(string)) {
@@ -109,8 +135,8 @@ client.on("interactionCreate", async (interaction) => {
 				await interaction.reply(`You are now a citizen of \`${string}\`.`);
 			} else {
 				await interaction.reply({
-					content: `\`${string}\` is not one of [The Square](https://pinniped.page/images/the-square.png)'s regions. Visit https://pinniped.page/projects/the-square for more information.`,
-					ephemeral: true,
+					content: `\`${string}\` is not one of [**The Square**](https://pinniped.page/images/the-square.png)’s regions. Visit [pinniped.page/projects/the-square](https://pinniped.page/projects/the-square) for more information.`,
+					flags: MessageFlags.Ephemeral,
 				});
 
 				console.log(`\x1b[35m> /join\x1b[37m — ??? (${string}) | ${member.displayName}`);
@@ -119,11 +145,11 @@ client.on("interactionCreate", async (interaction) => {
 
 			console.log(`\x1b[35m> /join\x1b[37m — ${string} | ${member.displayName}`);
 		} catch (error) {
-			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
-			console.log(error);
+			errorMessage(interaction, error);
 		}
 	}
 
+	// "/leave" - ...
 	if (commandName === "leave") {
 		try {
 			const member = interaction.member;
@@ -140,7 +166,7 @@ client.on("interactionCreate", async (interaction) => {
 			if (region == null) {
 				await interaction.reply({
 					content: `You have to join [The Square](https://pinniped.page/images/the-square.png) before you can leave! Visit https://pinniped.page/projects/the-square for more information.`,
-					ephemeral: true,
+					flags: MessageFlags.Ephemeral,
 				});
 
 				console.log(`\x1b[35m> /leave\x1b[37m — !!! | ${member.displayName}`);
@@ -150,11 +176,11 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.reply(`You are no longer a citizen of \`${region}\`.`);
 			console.log(`\x1b[35m> /leave\x1b[37m — ${region} | ${member.displayName}`);
 		} catch (error) {
-			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
-			console.log(error);
+			errorMessage(interaction, error);
 		}
 	}
 
+	// "/stop" - ...
 	if (commandName === "stop") {
 		try {
 			const user = interaction.member.user;
@@ -172,11 +198,11 @@ client.on("interactionCreate", async (interaction) => {
 				me.send(`**ALERT:** ${user} tried to use /stop.`);
 			}
 		} catch (error) {
-			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
-			console.log(error);
+			errorMessage(interaction, error);
 		}
 	}
 
+	// "/text" - ...
 	if (commandName === "text") {
 		try {
 			const text = interaction.options.getString("message");
@@ -211,11 +237,11 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.reply("Message sent.");
 			console.log(`\x1b[35m> /text\x1b[37m — "${text}"`);
 		} catch (error) {
-			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
-			console.log(error);
+			errorMessage(interaction, error);
 		}
 	}
 
+	// "/text-space" - ...
 	if (commandName === "text-space") {
 		try {
 			const text = interaction.options.getString("text");
@@ -224,11 +250,11 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.reply(newText);
 			console.log(`\x1b[35m> /text-space\x1b[37m — "${newText}"`);
 		} catch (error) {
-			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
-			console.log(error);
+			errorMessage(interaction, error);
 		}
 	}
 
+	// "/embed" - ...
 	if (commandName === "embed") {
 		try {
 			const title = interaction.options.getString("title");
@@ -240,33 +266,30 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.reply({ embeds: [embed] });
 			console.log(`\x1b[35m> /embed\x1b[37m — "${title}", "${description}"`);
 		} catch (error) {
-			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
-			console.log(error);
+			errorMessage(interaction, error);
 		}
 	}
 
+	// "/help" - ...
 	if (commandName === "help") {
 		try {
 			await interaction.reply("https://pinniped.page/projects/the-square#commands");
 			console.log(`\x1b[35m> /help`);
 		} catch (error) {
-			await interaction.reply({ content: "Something went wrong...", ephemeral: true });
-			console.log(error);
+			errorMessage(interaction, error);
 		}
 	}
 });
 
-client.login(token);
-
+// INITIAL DATABASE STUFF ...
 const db = getDatabase();
 const statusRef = ref(db, "omega-seal");
 let firstPing = true;
 
+// LISTEN TO 'omega-seal' DATABASE ...
 onValue(statusRef, () => {
-	if (firstPing) {
-		firstPing = false;
-	} else {
-		//console.log("\x1b[33m> Firebase ping");
+	if (firstPing) firstPing = false;
+	else {
 		console.log("\x1b[31m> Firebase ping");
 		firstPing = true;
 	}
@@ -275,3 +298,18 @@ onValue(statusRef, () => {
 		status: "online",
 	});
 });
+
+// UTILITY: LOG COMMAND USAGE TO CONSOLE
+async function logMessage(command, message, member) {
+	console.log(`\x1b[35m> /${command}\x1b[37m — ${message} | ${member.user.displayName} (${member.user.username})`);
+}
+
+// UTILITY: ERROR RESPONSE & LOG TO CONSOLE
+async function errorMessage(interaction, commandName, error) {
+	await interaction.reply({
+		content: "Something went wrong....\n**Please report bugs!**\n[pinniped.page/contact](https://pinniped.page/contact)",
+		flags: MessageFlags.Ephemeral,
+	});
+	console.log(`\x1b[31mERROR!! (/${commandName})`);
+	console.log(error);
+}
