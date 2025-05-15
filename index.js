@@ -22,7 +22,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Part
 // START THE CLIENT
 client.login(token);
 client.once("ready", () => {
-	console.log("\x1b[36mOmega Seal is now online!\n\x1b[37m---");
+	console.log("\x1b[32mOmega Seal is now online!\n");
 	client.user.setActivity({ name: "Obsidian_Seal", type: ActivityType.Watching }); // custom statuses are not yet supported :(
 });
 
@@ -91,7 +91,7 @@ client.on("interactionCreate", async (interaction) => {
 			let botPing = Date.now() - interaction.createdTimestamp;
 			let wsPing = client.ws.ping;
 
-			await interaction.reply(`**Pong!**\nbot ping: \`${botPing}\`ms\nAPI ping: \`${wsPing}\`ms`);
+			await interaction.reply(`:ping_pong: **Pong!**\nbot ping: \`${botPing}\`ms\nAPI ping: \`${wsPing}\`ms`);
 
 			logMessage(commandName, `${botPing} & ${wsPing}`, member);
 		} catch (error) {
@@ -99,7 +99,7 @@ client.on("interactionCreate", async (interaction) => {
 		}
 	}
 
-	// "/join" - ...
+	// "/join" - join a region of The Square
 	if (commandName === "join") {
 		try {
 			const member = interaction.member;
@@ -108,103 +108,93 @@ client.on("interactionCreate", async (interaction) => {
 
 			if (interaction.guild.id != guildID) {
 				await interaction.reply({
-					content: `This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/projects/the-square](https://pinniped.page/projects/the-square) for more information.`,
+					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/projects/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
 					flags: MessageFlags.Ephemeral,
 				});
 				logMessage(commandName, `!!! (not Seal Squad)`, member);
 				return;
 			}
 
-			var role;
-
 			if (regions.includes(string)) {
 				roles.forEach((id) => {
 					if (member.roles.cache.has(id)) {
-						role = member.guild.roles.cache.find((role) => role.id === id);
+						let role = member.guild.roles.cache.find((role) => role.id === id);
 						member.roles.remove(role);
 					}
 				});
 
-				for (let i = 0; i < regions.length; i++) {
-					if (string == regions[i]) {
-						role = member.guild.roles.cache.find((role) => role.id === roles[i]);
-						member.roles.add(role);
-					}
-				}
+				let role = member.guild.roles.cache.find((role) => role.id === roles[regions.indexOf(string)]);
+				member.roles.add(role);
 
-				await interaction.reply(`You are now a citizen of \`${string}\`.`);
+				await interaction.reply(`:grin: You are now a <@&${role.id}>!`);
 			} else {
 				await interaction.reply({
-					content: `\`${string}\` is not one of [**The Square**](https://pinniped.page/images/the-square.png)’s regions. Visit [pinniped.page/projects/the-square](https://pinniped.page/projects/the-square) for more information.`,
+					content: `:warning: \`${string}\` is not one of [**The Square**](https://pinniped.page/images/the-square.png)’s regions. Visit [pinniped.page/projects/the-square](https://pinniped.page/projects/the-square) for more information.`,
 					flags: MessageFlags.Ephemeral,
 				});
 
-				console.log(`\x1b[35m> /join\x1b[37m — ??? (${string}) | ${member.displayName}`);
+				logMessage(commandName, `??? (${string})`, member);
 				return;
 			}
 
-			console.log(`\x1b[35m> /join\x1b[37m — ${string} | ${member.displayName}`);
+			logMessage(commandName, `${string}`, member);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, commandName, error);
 		}
 	}
 
-	// "/leave" - ...
+	// "/leave" - leave The Square
 	if (commandName === "leave") {
 		try {
 			const member = interaction.member;
-			var role, region;
 
-			for (let i = 0; i < roles.length; i++) {
-				if (member.roles.cache.has(roles[i])) {
-					role = member.guild.roles.cache.find((role) => role.id === roles[i]);
+			let role, region;
+
+			roles.forEach((id) => {
+				if (member.roles.cache.has(id)) {
+					role = member.guild.roles.cache.find((role) => role.id === id);
 					member.roles.remove(role);
-					region = regions[i];
+					region = regions[roles.indexOf(id)];
 				}
-			}
+			});
 
 			if (region == null) {
 				await interaction.reply({
-					content: `You have to join [The Square](https://pinniped.page/images/the-square.png) before you can leave! Visit https://pinniped.page/projects/the-square for more information.`,
+					content: `:warning: You have to join [**The Square**](https://pinniped.page/images/the-square.png) before you can leave! Visit https://pinniped.page/projects/the-square for more information.`,
 					flags: MessageFlags.Ephemeral,
 				});
 
-				console.log(`\x1b[35m> /leave\x1b[37m — !!! | ${member.displayName}`);
+				logMessage(commandName, `!!! (not in The Square)`, member);
 				return;
 			}
 
-			await interaction.reply(`You are no longer a citizen of \`${region}\`.`);
-			console.log(`\x1b[35m> /leave\x1b[37m — ${region} | ${member.displayName}`);
+			await interaction.reply(`:pensive: You are no longer a <@&${role.id}>.`);
+			logMessage(commandName, `${region}`, member);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, commandName, error);
 		}
 	}
 
-	// "/stop" - ...
-	if (commandName === "stop") {
-		try {
-			const user = interaction.member.user;
+	// "/stop" - stop the bot [DEPRECATED]
+	// if (commandName === "stop") {
+	// 	try {
+	// 		const member = interaction.member;
 
-			if (user.id == "390612175137406978") {
-				await interaction.reply("Stopping...");
-				console.log(`\x1b[35m> /stop\x1b[37m — ${user.id == "390612175137406978"} | ${user.username}`);
+	// 		await interaction.reply({
+	// 			content: `:no_entry_sign: This command has been deprecated, sorry.`,
+	// 			flags: MessageFlags.Ephemeral,
+	// 		});
+	// 		logMessage(commandName, `...`, member);
+	// 	} catch (error) {
+	// 		errorMessage(interaction, commandName, error);
+	// 	}
+	// }
 
-				process.exit(0);
-			} else {
-				await interaction.reply({ content: "Only Obsidian_Seal can use this command!", ephemeral: true });
-				console.log(`\x1b[35m> /stop\x1b[37m — ${user.id == "390612175137406978"} | ${user.username}`);
-
-				const me = await client.users.fetch("390612175137406978");
-				me.send(`**ALERT:** ${user} tried to use /stop.`);
-			}
-		} catch (error) {
-			errorMessage(interaction, error);
-		}
-	}
-
-	// "/text" - ...
+	// "/text" - post a message to pinniped.page/text
 	if (commandName === "text") {
 		try {
+			const member = interaction.member;
+
 			const text = interaction.options.getString("message");
 
 			const date = new Date();
@@ -218,10 +208,7 @@ client.on("interactionCreate", async (interaction) => {
 			if (day < 10) day = `0${day}`;
 
 			const db = getDatabase();
-			const textRef = ref(db, "text");
-			const autoId = push(textRef).key;
-
-			set(ref(db, "text/" + autoId), {
+			push(ref(db, "text"), {
 				text: text,
 				date: {
 					year: year,
@@ -234,68 +221,81 @@ client.on("interactionCreate", async (interaction) => {
 				},
 			});
 
-			await interaction.reply("Message sent.");
-			console.log(`\x1b[35m> /text\x1b[37m — "${text}"`);
+			await interaction.reply(":pencil: Your message has been sent to [pinniped.page/text](https://pinniped.page/text).");
+			logMessage(commandName, `${text}`, member);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, commandName, error);
 		}
 	}
 
-	// "/text-space" - ...
+	// "/text-space" - special text emphasis
 	if (commandName === "text-space") {
 		try {
+			const member = interaction.member;
+
 			const text = interaction.options.getString("text");
 			const newText = text.split("").join(" ");
 
-			await interaction.reply(newText);
-			console.log(`\x1b[35m> /text-space\x1b[37m — "${newText}"`);
+			await interaction.reply(`:pen_ballpoint: The text you entered (\`${text}\`) has been expanded.\n${newText}\n-# WARNING: user-generated content`);
+			logMessage(commandName, `“${text}” >>> “${newText}”`, member);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, commandName, error);
 		}
 	}
 
-	// "/embed" - ...
+	// "/embed" - generate a custom embed
 	if (commandName === "embed") {
 		try {
+			const member = interaction.member;
+
 			const title = interaction.options.getString("title");
 			const description = interaction.options.getString("description");
 			const colour = interaction.options.getString("colour");
 
+			if (!/^#?[0123456789ABCDEFabcdef]{6}$/.test(colour)) {
+				await interaction.reply({
+					content: `:warning: \`${colour}\` is not a valid colour (HEX code) string. Valid colour strings follow the form \`^#?[0123456789ABCDEFabcdef]{6}$\`.`,
+					flags: MessageFlags.Ephemeral,
+				});
+				logMessage(commandName, `${title} & ${description} & ${colour} (invalid colour)`, member);
+				return;
+			}
+
 			const embed = new EmbedBuilder().setTitle(title).setDescription(description).setColor(colour);
 
-			await interaction.reply({ embeds: [embed] });
-			console.log(`\x1b[35m> /embed\x1b[37m — "${title}", "${description}"`);
+			await interaction.reply({ content: `:tools: Embed generated!\n-# WARNING: user-generated content`, embeds: [embed] });
+			logMessage(commandName, `${title} & ${description} & ${colour}`, member);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, commandName, error);
 		}
 	}
 
-	// "/help" - ...
+	// "/help" - help message
 	if (commandName === "help") {
 		try {
-			await interaction.reply("https://pinniped.page/projects/the-square#commands");
-			console.log(`\x1b[35m> /help`);
+			const member = interaction.member;
+
+			await interaction.reply({
+				content: ":palm_up_hand: **This might help.**\n> about <@960236750830194688>: [pinniped.page/omega-seal](https://pinniped.page/omega-seal)\n> about The Square: [pinniped.page/the-square](https://pinniped.page/the-square)\n> <@960236750830194688>’s GitHub repository: [github.com/ObsidianSeal/Omega-Seal-The-Square](https://github.com/ObsidianSeal/Omega-Seal-The-Square)\n> bot status: [pinniped.page/status#DISCORD%20BOT](https://pinniped.page/status#DISCORD%20BOT)\n> more help: [pinniped.page/contact](https://pinniped.page/contact)",
+				flags: MessageFlags.SuppressEmbeds,
+			});
+			logMessage(commandName, `...`, member);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, commandName, error);
 		}
 	}
 });
 
-// INITIAL DATABASE STUFF ...
+// INITIAL DATABASE STUFF
 const db = getDatabase();
-const statusRef = ref(db, "omega-seal");
-let firstPing = true;
+const botRef = ref(db, "omega-seal");
 
-// LISTEN TO 'omega-seal' DATABASE ...
-onValue(statusRef, () => {
-	if (firstPing) firstPing = false;
-	else {
-		console.log("\x1b[31m> Firebase ping");
-		firstPing = true;
-	}
-
-	set(statusRef, {
+// LISTEN TO 'omega-seal' DATABASE
+onValue(botRef, () => {
+	set(botRef, {
 		status: "online",
+	}).then(() => {
+		databaseLogMessage("status set to ONLINE");
 	});
 });
 
@@ -304,12 +304,30 @@ async function logMessage(command, message, member) {
 	console.log(`\x1b[35m> /${command}\x1b[37m — ${message} | ${member.user.displayName} (${member.user.username})`);
 }
 
+// UTILITY: LOG DATABASE UPDATES TO CONSOLE
+async function databaseLogMessage(message) {
+	console.log(`\x1b[34m[db] ${message}`);
+}
+
 // UTILITY: ERROR RESPONSE & LOG TO CONSOLE
 async function errorMessage(interaction, commandName, error) {
 	await interaction.reply({
-		content: "Something went wrong....\n**Please report bugs!**\n[pinniped.page/contact](https://pinniped.page/contact)",
+		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> report issues here: [pinniped.page/contact](https://pinniped.page/contact)\n> for general <@960236750830194688> help, use \`/help\``,
 		flags: MessageFlags.Ephemeral,
 	});
 	console.log(`\x1b[31mERROR!! (/${commandName})`);
 	console.log(error);
 }
+
+/*
+ * colours (for the VSCode theme I use)
+ * ----------------------------------------
+ * RED = \x1b[31m (errors)
+ * ORANGE = \x1b[34m (database updates)
+ * YELLOW = \x1b[33m (unused)
+ * GREEN = \x1b[32m (successes)
+ * BLUE = \x1b[36m (unused)
+ * PURPLE = \x1b[35m (command logs)
+ */
+
+console.log("\x1b[31m.\x1b[34m.\x1b[33m.\x1b[32m.\x1b[36m.\x1b[35m.\n");

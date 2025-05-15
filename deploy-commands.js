@@ -19,13 +19,13 @@ const commands = [
 	new SlashCommandBuilder().setName("leave").setDescription("Leave The Square and reset the colour of your name."),
 
 	// "/stop"
-	new SlashCommandBuilder().setName("stop").setDescription("Stop Omega Seal — DEPRECATED."),
+	// new SlashCommandBuilder().setName("stop").setDescription("Stop Omega Seal. [DEPRECATED]"),
 
 	// "/text"
 	new SlashCommandBuilder()
 		.setName("text")
 		.setDescription("Send a message on my website’s chat page.")
-		.addStringOption((option) => option.setName("message").setDescription("The text you want to send.").setRequired(true)),
+		.addStringOption((option) => option.setName("message").setDescription("The text you want to send.").setRequired(true).setMaxLength(120)),
 
 	// "/text-space"
 	new SlashCommandBuilder()
@@ -39,14 +39,21 @@ const commands = [
 		.setDescription("Send a custom embed.")
 		.addStringOption((option) => option.setName("title").setDescription("The embed’s title.").setRequired(true))
 		.addStringOption((option) => option.setName("description").setDescription("The embed’s description.").setRequired(true))
-		.addStringOption((option) => option.setName("colour").setDescription("The embed’s accent colour.").setRequired(false)),
+		.addStringOption((option) => option.setName("colour").setDescription("The embed’s accent colour.").setRequired(false).setMinLength(6).setMaxLength(7)),
 
 	// "/help"
 	new SlashCommandBuilder().setName("help").setDescription("Send this command if you don’t know how to use the bot or if you just want to learn more about it."),
 ].map((command) => command.toJSON());
 
-// SEND THE COMMANDS TO DISCORD
 const rest = new REST().setToken(token);
+
+// SEND THE COMMANDS TO DISCORD
 rest.put(Routes.applicationCommands(clientID), { body: commands }) // use "body: []" to remove all; requires re-adding the bot to servers after commands are restored
-	.then(() => console.log("\x1b[36mOmega Seal’s “application commands” have successfully been registered with Discord."))
+	.then(() => console.log("\x1b[32mOmega Seal’s “application commands” have successfully been registered with Discord."))
 	.catch(console.error);
+
+// DELETE A COMMAND
+// let commandID = 0;
+// rest.delete(Routes.applicationCommands(clientID, commandID))
+// 	.then(() => console.log(`\x1b[32m${commandID} has successfully been deleted from Discord.`))
+// 	.catch(console.error);
