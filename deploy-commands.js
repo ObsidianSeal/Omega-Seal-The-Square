@@ -18,9 +18,6 @@ const commands = [
 	// "/leave"
 	new SlashCommandBuilder().setName("leave").setDescription("Leave The Square and reset the colour of your name."),
 
-	// "/stop"
-	// new SlashCommandBuilder().setName("stop").setDescription("Stop Omega Seal. [DEPRECATED]"),
-
 	// "/text"
 	new SlashCommandBuilder()
 		.setName("text")
