@@ -305,8 +305,8 @@ async function commandLogMessage(interaction, message) {
 	let username, displayName;
 
 	if (interaction.inGuild()) {
-		username = interaction.member.username;
-		displayName = interaction.member.displayName;
+		username = interaction.member.user.username;
+		displayName = interaction.member.user.displayName;
 	} else {
 		username = interaction.user.username;
 		displayName = "\x1b[33m[DM]\x1b[37m";
