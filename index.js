@@ -1,6 +1,6 @@
 // IMPORT THINGS
-const { clientID, guildID, token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId } = require("./config.json");
-const { Client, GatewayIntentBits, Partials, InteractionType, EmbedBuilder, ActivityType, MessageFlags } = require("discord.js");
+const { clientID, guildID, token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId, s2ID } = require("./config.json");
+const { Client, GatewayIntentBits, InteractionType, EmbedBuilder, ActivityType, MessageFlags, TextChannel } = require("discord.js");
 const { initializeApp } = require("firebase/app");
 const { getDatabase, ref, push, set, onValue } = require("firebase/database");
 
@@ -17,13 +17,30 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 // MAKE THE CLIENT
-const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages] });
 
 // START THE CLIENT
 client.login(token);
 client.once("ready", () => {
 	console.log("\x1b[32mOmega Seal is now online!\n");
 	client.user.setActivity({ name: "Obsidian_Seal", type: ActivityType.Watching }); // custom statuses are not yet supported :(
+	client.channels.cache.get("755823609523470407").send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.1.0 @ ${Date.now()}`);
+});
+
+// CLIENT LISTENERS
+client.on("guildMemberAdd", async (member) => {
+	if (member.guild.id == guildID)
+		await client.channels.cache
+			.get("755817169039917147")
+			.send(
+				`## <:ssseal:1236461048270164020> Welcome to Seal Squad <@${member.id}>! <:ssseal:1236461048270164020>\n-# member #${member.guild.memberCount}\n- please read the <#755785157562335324>\n- catch up on the latest <#755784977399939214>\n- watch some <#755816833671626963>\n- vote in <#763475121788157983>\n- and start chatting in the many channels!\n\n:identification_card: **To remain in this server, you must get a role by joining The Square.**\n> use \` /join\` to join\n> use \` /help\` for help\n-# bot commands can be used in any of the CHAT channels`
+			);
+	if (member.guild.id == s2ID)
+		await client.channels.cache
+			.get("1349764047234662503")
+			.send(
+				`## <a:minecraft_bounce:587505418406723584> Welcome to Civil Engineers’ Paradise <@${member.id}>! <a:minecraft_bounce:587505418406723584>\n-# member #${member.guild.memberCount}\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`
+			);
 });
 
 // REGION LIST ("THE SQUARE")
@@ -93,7 +110,7 @@ client.on("interactionCreate", async (interaction) => {
 
 			await interaction.reply(`:ping_pong: **Pong!**\nbot ping: \`${botPing}\`ms\nAPI ping: \`${wsPing}\`ms`);
 
-			logMessage(commandName, `${botPing} & ${wsPing}`, member);
+			commandLogMessage(commandName, `${botPing} & ${wsPing}`, member);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -111,7 +128,7 @@ client.on("interactionCreate", async (interaction) => {
 					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/projects/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
 					flags: MessageFlags.Ephemeral,
 				});
-				logMessage(commandName, `!!! (not Seal Squad)`, member);
+				commandLogMessage(commandName, `!!! (not Seal Squad)`, member);
 				return;
 			}
 
@@ -133,11 +150,11 @@ client.on("interactionCreate", async (interaction) => {
 					flags: MessageFlags.Ephemeral,
 				});
 
-				logMessage(commandName, `??? (${string})`, member);
+				commandLogMessage(commandName, `??? (${string})`, member);
 				return;
 			}
 
-			logMessage(commandName, `${string}`, member);
+			commandLogMessage(commandName, `${string}`, member);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -164,12 +181,12 @@ client.on("interactionCreate", async (interaction) => {
 					flags: MessageFlags.Ephemeral,
 				});
 
-				logMessage(commandName, `!!! (not in The Square)`, member);
+				commandLogMessage(commandName, `!!! (not in The Square)`, member);
 				return;
 			}
 
 			await interaction.reply(`:pensive: You are no longer a <@&${role.id}>.`);
-			logMessage(commandName, `${region}`, member);
+			commandLogMessage(commandName, `${region}`, member);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -184,7 +201,7 @@ client.on("interactionCreate", async (interaction) => {
 	// 			content: `:no_entry_sign: This command has been deprecated, sorry.`,
 	// 			flags: MessageFlags.Ephemeral,
 	// 		});
-	// 		logMessage(commandName, `...`, member);
+	// 		commandLogMessage(commandName, `...`, member);
 	// 	} catch (error) {
 	// 		errorMessage(interaction, commandName, error);
 	// 	}
@@ -222,7 +239,7 @@ client.on("interactionCreate", async (interaction) => {
 			});
 
 			await interaction.reply(":pencil: Your message has been sent to [pinniped.page/text](https://pinniped.page/text).");
-			logMessage(commandName, `${text}`, member);
+			commandLogMessage(commandName, `${text}`, member);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -237,7 +254,7 @@ client.on("interactionCreate", async (interaction) => {
 			const newText = text.split("").join(" ");
 
 			await interaction.reply(`:pen_ballpoint: The text you entered (\`${text}\`) has been expanded.\n${newText}\n-# WARNING: user-generated content`);
-			logMessage(commandName, `“${text}” >>> “${newText}”`, member);
+			commandLogMessage(commandName, `“${text}” >>> “${newText}”`, member);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -257,14 +274,14 @@ client.on("interactionCreate", async (interaction) => {
 					content: `:warning: \`${colour}\` is not a valid colour (HEX code) string. Valid colour strings follow the form \`^#?[0123456789ABCDEFabcdef]{6}$\`.`,
 					flags: MessageFlags.Ephemeral,
 				});
-				logMessage(commandName, `${title} & ${description} & ${colour} (invalid colour)`, member);
+				commandLogMessage(commandName, `${title} & ${description} & ${colour} (invalid colour)`, member);
 				return;
 			}
 
 			const embed = new EmbedBuilder().setTitle(title).setDescription(description).setColor(colour);
 
 			await interaction.reply({ content: `:tools: Embed generated!\n-# WARNING: user-generated content`, embeds: [embed] });
-			logMessage(commandName, `${title} & ${description} & ${colour}`, member);
+			commandLogMessage(commandName, `${title} & ${description} & ${colour}`, member);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -279,7 +296,7 @@ client.on("interactionCreate", async (interaction) => {
 				content: ":palm_up_hand: **This might help.**\n> about <@960236750830194688>: [pinniped.page/omega-seal](https://pinniped.page/omega-seal)\n> about The Square: [pinniped.page/the-square](https://pinniped.page/the-square)\n> <@960236750830194688>’s GitHub repository: [github.com/ObsidianSeal/Omega-Seal-The-Square](https://github.com/ObsidianSeal/Omega-Seal-The-Square)\n> bot status: [pinniped.page/status#DISCORD%20BOT](https://pinniped.page/status#DISCORD%20BOT)\n> more help: [pinniped.page/contact](https://pinniped.page/contact)",
 				flags: MessageFlags.SuppressEmbeds,
 			});
-			logMessage(commandName, `...`, member);
+			commandLogMessage(commandName, `...`, member);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -295,17 +312,17 @@ onValue(botRef, () => {
 	set(botRef, {
 		status: "online",
 	}).then(() => {
-		databaseLogMessage("status set to ONLINE");
+		databasecommandLogMessage("status set to ONLINE");
 	});
 });
 
 // UTILITY: LOG COMMAND USAGE TO CONSOLE
-async function logMessage(command, message, member) {
+async function commandLogMessage(command, message, member) {
 	console.log(`\x1b[35m> /${command}\x1b[37m — ${message} | ${member.user.displayName} (${member.user.username})`);
 }
 
 // UTILITY: LOG DATABASE UPDATES TO CONSOLE
-async function databaseLogMessage(message) {
+async function databasecommandLogMessage(message) {
 	console.log(`\x1b[34m[db] ${message}`);
 }
 
