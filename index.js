@@ -41,7 +41,7 @@ client.on("guildMemberAdd", async (member) => {
 		await client.channels.cache
 			.get("1349764047234662503")
 			.send(
-				`## <a:minecraft_bounce:587505418406723584> Welcome to Civil Engineers’ Paradise <@${member.id}>! <a:minecraft_bounce:587505418406723584>\n-# member #${member.guild.memberCount}\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`
+				`## <:cep:1373149617557995600> Welcome to Civil Engineers’ Paradise <@${member.id}>! <:cep:1373149617557995600>\n-# member #${member.guild.memberCount}\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`
 			);
 });
 
