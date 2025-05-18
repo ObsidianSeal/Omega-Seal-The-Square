@@ -17,13 +17,15 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 // MAKE THE CLIENT
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages] });
+const client = new Client({
+	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages],
+	presence: { activities: [{ name: "Obsidian_Seal", type: ActivityType.Watching }] },
+});
 
 // START THE CLIENT
 client.login(token);
 client.once("ready", () => {
 	console.log("\x1b[32mOmega Seal is now online!\n");
-	client.user.setActivity({ name: "Obsidian_Seal", type: ActivityType.Watching }); // custom statuses are not yet supported :(
 	client.channels.cache
 		.get("755823609523470407")
 		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.1.1 @ ${Date.now()} = <t:${Math.round(Date.now() / 1000)}:R>`);
