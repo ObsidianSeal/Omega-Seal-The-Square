@@ -23,12 +23,15 @@ const client = new Client({
 });
 
 // START THE CLIENT
+let startTime;
 client.login(token);
 client.once("ready", () => {
+	startTime = Date.now();
 	console.log("\x1b[32mOmega Seal is now online!\n");
+
 	client.channels.cache
 		.get("755823609523470407")
-		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.1.1 @ ${Date.now()} = <t:${Math.round(Date.now() / 1000)}:R>`);
+		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.1.1 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 });
 
 // CLIENT LISTENERS
@@ -291,14 +294,15 @@ client.on("interactionCreate", async (interaction) => {
 
 // INITIAL DATABASE STUFF
 const db = getDatabase();
-const botRef = ref(db, "omega-seal");
+const botStatusRef = ref(db, "omega-seal/status");
 
 // LISTEN TO 'omega-seal' DATABASE
-onValue(botRef, () => {
-	set(botRef, {
-		status: "online",
+onValue(botStatusRef, () => {
+	set(botStatusRef, {
+		online: true,
+		startTime: startTime,
 	}).then(() => {
-		databaseLogMessage("status set to ONLINE");
+		databaseLogMessage(`status updated: {online: true, startTime: ${startTime}}`);
 	});
 });
 
