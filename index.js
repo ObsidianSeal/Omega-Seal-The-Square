@@ -23,7 +23,7 @@ const client = new Client({
 });
 
 // START THE CLIENT
-let startTime;
+let startTime = 0;
 client.login(token);
 client.once("ready", () => {
 	startTime = Date.now();
@@ -298,12 +298,14 @@ const botStatusRef = ref(db, "omega-seal/status");
 
 // LISTEN TO 'omega-seal' DATABASE
 onValue(botStatusRef, () => {
-	set(botStatusRef, {
-		online: true,
-		startTime: startTime,
-	}).then(() => {
-		databaseLogMessage(`status updated: {online: true, startTime: ${startTime}}`);
-	});
+	if (startTime != 0) {
+		set(botStatusRef, {
+			online: true,
+			startTime: startTime,
+		}).then(() => {
+			databaseLogMessage(`status updated: {online: true, startTime: ${startTime}}`);
+		});
+	}
 });
 
 // UTILITY: LOG COMMAND USAGE TO CONSOLE
