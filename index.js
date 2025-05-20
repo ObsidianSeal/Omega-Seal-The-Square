@@ -31,7 +31,7 @@ client.once("ready", () => {
 
 	client.channels.cache
 		.get("755823609523470407")
-		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.1.1 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.2.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 });
 
 // CLIENT LISTENERS
@@ -295,16 +295,57 @@ client.on("interactionCreate", async (interaction) => {
 // INITIAL DATABASE STUFF
 const db = getDatabase();
 const botStatusRef = ref(db, "omega-seal/status");
+const botContactFormMessagesRef = ref(db, "omega-seal/contact-form-messages");
 
-// LISTEN TO 'omega-seal' DATABASE
-onValue(botStatusRef, () => {
+// LISTEN TO 'omega-seal/status'
+onValue(botStatusRef, async (snapshot) => {
 	if (startTime != 0) {
-		set(botStatusRef, {
-			online: true,
-			startTime: startTime,
-		}).then(() => {
-			databaseLogMessage(`status updated: {online: true, startTime: ${startTime}}`);
-		});
+		const receivedData = snapshot.val();
+
+		databaseLogMessage(false, "omega-seal/status", receivedData);
+
+		// I will change this when I update the website
+		if (receivedData == "offline") {
+			let statusUpdate = {
+				online: true,
+				startTime: startTime,
+			};
+
+			try {
+				await set(botStatusRef, statusUpdate);
+				databaseLogMessage(true, "omega-seal/status", statusUpdate);
+			} catch (error) {
+				databaseErrorMessage(error);
+			}
+		}
+	}
+});
+
+// LISTEN TO 'omega-seal/contact-form-messages'
+onValue(botContactFormMessagesRef, async (snapshot) => {
+	if (startTime != 0) {
+		const receivedData = snapshot.val();
+
+		databaseLogMessage(false, "omega-seal/contact-form-messages", receivedData);
+
+		for (let messageID in receivedData) {
+			const response = await client.channels.cache
+				.get("755823609523470407")
+				.send(
+					`<@390612175137406978>\n## CONTACT FORM SUBMISSION RECEIVED\n-# \`${messageID}\` @ ${startTime} = <t:${Math.round(Date.now() / 1000)}:R>\n**TYPE:** ${
+						receivedData[messageID].typeSelected
+					}\n**PRIORITY:** ${receivedData[messageID].prioritySelected}\n**SUBJECT:** \`${receivedData[messageID].messageSubject}\`\n\`\`\`md\n${
+						receivedData[messageID].messageBody
+					}\`\`\` `
+				);
+			response.react("☑️");
+			try {
+				await set(ref(db, `omega-seal/contact-form-messages/${messageID}`), null);
+				databaseLogMessage(true, `omega-seal/contact-form-messages/${messageID}`, null);
+			} catch (error) {
+				databaseErrorMessage(error);
+			}
+		}
 	}
 });
 
@@ -320,12 +361,22 @@ async function commandLogMessage(interaction, message) {
 		displayName = "\x1b[33m[DM]\x1b[37m";
 	}
 
-	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${displayName} (${username})`);
+	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${displayName} (${username})\x1b[37m`);
 }
 
 // UTILITY: LOG DATABASE UPDATES TO CONSOLE
-async function databaseLogMessage(message) {
-	console.log(`\x1b[34m[db] ${message}`);
+async function databaseLogMessage(direction, path, content) {
+	let colourText = "\x1b[34m[db] RECEIVE";
+	if (direction) colourText = "\x1b[36m[db] SEND";
+
+	console.log(`${colourText} @ ${path}\x1b[37m ${content}`);
+	console.log(content);
+}
+
+// UTILITY: LOG DATABASE ERRORS
+async function databaseErrorMessage(error) {
+	console.log(`\x1b[31mERROR!!\x1b[37m`);
+	console.log(error);
 }
 
 // UTILITY: ERROR RESPONSE & LOG TO CONSOLE
@@ -334,7 +385,7 @@ async function errorMessage(interaction, commandName, error) {
 		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> report issues here: [pinniped.page/contact](https://pinniped.page/contact)\n> for general <@960236750830194688> help, use \`/help\``,
 		flags: MessageFlags.Ephemeral,
 	});
-	console.log(`\x1b[31mERROR!! (/${commandName})`);
+	console.log(`\x1b[31mERROR!! (/${commandName})\x1b[37m`);
 	console.log(error);
 }
 
@@ -342,10 +393,10 @@ async function errorMessage(interaction, commandName, error) {
  * colours (for the VSCode theme I use)
  * ----------------------------------------
  * RED = \x1b[31m (errors)
- * ORANGE = \x1b[34m (database updates)
+ * ORANGE = \x1b[34m (database receive)
  * YELLOW = \x1b[33m (special)
  * GREEN = \x1b[32m (successes)
- * BLUE = \x1b[36m (unused)
+ * BLUE = \x1b[36m (database send)
  * PURPLE = \x1b[35m (command logs)
  * reset = \x1b[37m
  */
