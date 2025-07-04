@@ -16,6 +16,11 @@ const firebaseConfig = {
 };
 initializeApp(firebaseConfig);
 
+// INITIAL DATABASE STUFF
+const db = getDatabase();
+const botStatusRef = ref(db, "omega-seal/status");
+const botContactFormMessagesRef = ref(db, "omega-seal/contact-form-messages");
+
 // MAKE THE CLIENT
 const client = new Client({
 	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages],
@@ -25,13 +30,18 @@ const client = new Client({
 // START THE CLIENT
 let startTime = 0;
 client.login(token);
-client.once("ready", () => {
+client.once("ready", async () => {
 	startTime = Date.now();
 	console.log("\x1b[32mOmega Seal is now online!\n");
 
 	client.channels.cache
 		.get("755823609523470407")
 		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.2.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+
+	await set(botStatusRef, {
+		online: true,
+		startTime: startTime,
+	});
 });
 
 // CLIENT LISTENERS
@@ -292,11 +302,6 @@ client.on("interactionCreate", async (interaction) => {
 	}
 });
 
-// INITIAL DATABASE STUFF
-const db = getDatabase();
-const botStatusRef = ref(db, "omega-seal/status");
-const botContactFormMessagesRef = ref(db, "omega-seal/contact-form-messages");
-
 // LISTEN TO 'omega-seal/status'
 onValue(botStatusRef, async (snapshot) => {
 	if (startTime != 0) {
@@ -360,7 +365,7 @@ async function commandLogMessage(interaction, message) {
 		displayName = "\x1b[33m[DM]\x1b[37m";
 	}
 
-	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${displayName} (${username})\x1b[37m`);
+	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${displayName} (${username})\x1b[37m [${Date.now()}]`);
 }
 
 // UTILITY: LOG DATABASE UPDATES TO CONSOLE
@@ -368,13 +373,13 @@ async function databaseLogMessage(direction, path, content) {
 	let colourText = "\x1b[34m[db] RECEIVE";
 	if (direction) colourText = "\x1b[36m[db] SEND";
 
-	console.log(`${colourText} @ ${path}\x1b[37m ${content}`);
+	console.log(`${colourText} @ ${path}\x1b[37m ${content} [${Date.now()}]`);
 	console.log(content);
 }
 
 // UTILITY: LOG DATABASE ERRORS
 async function databaseErrorMessage(error) {
-	console.log(`\x1b[31mERROR!!\x1b[37m`);
+	console.log(`\x1b[31mERROR!!\x1b[37m [${Date.now()}]`);
 	console.log(error);
 }
 
@@ -384,7 +389,7 @@ async function errorMessage(interaction, commandName, error) {
 		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> report issues here: [pinniped.page/contact](https://pinniped.page/contact)\n> for general <@960236750830194688> help, use \`/help\``,
 		flags: MessageFlags.Ephemeral,
 	});
-	console.log(`\x1b[31mERROR!! (/${commandName})\x1b[37m`);
+	console.log(`\x1b[31mERROR!! (/${commandName})\x1b[37m [${Date.now()}]`);
 	console.log(error);
 }
 
