@@ -269,9 +269,9 @@ client.on("interactionCreate", async (interaction) => {
 			const description = interaction.options.getString("description");
 			const colour = interaction.options.getString("colour");
 
-			if (!/^#?[0123456789ABCDEFabcdef]{6}$/.test(colour)) {
+			if (!/^#?[0-9A-Fa-f]{6}$/.test(colour)) {
 				await interaction.reply({
-					content: `:warning: \`${colour}\` is not a valid colour (HEX code) string. Valid colour strings follow the form \`^#?[0123456789ABCDEFabcdef]{6}$\`.`,
+					content: `:warning: \`${colour}\` is not a valid colour (HEX code) string. Valid colour strings follow the form \`^#?[0-9A-Fa-f]{6}$\`.`,
 					flags: MessageFlags.Ephemeral,
 				});
 				commandLogMessage(interaction, `${title} & ${description} & ${colour} (invalid colour)`);
