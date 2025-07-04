@@ -304,7 +304,6 @@ onValue(botStatusRef, async (snapshot) => {
 
 		databaseLogMessage(false, "omega-seal/status", receivedData);
 
-		// I will change this when I update the website
 		if (receivedData == "offline") {
 			let statusUpdate = {
 				online: true,
