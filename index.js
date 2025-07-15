@@ -328,7 +328,7 @@ client.on("interactionCreate", async (interaction) => {
 	// "/metar" - get a METAR report from a specified airport
 	if (commandName === "metar") {
 		try {
-			const airport = interaction.options.getString("airport");
+			const airport = interaction.options.getString("airport").toUpperCase();
 
 			if (!/^[A-Z]{4}$/.test(airport)) {
 				await interaction.reply({
