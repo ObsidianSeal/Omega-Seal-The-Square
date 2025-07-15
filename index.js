@@ -36,7 +36,7 @@ client.once("ready", async () => {
 
 	client.channels.cache
 		.get("755823609523470407")
-		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.2.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.3.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 
 	await set(botStatusRef, {
 		online: true,
@@ -158,7 +158,9 @@ client.on("interactionCreate", async (interaction) => {
 				let role = member.guild.roles.cache.find((role) => role.id === roles[regions.indexOf(string)]);
 				member.roles.add(role);
 
-				await interaction.reply(`:grin: You are now a <@&${role.id}>!`);
+				await interaction.reply(
+					`:grin: You are now a <@&${role.id}>!\n-# learn more about your region at [pinniped.page/the-square#${string}](https://pinniped.page/the-square#${string})`
+				);
 			} else {
 				await interaction.reply({
 					content: `:warning: \`${string}\` is not one of [**The Square**](https://pinniped.page/images/the-square.png)’s regions. Visit [pinniped.page/projects/the-square](https://pinniped.page/projects/the-square) for more information.`,
@@ -206,8 +208,44 @@ client.on("interactionCreate", async (interaction) => {
 				return;
 			}
 
-			await interaction.reply(`:pensive: You are no longer a <@&${role.id}>.`);
+			await interaction.reply(`:pensive: You are no longer a <@&${role.id}>\n-# please note that you can move regions without leaving The Square`);
 			commandLogMessage(interaction, `${region}`);
+		} catch (error) {
+			errorMessage(interaction, commandName, error);
+		}
+	}
+
+	// "/populations" - regions of The Square, sorted by member count
+	if (commandName === "populations") {
+		try {
+			if (!interaction.inGuild() || interaction.guild.id != guildID) {
+				await interaction.reply({
+					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/projects/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
+					flags: MessageFlags.Ephemeral,
+				});
+				commandLogMessage(interaction, `!!! (not Seal Squad)`);
+				return;
+			}
+
+			await interaction.guild.members.fetch();
+
+			let memberCounts = [];
+			for (let i = 0; i < regions.length; i++) {
+				const role = interaction.guild.roles.cache.find((role) => role.id === roles[i]);
+				const memberCount = role.members.size;
+				memberCounts.push([regions[i], memberCount]);
+			}
+			memberCounts.sort(function (a, b) {
+				return b[1] - a[1];
+			});
+
+			let regionListString = "";
+			for (let i = 0; i < regions.length; i++) {
+				regionListString += `\n${i + 1}. \`${memberCounts[i][0]}\` **${memberCounts[i][1].toLocaleString("en-CA")}**`;
+			}
+
+			await interaction.reply(`## :crown: The Square :crown:\n-# all 22 regions, sorted by member count${regionListString}`);
+			commandLogMessage(interaction, `...`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -287,6 +325,44 @@ client.on("interactionCreate", async (interaction) => {
 		}
 	}
 
+	// "/metar" - get a METAR report from a specified airport
+	if (commandName === "metar") {
+		try {
+			const airport = interaction.options.getString("airport");
+
+			if (!/^[A-Z]{4}$/.test(airport)) {
+				await interaction.reply({
+					content: `:warning: \`${airport}\` is not a valid ICAO airport code. Valid ICAO airport codes follow the form \`^[A-Z]{4}$\`.`,
+					flags: MessageFlags.Ephemeral,
+				});
+				commandLogMessage(interaction, `??? (invalid ICAO airport code)`);
+				return;
+			}
+
+			const requestURL = `https://aviationweather.gov/api/data/metar?ids=${airport}`;
+			const request = new Request(requestURL);
+			const response = await fetch(request);
+			const text = await response.text();
+
+			if (text == "") {
+				await interaction.reply({
+					content: `:airplane_small: There is no [METAR](https://en.wikipedia.org/wiki/METAR) data available for \`${airport}\`. Either that airport doesn’t exist or its METAR reports are not public. Sorry!`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
+				});
+				commandLogMessage(interaction, `??? (no response)`);
+				return;
+			}
+
+			await interaction.reply({
+				content: `:airplane: Here is the latest [METAR](https://en.wikipedia.org/wiki/METAR) report for \`${airport}\`.\n-# source: [aviationweather.gov/api/data/metar?ids=${airport}](https://aviationweather.gov/api/data/metar?ids=${airport})\n\`\`\`${text}\`\`\``,
+				flags: MessageFlags.SuppressEmbeds,
+			});
+			commandLogMessage(interaction, text);
+		} catch (error) {
+			errorMessage(interaction, commandName, error);
+		}
+	}
+
 	// "/help" - help message
 	if (commandName === "help") {
 		try {
@@ -309,6 +385,7 @@ onValue(botStatusRef, async (snapshot) => {
 
 		databaseLogMessage(false, "omega-seal/status", receivedData);
 
+		// omega seal page ping
 		if (receivedData == "offline") {
 			let statusUpdate = {
 				online: true,
@@ -318,6 +395,27 @@ onValue(botStatusRef, async (snapshot) => {
 			try {
 				await set(botStatusRef, statusUpdate);
 				databaseLogMessage(true, "omega-seal/status", statusUpdate);
+			} catch (error) {
+				databaseErrorMessage(error);
+			}
+		}
+
+		// update populations
+		if (receivedData == "populations") {
+			let populations = {};
+
+			const guild = client.guilds.cache.get(guildID);
+			await guild.members.fetch();
+
+			for (let i = 0; i < regions.length; i++) {
+				const role = guild.roles.cache.find((role) => role.id === roles[i]);
+				const population = role.members.size;
+				populations[regions[i]] = population;
+			}
+
+			try {
+				await set(ref(db, `omega-seal/the-square`), populations);
+				databaseLogMessage(true, "omega-seal/the-square", populations);
 			} catch (error) {
 				databaseErrorMessage(error);
 			}

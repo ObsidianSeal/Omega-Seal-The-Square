@@ -2,7 +2,7 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
-const { botID, guildID, token } = require("./config.json");
+const { botID, token } = require("./config.json");
 
 // MAKE COMMANDS
 const commands = [
@@ -17,6 +17,9 @@ const commands = [
 
 	// "/leave"
 	new SlashCommandBuilder().setName("leave").setDescription("Leave The Square and reset the colour of your name."),
+
+	// "/populations"
+	new SlashCommandBuilder().setName("populations").setDescription("Check the population of each of The Square’s regions."),
 
 	// "/text"
 	new SlashCommandBuilder()
@@ -37,6 +40,14 @@ const commands = [
 		.addStringOption((option) => option.setName("title").setDescription("The embed’s title.").setRequired(true))
 		.addStringOption((option) => option.setName("description").setDescription("The embed’s description.").setRequired(true))
 		.addStringOption((option) => option.setName("colour").setDescription("The embed’s accent colour.").setRequired(false).setMinLength(6).setMaxLength(7)),
+
+	// "/metar"
+	new SlashCommandBuilder()
+		.setName("metar")
+		.setDescription("Prepare for flight with this quick weather report.")
+		.addStringOption((option) =>
+			option.setName("airport").setDescription("The ICAO airport code for the location you want a weather report from.").setRequired(true).setMinLength(4).setMaxLength(4)
+		),
 
 	// "/help"
 	new SlashCommandBuilder().setName("help").setDescription("Send this command if you don’t know how to use the bot or if you just want to learn more about it."),
