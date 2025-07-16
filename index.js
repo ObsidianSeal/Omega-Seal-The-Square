@@ -386,7 +386,7 @@ onValue(botStatusRef, async (snapshot) => {
 		databaseLogMessage(false, "omega-seal/status", receivedData);
 
 		// omega seal page ping
-		if (receivedData == "offline") {
+		if (receivedData == "offline" || receivedData == "populations") {
 			let statusUpdate = {
 				online: true,
 				startTime: startTime,
