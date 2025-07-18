@@ -1,6 +1,6 @@
 // IMPORT THINGS
 const { guildID, token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId, s2ID } = require("./config.json");
-const { Client, GatewayIntentBits, InteractionType, EmbedBuilder, ActivityType, MessageFlags } = require("discord.js");
+const { Client, GatewayIntentBits, InteractionType, EmbedBuilder, ActivityType, MessageFlags, time } = require("discord.js");
 const { initializeApp } = require("firebase/app");
 const { getDatabase, ref, push, set, onValue } = require("firebase/database");
 
@@ -38,10 +38,8 @@ client.once("ready", async () => {
 		.get("755823609523470407")
 		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.3.1 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 
-	await set(botStatusRef, {
-		online: true,
-		startTime: startTime,
-	});
+	statusListener();
+	contactFormMessagesListener();
 });
 
 // CLIENT LISTENERS
@@ -390,8 +388,8 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 // LISTEN TO 'omega-seal/status'
-onValue(botStatusRef, async (snapshot) => {
-	if (startTime != 0) {
+function statusListener() {
+	onValue(botStatusRef, async (snapshot) => {
 		const receivedData = snapshot.val();
 
 		databaseLogMessage(false, "omega-seal/status", receivedData);
@@ -431,25 +429,54 @@ onValue(botStatusRef, async (snapshot) => {
 				databaseErrorMessage(error);
 			}
 		}
-	}
-});
+	});
+}
+
+// prevent sending alerts more than once
+let messageIDs = [];
 
 // LISTEN TO 'omega-seal/contact-form-messages'
-onValue(botContactFormMessagesRef, async (snapshot) => {
-	if (startTime != 0) {
+function contactFormMessagesListener() {
+	onValue(botContactFormMessagesRef, async (snapshot) => {
 		const receivedData = snapshot.val();
 
 		databaseLogMessage(false, "omega-seal/contact-form-messages", receivedData);
 
 		for (let messageID in receivedData) {
+			if (!messageIDs.includes(messageID)) messageIDs.push(messageID);
+			else continue;
+
+			if (
+				Object.keys(receivedData[messageID]).length != 5 ||
+				!Object.keys(receivedData[messageID]).includes("typeSelected") ||
+				!Object.keys(receivedData[messageID]).includes("prioritySelected") ||
+				!Object.keys(receivedData[messageID]).includes("messageSubject") ||
+				!Object.keys(receivedData[messageID]).includes("messageBody") ||
+				!Object.keys(receivedData[messageID]).includes("timestamp")
+			) {
+				continue;
+			}
+
+			let type = receivedData[messageID].typeSelected.toString();
+			let priority = receivedData[messageID].prioritySelected.toString();
+			let subject = receivedData[messageID].messageSubject.toString().replaceAll(/`/g, "<backtick>");
+			let body = receivedData[messageID].messageBody.toString().replaceAll(/```/g, "<backticks>");
+			let timestamp = parseInt(receivedData[messageID].timestamp);
+
+			if (!["ISSUES", "COMMENTS", "SUGGESTIONS", "QUESTIONS", "HELP", "OTHER"].includes(type)) continue;
+			if (!["LOW", "MEDIUM", "HIGH"].includes(priority)) continue;
+
+			if (subject.length > 100 || subject.length == 0) continue;
+			if (body.length > 1500 || body.length == 0) continue;
+
+			if (timestamp < 1750000000000 || timestamp > Date.now() + 86400000 || isNaN(timestamp)) continue;
+
 			const response = await client.channels.cache
 				.get("1395802045998567465")
 				.send(
-					`<@390612175137406978>\n## CONTACT FORM SUBMISSION RECEIVED\n-# \`${messageID}\` @ ${startTime} = <t:${Math.round(Date.now() / 1000)}:R>\n**TYPE:** ${
-						receivedData[messageID].typeSelected
-					}\n**PRIORITY:** ${receivedData[messageID].prioritySelected}\n**SUBJECT:** \`${receivedData[messageID].messageSubject}\`\n\`\`\`md\n${
-						receivedData[messageID].messageBody
-					}\`\`\` `
+					`<@390612175137406978>\n## CONTACT FORM SUBMISSION RECEIVED\n-# \`${messageID}\` @ ${timestamp} = <t:${Math.round(
+						timestamp / 1000
+					)}:R>\n**TYPE:** ${type}\n**PRIORITY:** ${priority}\n**SUBJECT:** \`${subject}\`\n\`\`\`md\n${body}\`\`\``
 				);
 			response.react("☑️");
 			try {
@@ -459,8 +486,8 @@ onValue(botContactFormMessagesRef, async (snapshot) => {
 				databaseErrorMessage(error);
 			}
 		}
-	}
-});
+	});
+}
 
 // UTILITY: LOG COMMAND USAGE TO CONSOLE
 async function commandLogMessage(interaction, message) {
