@@ -36,7 +36,7 @@ client.once("ready", async () => {
 
 	client.channels.cache
 		.get("755823609523470407")
-		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.3.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.3.1 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 
 	await set(botStatusRef, {
 		online: true,
@@ -230,10 +230,12 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.guild.members.fetch();
 
 			let memberCounts = [];
+			let memberTotal = 0;
 			for (let i = 0; i < regions.length; i++) {
 				const role = interaction.guild.roles.cache.find((role) => role.id === roles[i]);
 				const memberCount = role.members.size;
 				memberCounts.push([regions[i], memberCount]);
+				memberTotal += memberCount;
 			}
 			memberCounts.sort(function (a, b) {
 				return b[1] - a[1];
@@ -244,7 +246,9 @@ client.on("interactionCreate", async (interaction) => {
 				regionListString += `\n${i + 1}. \`${memberCounts[i][0]}\` **${memberCounts[i][1].toLocaleString("en-CA")}**`;
 			}
 
-			await interaction.reply(`## :crown: The Square :crown:\n-# all 22 regions, sorted by member count${regionListString}`);
+			await interaction.reply(
+				`## :crown: The Square :crown:\n-# all 22 regions, sorted by member count (${memberTotal.toLocaleString("en-CA")} total) ${regionListString}`
+			);
 			commandLogMessage(interaction, `...`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
