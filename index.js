@@ -246,9 +246,12 @@ client.on("interactionCreate", async (interaction) => {
 				regionListString += `\n${i + 1}. \`${memberCounts[i][0]}\` **${memberCounts[i][1].toLocaleString("en-CA")}**`;
 			}
 
-			await interaction.reply(
-				`## :crown: The Square :crown:\n-# all 22 regions, sorted by member count (${memberTotal.toLocaleString("en-CA")} total) ${regionListString}`
-			);
+			await interaction.reply({
+				content: `## :crown: The Square :crown:\n-# all 22 regions, sorted by member count (${memberTotal.toLocaleString(
+					"en-CA"
+				)} total) ${regionListString}\n-# learn more about The Square at [pinniped.page/the-square](https://pinniped.page/projects/the-square)`,
+				flags: MessageFlags.SuppressEmbeds,
+			});
 			commandLogMessage(interaction, `...`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
