@@ -138,8 +138,8 @@ client.on("interactionCreate", async (interaction) => {
 
 			if (!interaction.inGuild() || interaction.guild.id != guildID) {
 				await interaction.reply({
-					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/projects/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
-					flags: MessageFlags.Ephemeral,
+					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
 				commandLogMessage(interaction, `!!! (not Seal Squad)`);
 				return;
@@ -158,13 +158,14 @@ client.on("interactionCreate", async (interaction) => {
 				let role = member.guild.roles.cache.find((role) => role.id === roles[regions.indexOf(string)]);
 				member.roles.add(role);
 
-				await interaction.reply(
-					`:grin: You are now a <@&${role.id}>!\n-# learn more about your region at [pinniped.page/the-square#${string}](https://pinniped.page/the-square#${string})`
-				);
+				await interaction.reply({
+					content: `:grin: You are now a <@&${role.id}>!\n-# learn more about your region at [pinniped.page/the-square#${string}](https://pinniped.page/projects/the-square#${string})`,
+					flags: MessageFlags.SuppressEmbeds,
+				});
 			} else {
 				await interaction.reply({
-					content: `:warning: \`${string}\` is not one of [**The Square**](https://pinniped.page/images/the-square.png)’s regions. Visit [pinniped.page/projects/the-square](https://pinniped.page/projects/the-square) for more information.`,
-					flags: MessageFlags.Ephemeral,
+					content: `:warning: \`${string}\` is not one of [**The Square**](https://pinniped.page/projects/the-square)’s regions. Visit [pinniped.page/the-square](https://pinniped.page/projects/the-square) for more information.`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
 				commandLogMessage(interaction, `??? (${string})`);
 				return;
@@ -181,8 +182,8 @@ client.on("interactionCreate", async (interaction) => {
 		try {
 			if (!interaction.inGuild() || interaction.guild.id != guildID) {
 				await interaction.reply({
-					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/projects/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
-					flags: MessageFlags.Ephemeral,
+					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
 				commandLogMessage(interaction, `!!! (not Seal Squad)`);
 				return;
@@ -201,8 +202,8 @@ client.on("interactionCreate", async (interaction) => {
 
 			if (region == null) {
 				await interaction.reply({
-					content: `:warning: You have to join [**The Square**](https://pinniped.page/images/the-square.png) before you can leave! Visit https://pinniped.page/projects/the-square for more information.`,
-					flags: MessageFlags.Ephemeral,
+					content: `:warning: You have to join [**The Square**](https://pinniped.page/projects/the-square) before you can leave! Visit [pinniped.page/the-square](https://pinniped.page/projects/the-square) for more information.`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
 				commandLogMessage(interaction, `!!! (not in The Square)`);
 				return;
@@ -220,8 +221,8 @@ client.on("interactionCreate", async (interaction) => {
 		try {
 			if (!interaction.inGuild() || interaction.guild.id != guildID) {
 				await interaction.reply({
-					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/projects/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
-					flags: MessageFlags.Ephemeral,
+					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
 				commandLogMessage(interaction, `!!! (not Seal Squad)`);
 				return;
@@ -287,7 +288,10 @@ client.on("interactionCreate", async (interaction) => {
 				},
 			});
 
-			await interaction.reply(":pencil: Your message has been sent to [pinniped.page/text](https://pinniped.page/text).");
+			await interaction.reply({
+				content: ":pencil: Your message has been sent to [pinniped.page/text](https://pinniped.page/projects/text).",
+				flags: MessageFlags.SuppressEmbeds,
+			});
 			commandLogMessage(interaction, `${text}`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
@@ -374,7 +378,7 @@ client.on("interactionCreate", async (interaction) => {
 	if (commandName === "help") {
 		try {
 			await interaction.reply({
-				content: ":palm_up_hand: **This might help.**\n> about <@960236750830194688>: [pinniped.page/omega-seal](https://pinniped.page/omega-seal)\n> about The Square: [pinniped.page/the-square](https://pinniped.page/the-square)\n> <@960236750830194688>’s GitHub repository: [github.com/ObsidianSeal/Omega-Seal-The-Square](https://github.com/ObsidianSeal/Omega-Seal-The-Square)\n> bot status: [pinniped.page/status#DISCORD-BOT](https://pinniped.page/status#DISCORD-BOT)\n> more help: [pinniped.page/contact](https://pinniped.page/contact)",
+				content: ":palm_up_hand: **This might help.**\n> about <@960236750830194688>: [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal)\n> about The Square: [pinniped.page/the-square](https://pinniped.page/projects/the-square)\n> <@960236750830194688>’s GitHub repository: [github.com/ObsidianSeal/Omega-Seal-The-Square](https://github.com/ObsidianSeal/Omega-Seal-The-Square)\n> bot status: [pinniped.page/status#DISCORD-BOT](https://pinniped.page/status#DISCORD-BOT)\n> more help: [pinniped.page/contact](https://pinniped.page/contact)",
 				flags: MessageFlags.SuppressEmbeds,
 			});
 
@@ -439,7 +443,7 @@ onValue(botContactFormMessagesRef, async (snapshot) => {
 
 		for (let messageID in receivedData) {
 			const response = await client.channels.cache
-				.get("755823609523470407")
+				.get("1395802045998567465")
 				.send(
 					`<@390612175137406978>\n## CONTACT FORM SUBMISSION RECEIVED\n-# \`${messageID}\` @ ${startTime} = <t:${Math.round(Date.now() / 1000)}:R>\n**TYPE:** ${
 						receivedData[messageID].typeSelected
