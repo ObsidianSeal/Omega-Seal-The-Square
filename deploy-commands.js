@@ -49,6 +49,9 @@ const commands = [
 			option.setName("airport").setDescription("The ICAO airport code for the location you want a weather report from.").setRequired(true).setMinLength(4).setMaxLength(4)
 		),
 
+	// "/ion"
+	new SlashCommandBuilder().setName("ion").setDescription("See when the next ION trains are coming to University of Waterloo Station."),
+
 	// "/help"
 	new SlashCommandBuilder().setName("help").setDescription("Send this command if you don’t know how to use the bot or if you just want to learn more about it."),
 ].map((command) => command.toJSON());

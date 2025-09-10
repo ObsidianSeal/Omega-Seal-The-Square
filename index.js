@@ -1,8 +1,9 @@
 // IMPORT THINGS
 const { guildID, token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId, s2ID } = require("./config.json");
-const { Client, GatewayIntentBits, InteractionType, EmbedBuilder, ActivityType, MessageFlags, time } = require("discord.js");
+const { Client, GatewayIntentBits, InteractionType, EmbedBuilder, ActivityType, MessageFlags } = require("discord.js");
 const { initializeApp } = require("firebase/app");
 const { getDatabase, ref, push, set, onValue } = require("firebase/database");
+const { transit_realtime } = require("gtfs-realtime-bindings");
 
 // FIREBASE CONFIGURATION
 const firebaseConfig = {
@@ -36,7 +37,7 @@ client.once("ready", async () => {
 
 	client.channels.cache
 		.get("755823609523470407")
-		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.3.1 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.4.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 
 	statusListener();
 	contactFormMessagesListener();
@@ -367,6 +368,50 @@ client.on("interactionCreate", async (interaction) => {
 				flags: MessageFlags.SuppressEmbeds,
 			});
 			commandLogMessage(interaction, text);
+		} catch (error) {
+			errorMessage(interaction, commandName, error);
+		}
+	}
+
+	// "/ion" - see when the next ION trains are coming to UW station
+	if (commandName === "ion") {
+		try {
+			let southboundTime = Infinity;
+			let northboundTime = Infinity;
+
+			const request = new Request("https://webapps.regionofwaterloo.ca/api/grt-routes/api/tripupdates");
+			const response = await fetch(request);
+			const feed = transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
+
+			for (let i = 0; i < feed.entity.length; i++) {
+				if (feed.entity[i].tripUpdate.trip.routeId == "301") {
+					for (let j = 0; j < feed.entity[i].tripUpdate.stopTimeUpdate.length; j++) {
+						if (feed.entity[i].tripUpdate.stopTimeUpdate[j].stopId == "6004" && feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time) {
+							let time = feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time.low;
+							if (time < southboundTime && time > Math.floor(Date.now() / 1000)) southboundTime = time;
+						}
+						if (feed.entity[i].tripUpdate.stopTimeUpdate[j].stopId == "6120" && feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time) {
+							let time = feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time.low;
+							if (time < northboundTime && time > Math.floor(Date.now() / 1000)) northboundTime = time;
+						}
+					}
+				}
+			}
+
+			replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: not in service\n-# please submit a bug report if you believe there is an error`;
+
+			if (southboundTime != Infinity && northboundTime != Infinity) {
+				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R>\n- NORTHBOUND: <t:${northboundTime}:R>\n-# please submit a bug report if you believe there is an error`;
+			}
+			if (southboundTime != Infinity && northboundTime == Infinity) {
+				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R>\n- NORTHBOUND: not in service\n-# please submit a bug report if you believe there is an error`;
+			}
+			if (southboundTime == Infinity && northboundTime != Infinity) {
+				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service:R>\n- NORTHBOUND: <t:${northboundTime}:R>\n-# please submit a bug report if you believe there is an error`;
+			}
+
+			await interaction.reply(replyText);
+			commandLogMessage(interaction, `${southboundTime}, ${northboundTime}`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
