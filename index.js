@@ -37,7 +37,7 @@ client.once("ready", async () => {
 
 	client.channels.cache
 		.get("755823609523470407")
-		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.4.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.4.1 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 
 	statusListener();
 	contactFormMessagesListener();
@@ -386,13 +386,21 @@ client.on("interactionCreate", async (interaction) => {
 			for (let i = 0; i < feed.entity.length; i++) {
 				if (feed.entity[i].tripUpdate.trip.routeId == "301") {
 					for (let j = 0; j < feed.entity[i].tripUpdate.stopTimeUpdate.length; j++) {
-						if (feed.entity[i].tripUpdate.stopTimeUpdate[j].stopId == "6004" && feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time) {
-							let time = feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time.low;
-							if (time < southboundTime && time > Math.floor(Date.now() / 1000)) southboundTime = time;
+						if (feed.entity[i].tripUpdate.stopTimeUpdate[j].stopId == "6004") {
+							if (Object.keys(feed.entity[i].tripUpdate.stopTimeUpdate[j]).includes("arrival")) {
+								if (Object.keys(feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival).includes("time")) {
+									let time = feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time.low;
+									if (time < southboundTime && time > Math.floor(Date.now() / 1000)) southboundTime = time;
+								}
+							}
 						}
-						if (feed.entity[i].tripUpdate.stopTimeUpdate[j].stopId == "6120" && feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time) {
-							let time = feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time.low;
-							if (time < northboundTime && time > Math.floor(Date.now() / 1000)) northboundTime = time;
+						if (feed.entity[i].tripUpdate.stopTimeUpdate[j].stopId == "6120") {
+							if (Object.keys(feed.entity[i].tripUpdate.stopTimeUpdate[j]).includes("arrival")) {
+								if (Object.keys(feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival).includes("time")) {
+									let time = feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time.low;
+									if (time < northboundTime && time > Math.floor(Date.now() / 1000)) northboundTime = time;
+								}
+							}
 						}
 					}
 				}
@@ -401,13 +409,19 @@ client.on("interactionCreate", async (interaction) => {
 			replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: not in service\n-# please submit a bug report if you believe there is an error`;
 
 			if (southboundTime != Infinity && northboundTime != Infinity) {
-				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R>\n- NORTHBOUND: <t:${northboundTime}:R>\n-# please submit a bug report if you believe there is an error`;
+				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
+					new Date(southboundTime * 1000)
+				)})\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(new Date(northboundTime * 1000))})\n-# please submit a bug report if you believe there is an error`;
 			}
 			if (southboundTime != Infinity && northboundTime == Infinity) {
-				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R>\n- NORTHBOUND: not in service\n-# please submit a bug report if you believe there is an error`;
+				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
+					new Date(southboundTime * 1000)
+				)})\n- NORTHBOUND: not in service\n-# please submit a bug report if you believe there is an error`;
 			}
 			if (southboundTime == Infinity && northboundTime != Infinity) {
-				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service:R>\n- NORTHBOUND: <t:${northboundTime}:R>\n-# please submit a bug report if you believe there is an error`;
+				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service:R>\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
+					new Date(northboundTime * 1000)
+				)})\n-# please submit a bug report if you believe there is an error`;
 			}
 
 			await interaction.reply(replyText);
@@ -532,6 +546,20 @@ function contactFormMessagesListener() {
 			}
 		}
 	});
+}
+
+// UTILITY: FORMATE TIME FROM DATE (ADAPTED FROM THE GAME OF NUMBERS)
+function formatTime(date) {
+	let hour = date.getHours();
+	let minute = date.getMinutes();
+	let second = date.getSeconds();
+
+	let half = "AM";
+	if (hour >= 12) half = "PM";
+	if (hour == 0) hour = 12;
+	if (hour > 12) hour = hour % 12;
+
+	return `${hour}:${minute.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")} ${half}`;
 }
 
 // UTILITY: LOG COMMAND USAGE TO CONSOLE
