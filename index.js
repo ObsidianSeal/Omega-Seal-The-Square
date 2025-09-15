@@ -408,7 +408,7 @@ client.on("interactionCreate", async (interaction) => {
 									let time = feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time.low;
 									if (time < northboundTime && time > Math.floor(Date.now() / 1000)) {
 										northboundTime = time;
-										northboundGradeCrossingTime = time - 15;
+										northboundGradeCrossingTime = time - 10;
 									}
 								}
 							}
@@ -427,7 +427,7 @@ client.on("interactionCreate", async (interaction) => {
 				)})\n-# roughly estimated “Transit Plaza” grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
 					northboundGradeCrossingTime
-				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))} ±${gradeCrossingError} seconds)`;
+				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))} ± ${gradeCrossingError} seconds)`;
 			}
 			if (southboundTime != Infinity && northboundTime == Infinity) {
 				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
@@ -435,7 +435,7 @@ client.on("interactionCreate", async (interaction) => {
 				)})\n- NORTHBOUND: not in service\n-# roughly estimated “Transit Plaza” grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
 					northboundGradeCrossingTime
-				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))} ±${gradeCrossingError} seconds)`;
+				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))} ± ${gradeCrossingError} seconds)`;
 			}
 			if (southboundTime == Infinity && northboundTime != Infinity) {
 				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service:R>\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
@@ -443,7 +443,7 @@ client.on("interactionCreate", async (interaction) => {
 				)})\n-# roughly estimated “Transit Plaza” grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
 					northboundGradeCrossingTime
-				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))} ±${gradeCrossingError} seconds)`;
+				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))} ± ${gradeCrossingError} seconds)`;
 			}
 
 			await interaction.reply(replyText);
