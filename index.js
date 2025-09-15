@@ -37,7 +37,7 @@ client.once("ready", async () => {
 
 	client.channels.cache
 		.get("755823609523470407")
-		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.4.1 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.4.2 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 
 	statusListener();
 	contactFormMessagesListener();
@@ -379,6 +379,11 @@ client.on("interactionCreate", async (interaction) => {
 			let southboundTime = Infinity;
 			let northboundTime = Infinity;
 
+			let southboundGradeCrossingTime = Infinity;
+			let northboundGradeCrossingTime = Infinity;
+
+			let gradeCrossingError = 5;
+
 			const request = new Request("https://webapps.regionofwaterloo.ca/api/grt-routes/api/tripupdates");
 			const response = await fetch(request);
 			const feed = transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
@@ -390,7 +395,10 @@ client.on("interactionCreate", async (interaction) => {
 							if (Object.keys(feed.entity[i].tripUpdate.stopTimeUpdate[j]).includes("arrival")) {
 								if (Object.keys(feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival).includes("time")) {
 									let time = feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time.low;
-									if (time < southboundTime && time > Math.floor(Date.now() / 1000)) southboundTime = time;
+									if (time < southboundTime && time > Math.floor(Date.now() / 1000)) {
+										southboundTime = time;
+										southboundGradeCrossingTime = time - 50;
+									}
 								}
 							}
 						}
@@ -398,7 +406,10 @@ client.on("interactionCreate", async (interaction) => {
 							if (Object.keys(feed.entity[i].tripUpdate.stopTimeUpdate[j]).includes("arrival")) {
 								if (Object.keys(feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival).includes("time")) {
 									let time = feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time.low;
-									if (time < northboundTime && time > Math.floor(Date.now() / 1000)) northboundTime = time;
+									if (time < northboundTime && time > Math.floor(Date.now() / 1000)) {
+										northboundTime = time;
+										northboundGradeCrossingTime = time - 15;
+									}
 								}
 							}
 						}
@@ -411,17 +422,28 @@ client.on("interactionCreate", async (interaction) => {
 			if (southboundTime != Infinity && northboundTime != Infinity) {
 				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
 					new Date(southboundTime * 1000)
-				)})\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(new Date(northboundTime * 1000))})\n-# please submit a bug report if you believe there is an error`;
+				)})\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
+					new Date(northboundTime * 1000)
+				)})\n-# roughly estimated “Transit Plaza” grade crossing activation time: <t:${Math.min(
+					southboundGradeCrossingTime,
+					northboundGradeCrossingTime
+				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))} ±${gradeCrossingError} seconds)`;
 			}
 			if (southboundTime != Infinity && northboundTime == Infinity) {
 				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
 					new Date(southboundTime * 1000)
-				)})\n- NORTHBOUND: not in service\n-# please submit a bug report if you believe there is an error`;
+				)})\n- NORTHBOUND: not in service\n-# roughly estimated “Transit Plaza” grade crossing activation time: <t:${Math.min(
+					southboundGradeCrossingTime,
+					northboundGradeCrossingTime
+				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))} ±${gradeCrossingError} seconds)`;
 			}
 			if (southboundTime == Infinity && northboundTime != Infinity) {
 				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service:R>\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
 					new Date(northboundTime * 1000)
-				)})\n-# please submit a bug report if you believe there is an error`;
+				)})\n-# roughly estimated “Transit Plaza” grade crossing activation time: <t:${Math.min(
+					southboundGradeCrossingTime,
+					northboundGradeCrossingTime
+				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))} ±${gradeCrossingError} seconds)`;
 			}
 
 			await interaction.reply(replyText);
