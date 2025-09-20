@@ -438,7 +438,7 @@ client.on("interactionCreate", async (interaction) => {
 				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))} ± ${gradeCrossingError} seconds)`;
 			}
 			if (southboundTime == Infinity && northboundTime != Infinity) {
-				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service:R>\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
+				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
 					new Date(northboundTime * 1000)
 				)})\n-# roughly estimated “Transit Plaza” grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
