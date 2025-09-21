@@ -382,6 +382,9 @@ client.on("interactionCreate", async (interaction) => {
 			let southboundGradeCrossingTime = Infinity;
 			let northboundGradeCrossingTime = Infinity;
 
+			let southboundGradeCrossingTimeOffset = 50;
+			let northboundGradeCrossingTimeOffset = 10;
+
 			let gradeCrossingError = 5;
 
 			const request = new Request("https://webapps.regionofwaterloo.ca/api/grt-routes/api/tripupdates");
@@ -395,9 +398,13 @@ client.on("interactionCreate", async (interaction) => {
 							if (Object.keys(feed.entity[i].tripUpdate.stopTimeUpdate[j]).includes("arrival")) {
 								if (Object.keys(feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival).includes("time")) {
 									let time = feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time.low;
+									let gradeCrossingTime = time - southboundGradeCrossingTimeOffset;
+
 									if (time < southboundTime && time > Math.floor(Date.now() / 1000)) {
 										southboundTime = time;
-										southboundGradeCrossingTime = time - 50;
+									}
+									if (gradeCrossingTime < southboundGradeCrossingTime && gradeCrossingTime > Math.floor(Date.now() / 1000)) {
+										southboundGradeCrossingTime = gradeCrossingTime;
 									}
 								}
 							}
@@ -406,9 +413,13 @@ client.on("interactionCreate", async (interaction) => {
 							if (Object.keys(feed.entity[i].tripUpdate.stopTimeUpdate[j]).includes("arrival")) {
 								if (Object.keys(feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival).includes("time")) {
 									let time = feed.entity[i].tripUpdate.stopTimeUpdate[j].arrival.time.low;
+									let gradeCrossingTime = time - northboundGradeCrossingTimeOffset;
+
 									if (time < northboundTime && time > Math.floor(Date.now() / 1000)) {
 										northboundTime = time;
-										northboundGradeCrossingTime = time - 10;
+									}
+									if (gradeCrossingTime < northboundGradeCrossingTime && gradeCrossingTime > Math.floor(Date.now() / 1000)) {
+										northboundGradeCrossingTime = gradeCrossingTime;
 									}
 								}
 							}
