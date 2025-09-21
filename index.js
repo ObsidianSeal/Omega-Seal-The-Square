@@ -436,7 +436,7 @@ client.on("interactionCreate", async (interaction) => {
 				)})\n-# theoretical & roughly estimated “Transit Plaza” grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
 					northboundGradeCrossingTime
-				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))}`;
+				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))})`;
 			}
 			if (southboundTime != Infinity && northboundTime == Infinity) {
 				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
@@ -444,7 +444,7 @@ client.on("interactionCreate", async (interaction) => {
 				)})\n- NORTHBOUND: not in service\n-# theoretical & roughly estimated “Transit Plaza” grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
 					northboundGradeCrossingTime
-				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))}`;
+				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))})`;
 			}
 			if (southboundTime == Infinity && northboundTime != Infinity) {
 				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
@@ -452,7 +452,7 @@ client.on("interactionCreate", async (interaction) => {
 				)})\n-# theoretical & roughly estimated “Transit Plaza” grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
 					northboundGradeCrossingTime
-				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))}`;
+				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))})`;
 			}
 
 			await interaction.reply(replyText);
