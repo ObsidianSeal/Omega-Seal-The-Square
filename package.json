@@ -1,8 +1,8 @@
 {
 	"name": "omega-seal",
-	"version": "0.0.0",
+	"version": "1.4.2",
 	"description": "Obsidian_Seal’s personal Discord bot.",
-	"main": "index.js",
+	"main": "omega-seal.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
