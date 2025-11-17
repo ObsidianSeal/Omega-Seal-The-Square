@@ -57,6 +57,12 @@ client.on("guildMemberAdd", async (member) => {
 			.send(
 				`## <:cep:1373149617557995600> Welcome to Civil Engineers’ Paradise <@${member.id}>! <:cep:1373149617557995600>\n-# member #${member.guild.memberCount}\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`
 			);
+	if (member.guild.id == s3ID)
+		await client.channels.cache
+			.get("1440044248975016006")
+			.send(
+				`## <:cive29:1440073698345357392> <#1440044248975016006> to CIVE ’29 <@${member.id}>! <:cive29:1440073698345357392>\n-# member #${member.guild.memberCount} — congratulations on your successful <#1440055799333523496>\n- please read the <#1440044198148575385>\n- catch up on the latest <#1440044178448056382>\n- check out the <#1440044224782405633>\n- start chatting in <#1440055859685232840>\n- and then head over to the many other specific channels!`
+			);
 });
 
 // REGION LIST ("THE SQUARE")
