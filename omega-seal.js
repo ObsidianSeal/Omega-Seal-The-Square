@@ -59,7 +59,7 @@ client.on("guildMemberAdd", async (member) => {
 			);
 	if (member.guild.id == s3ID)
 		await client.channels.cache
-			.get("1440044248975016006")
+			.get("1440055859685232840")
 			.send(
 				`## <:cive29:1440073698345357392> Welcome to CIVE ’29 <@${member.id}>! <:cive29:1440073698345357392>\n-# member #${member.guild.memberCount} — congratulations on your successful <#1440055799333523496>\n- please read the <#1440044198148575385>\n- catch up on the latest <#1440044178448056382>\n- check out the <#1440044224782405633>\n- start chatting here in <#1440055859685232840> and then head over to the many other specific channels!`
 			);
