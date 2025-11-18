@@ -45,23 +45,25 @@ client.once("ready", async () => {
 
 // CLIENT LISTENERS
 client.on("guildMemberAdd", async (member) => {
+	// await member.guild.members.fetch(); // this is present in "/populations" - should it be here too?
+
 	if (member.guild.id == guildID)
 		await client.channels.cache
 			.get("755817169039917147")
 			.send(
-				`## <:ssseal:1236461048270164020> Welcome to Seal Squad <@${member.id}>! <:ssseal:1236461048270164020>\n-# member #${member.guild.memberCount}\n- please read the <#755785157562335324>\n- catch up on the latest <#755784977399939214>\n- watch some <#755816833671626963>\n- vote in <#763475121788157983>\n- and start chatting in the many channels!\n\n:identification_card: **Please get a role by joining The Square.**\n> use \`/join\` to join\n> use \`/help\` for help\n-# bot commands can be used in any of the CHAT channels`
+				`## <:ssseal:1236461048270164020> Welcome to Seal Squad <@${member.id}>! <:ssseal:1236461048270164020>\n-# member #\${member.guild.memberCount}\n- please read the <#755785157562335324>\n- catch up on the latest <#755784977399939214>\n- watch some <#755816833671626963>\n- vote in <#763475121788157983>\n- and start chatting in the many channels!\n\n:identification_card: **Please get a role by joining The Square.**\n> use \`/join\` to join\n> use \`/help\` for help\n-# bot commands can be used in any of the CHAT channels`
 			);
 	if (member.guild.id == s2ID)
 		await client.channels.cache
 			.get("1349764047234662503")
 			.send(
-				`## <:cep:1373149617557995600> Welcome to Civil Engineers’ Paradise <@${member.id}>! <:cep:1373149617557995600>\n-# member #${member.guild.memberCount}\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`
+				`## <:cep:1373149617557995600> Welcome to Civil Engineers’ Paradise <@${member.id}>! <:cep:1373149617557995600>\n-# member #\${member.guild.memberCount}\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`
 			);
 	if (member.guild.id == s3ID)
 		await client.channels.cache
 			.get("1440055859685232840")
 			.send(
-				`## <:cive29:1440073698345357392> Welcome to CIVE ’29 <@${member.id}>! <:cive29:1440073698345357392>\n-# member #${member.guild.memberCount} — congratulations on your successful <#1440055799333523496>\n- please read the <#1440044198148575385>\n- catch up on the latest <#1440044178448056382>\n- check out the <#1440044224782405633>\n- start chatting here in <#1440055859685232840> and then head over to the many other specific channels!`
+				`## <:cive29:1440073698345357392> Welcome to CIVE ’29 <@${member.id}>! <:cive29:1440073698345357392>\n-# member #\${member.guild.memberCount} — congratulations on your successful <#1440055799333523496>\n- please read the <#1440044198148575385>\n- catch up on the latest <#1440044178448056382>\n- check out the <#1440044224782405633>\n- start chatting here in <#1440055859685232840> and then head over to the many other specific channels!`
 			);
 });
 
