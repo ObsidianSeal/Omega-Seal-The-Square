@@ -31,13 +31,13 @@ const client = new Client({
 // START THE CLIENT
 let startTime = 0;
 client.login(token);
-client.once("ready", async () => {
+client.once("clientReady", async () => {
 	startTime = Date.now();
 	console.log("\x1b[32mOmega Seal is now online!\n");
 
-	client.channels.cache
-		.get("755823609523470407")
-		.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.4.2 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+	client.users.fetch("390612175137406978").then((user) => {
+		user.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.4.2 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+	});
 
 	statusListener();
 	contactFormMessagesListener();
