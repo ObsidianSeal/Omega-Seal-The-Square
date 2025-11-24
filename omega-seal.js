@@ -1,5 +1,5 @@
 // IMPORT THINGS
-const { guildID, token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId, s2ID } = require("./config.json");
+const { guildID, token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId, s2ID, s3ID } = require("./config.json");
 const { Client, GatewayIntentBits, InteractionType, EmbedBuilder, ActivityType, MessageFlags } = require("discord.js");
 const { initializeApp } = require("firebase/app");
 const { getDatabase, ref, push, set, onValue } = require("firebase/database");
