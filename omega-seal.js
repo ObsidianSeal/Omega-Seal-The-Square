@@ -474,7 +474,7 @@ client.on("interactionCreate", async (interaction) => {
 	if (commandName === "help") {
 		try {
 			await interaction.reply({
-				content: ":palm_up_hand: **This might help.**\n> about <@960236750830194688>: [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal)\n> about The Square: [pinniped.page/the-square](https://pinniped.page/projects/the-square)\n> <@960236750830194688>’s GitHub repository: [github.com/ObsidianSeal/Omega-Seal-The-Square](https://github.com/ObsidianSeal/Omega-Seal-The-Square)\n> bot status: [pinniped.page/status#DISCORD-BOT](https://pinniped.page/status#DISCORD-BOT)\n> more help: [pinniped.page/contact](https://pinniped.page/contact)",
+				content: ":palm_up_hand: **This might help.**\n> documentation + about <@960236750830194688>: [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal)\n> about The Square: [pinniped.page/the-square](https://pinniped.page/projects/the-square)\n> <@960236750830194688>’s GitHub repository: [github.com/ObsidianSeal/Omega-Seal-The-Square](https://github.com/ObsidianSeal/Omega-Seal-The-Square)\n> bot status: [pinniped.page/status#DISCORD-BOT](https://pinniped.page/status#DISCORD-BOT)\n> more help: [pinniped.page/contact](https://pinniped.page/contact)",
 				flags: MessageFlags.SuppressEmbeds,
 			});
 
