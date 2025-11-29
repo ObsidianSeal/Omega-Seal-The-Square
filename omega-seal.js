@@ -611,7 +611,7 @@ async function commandLogMessage(interaction, message) {
 		displayName = "\x1b[33m[DM]\x1b[37m";
 	}
 
-	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${displayName} (${username})\x1b[37m [${Date.now()}]`);
+	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${displayName} (${username})\x1b[37m [${formatTime(new Date())}]`);
 }
 
 // UTILITY: LOG DATABASE UPDATES TO CONSOLE
@@ -619,13 +619,13 @@ async function databaseLogMessage(direction, path, content) {
 	let colourText = "\x1b[34m[db] RECEIVE";
 	if (direction) colourText = "\x1b[36m[db] SEND";
 
-	console.log(`${colourText} @ ${path}\x1b[37m ${content} [${Date.now()}]`);
+	console.log(`${colourText} @ ${path}\x1b[37m ${content} [${formatTime(new Date())}]`);
 	console.log(content);
 }
 
 // UTILITY: LOG DATABASE ERRORS
 async function databaseErrorMessage(error) {
-	console.log(`\x1b[31mERROR!!\x1b[37m [${Date.now()}]`);
+	console.log(`\x1b[31mERROR!!\x1b[37m [${formatTime(new Date())}]`);
 	console.log(error);
 }
 
@@ -635,7 +635,7 @@ async function errorMessage(interaction, commandName, error) {
 		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> report issues here: [pinniped.page/contact](https://pinniped.page/contact)\n> for general <@960236750830194688> help, use \`/help\``,
 		flags: MessageFlags.Ephemeral,
 	});
-	console.log(`\x1b[31mERROR!! (/${commandName})\x1b[37m [${Date.now()}]`);
+	console.log(`\x1b[31mERROR!! (/${commandName})\x1b[37m [${formatTime(new Date())}]`);
 	console.log(error);
 }
 
