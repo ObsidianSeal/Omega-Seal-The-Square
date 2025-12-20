@@ -1,5 +1,5 @@
 // IMPORT THINGS
-const { guildID, token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId, s2ID, s3ID, s4ID } = require("./config.json");
+const { token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId } = require("./config.json");
 const { Client, GatewayIntentBits, InteractionType, EmbedBuilder, ActivityType, MessageFlags } = require("discord.js");
 const { initializeApp } = require("firebase/app");
 const { getDatabase, ref, push, set, onValue } = require("firebase/database");
@@ -45,30 +45,28 @@ client.once("clientReady", async () => {
 
 // CLIENT LISTENERS
 client.on("guildMemberAdd", async (member) => {
-	if (member.guild.id == guildID)
-		await client.channels.cache
-			.get("755782484117160006")
-			.send(
-				`## <:ssseal:1236461048270164020> Welcome to Seal Squad <@${member.id}>! <:ssseal:1236461048270164020>\n-# member #${member.guild.memberCount}\n- please read the <#755785157562335324>\n- catch up on the latest <#755784977399939214>\n- watch some <#755816833671626963>\n- vote in <#763475121788157983>\n- and start chatting in the many channels!\n\n:identification_card: **Please get a role by joining The Square.**\n> use \`/join\` to join\n> use \`/help\` for help\n-# bot commands can be used in any of the CHAT channels`
-			);
-	if (member.guild.id == s2ID)
-		await client.channels.cache
-			.get("1349764047234662503")
-			.send(
-				`## <:cep:1373149617557995600> Welcome to Civil Engineers’ Paradise <@${member.id}>! <:cep:1373149617557995600>\n-# member #${member.guild.memberCount}\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`
-			);
-	if (member.guild.id == s3ID)
-		await client.channels.cache
-			.get("1440055859685232840")
-			.send(
-				`## <:cive29:1440073698345357392> Welcome to CIVE ’29 <@${member.id}>! <:cive29:1440073698345357392>\n-# member #${member.guild.memberCount} — congratulations on your successful <#1440055799333523496>\n- please read the <#1440044198148575385>\n- catch up on the latest <#1440044178448056382>\n- check out the <#1440044224782405633>\n- start chatting here in <#1440055859685232840> and then head over to the many other specific channels!`
-			);
-	if (member.guild.id == s4ID)
-		await client.channels.cache
-			.get("1451787501378343075")
-			.send(
-				`## <:afgcircle:1451795376750465144> Welcome to ALL FUN & GAMES <@${member.id}>! <:afgcircle:1451795376750465144>\n-# member #${member.guild.memberCount}\n- please read the <#1451794710447525962>\n- catch up on the latest <#1451790467305050196>\n- check out the <#1451794754324136026>\n- say hi to everyone else here in <#1451787501378343075> and then head over to the many game-specific channels!\n-# <@390612175137406978> will verify your game ownership and apply the relevant roles`
-			);
+	const joinMessages = {
+		"755782483588677653": [
+			"755782484117160006",
+			`## <:ssseal:1236461048270164020> Welcome to Seal Squad <@${member.id}>! <:ssseal:1236461048270164020>\n-# member #${member.guild.memberCount}\n- please read the <#755785157562335324>\n- catch up on the latest <#755784977399939214>\n- watch some <#755816833671626963>\n- vote in <#763475121788157983>\n- and start chatting in the many channels!\n\n:identification_card: **Please get a role by joining The Square.**\n> use \`/join\` to join\n> use \`/help\` for help\n-# bot commands can be used in any of the CHAT channels`,
+		],
+		"1349764046274170930": [
+			"1349764047234662503",
+			`## <:cep:1373149617557995600> Welcome to Civil Engineers’ Paradise <@${member.id}>! <:cep:1373149617557995600>\n-# member #${member.guild.memberCount}\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`,
+		],
+		"1440028630746005698": [
+			"1440055859685232840",
+			`## <:cive29:1440073698345357392> Welcome to CIVE ’29 <@${member.id}>! <:cive29:1440073698345357392>\n-# member #${member.guild.memberCount} — congratulations on your successful <#1440055799333523496>\n- please read the <#1440044198148575385>\n- catch up on the latest <#1440044178448056382>\n- check out the <#1440044224782405633>\n- start chatting here in <#1440055859685232840> and then head over to the many other specific channels!`,
+		],
+		"1451787499109089497": [
+			"1451787501378343075",
+			`## <:afgcircle:1451795376750465144> Welcome to ALL FUN & GAMES <@${member.id}>! <:afgcircle:1451795376750465144>\n-# member #${member.guild.memberCount}\n- please read the <#1451794710447525962>\n- catch up on the latest <#1451790467305050196>\n- check out the <#1451794754324136026>\n- say hi to everyone else here in <#1451787501378343075> and then head over to the many game-specific channels!\n-# <@390612175137406978> will verify your game ownership and apply the relevant roles`,
+		],
+	};
+
+	for (let serverID in joinMessages) {
+		if (member.guild.id == serverID) await client.channels.cache.get(joinMessages[serverID][0]).send(joinMessages[serverID][1]);
+	}
 });
 
 // REGION LIST ("THE SQUARE")
