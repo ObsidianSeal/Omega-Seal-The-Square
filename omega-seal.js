@@ -134,7 +134,7 @@ client.on("interactionCreate", async (interaction) => {
 
 			await interaction.reply(`:ping_pong: **Pong!**\n> bot ping: \`${botPing}\`ms\n> API ping: \`${wsPing}\`ms`);
 
-			commandLogMessage(interaction, `${botPing} & ${wsPing}`);
+			logMessage(interaction, `${botPing} & ${wsPing}`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -150,7 +150,7 @@ client.on("interactionCreate", async (interaction) => {
 					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
-				commandLogMessage(interaction, `!!! (not Seal Squad)`);
+				logMessage(interaction, `!!! (not Seal Squad)`);
 				return;
 			}
 
@@ -176,11 +176,11 @@ client.on("interactionCreate", async (interaction) => {
 					content: `:warning: \`${string}\` is not one of [**The Square**](https://pinniped.page/projects/the-square)’s regions. Visit [pinniped.page/the-square](https://pinniped.page/projects/the-square) for more information.`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
-				commandLogMessage(interaction, `??? (${string})`);
+				logMessage(interaction, `??? (${string})`);
 				return;
 			}
 
-			commandLogMessage(interaction, `${string}`);
+			logMessage(interaction, `${string}`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -194,7 +194,7 @@ client.on("interactionCreate", async (interaction) => {
 					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
-				commandLogMessage(interaction, `!!! (not Seal Squad)`);
+				logMessage(interaction, `!!! (not Seal Squad)`);
 				return;
 			}
 
@@ -214,12 +214,12 @@ client.on("interactionCreate", async (interaction) => {
 					content: `:warning: You have to join [**The Square**](https://pinniped.page/projects/the-square) before you can leave! Visit [pinniped.page/the-square](https://pinniped.page/projects/the-square) for more information.`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
-				commandLogMessage(interaction, `!!! (not in The Square)`);
+				logMessage(interaction, `!!! (not in The Square)`);
 				return;
 			}
 
 			await interaction.reply(`:pensive: You are no longer a <@&${role.id}>\n-# please note that you can move regions without leaving The Square`);
-			commandLogMessage(interaction, `${region}`);
+			logMessage(interaction, `${region}`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -233,7 +233,7 @@ client.on("interactionCreate", async (interaction) => {
 					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
-				commandLogMessage(interaction, `!!! (not Seal Squad)`);
+				logMessage(interaction, `!!! (not Seal Squad)`);
 				return;
 			}
 
@@ -262,7 +262,7 @@ client.on("interactionCreate", async (interaction) => {
 				)} total) ${regionListString}\n-# learn more about The Square at [pinniped.page/the-square](https://pinniped.page/projects/the-square)`,
 				flags: MessageFlags.SuppressEmbeds,
 			});
-			commandLogMessage(interaction, `...`);
+			logMessage(interaction, `...`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -301,7 +301,7 @@ client.on("interactionCreate", async (interaction) => {
 				content: ":pencil: Your message has been sent to [pinniped.page/text](https://pinniped.page/projects/text).",
 				flags: MessageFlags.SuppressEmbeds,
 			});
-			commandLogMessage(interaction, `${text}`);
+			logMessage(interaction, `${text}`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -314,7 +314,7 @@ client.on("interactionCreate", async (interaction) => {
 			const newText = text.split("").join(" ");
 
 			await interaction.reply(`:pen_ballpoint: The text you entered (\`${text}\`) has been expanded.\n${newText}\n-# WARNING: user-generated content`);
-			commandLogMessage(interaction, `“${text}” >>> “${newText}”`);
+			logMessage(interaction, `“${text}” >>> “${newText}”`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -332,14 +332,14 @@ client.on("interactionCreate", async (interaction) => {
 					content: `:warning: \`${colour}\` is not a valid colour (HEX code) string. Valid colour strings follow the form \`^#?[0-9A-Fa-f]{6}$\`.`,
 					flags: MessageFlags.Ephemeral,
 				});
-				commandLogMessage(interaction, `${title} & ${description} & ${colour} (invalid colour)`);
+				logMessage(interaction, `${title} & ${description} & ${colour} (invalid colour)`);
 				return;
 			}
 
 			const embed = new EmbedBuilder().setTitle(title).setDescription(description).setColor(colour);
 			await interaction.reply({ content: `:tools: Embed generated!\n-# WARNING: user-generated content`, embeds: [embed] });
 
-			commandLogMessage(interaction, `${title} & ${description} & ${colour}`);
+			logMessage(interaction, `${title} & ${description} & ${colour}`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -355,7 +355,7 @@ client.on("interactionCreate", async (interaction) => {
 					content: `:warning: \`${airport}\` is not a valid ICAO airport code. Valid ICAO airport codes follow the form \`^[A-Z]{4}$\`.`,
 					flags: MessageFlags.Ephemeral,
 				});
-				commandLogMessage(interaction, `??? (invalid ICAO airport code)`);
+				logMessage(interaction, `??? (invalid ICAO airport code)`);
 				return;
 			}
 
@@ -369,7 +369,7 @@ client.on("interactionCreate", async (interaction) => {
 					content: `:airplane_small: There is no [METAR](https://en.wikipedia.org/wiki/METAR) data available for \`${airport}\`. Either that airport doesn’t exist or its METAR reports are not public. Sorry!`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
-				commandLogMessage(interaction, `??? (no response)`);
+				logMessage(interaction, `??? (no response)`);
 				return;
 			}
 
@@ -377,7 +377,7 @@ client.on("interactionCreate", async (interaction) => {
 				content: `:airplane: Here is the latest [METAR](https://en.wikipedia.org/wiki/METAR) report for \`${airport}\`.\n-# source: [aviationweather.gov/api/data/metar?ids=${airport}](https://aviationweather.gov/api/data/metar?ids=${airport})\n\`\`\`${text}\`\`\``,
 				flags: MessageFlags.SuppressEmbeds,
 			});
-			commandLogMessage(interaction, text);
+			logMessage(interaction, text);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -468,7 +468,7 @@ client.on("interactionCreate", async (interaction) => {
 			}
 
 			await interaction.editReply(replyText);
-			commandLogMessage(interaction, `${southboundTime}, ${northboundTime}`);
+			logMessage(interaction, `${southboundTime}, ${northboundTime}`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -482,7 +482,7 @@ client.on("interactionCreate", async (interaction) => {
 				flags: MessageFlags.SuppressEmbeds,
 			});
 
-			commandLogMessage(interaction, `...`);
+			logMessage(interaction, `...`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
 		}
@@ -614,19 +614,26 @@ function formatTime(date) {
 	return `${hour}:${minute.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")} ${half}`;
 }
 
-// UTILITY: LOG COMMAND USAGE TO CONSOLE
-async function commandLogMessage(interaction, message) {
-	let username, displayName;
+// UTILITY: LOG INTERACTION
+async function logMessage(interaction, message) {
+	let name;
+	if (interaction.inGuild()) name = interaction.user.username;
+	else name = `\x1b[33m[DM]\x1b[37m ${interaction.user.username}`;
 
-	if (interaction.inGuild()) {
-		username = interaction.member.user.username;
-		displayName = interaction.member.user.displayName;
-	} else {
-		username = interaction.user.username;
-		displayName = "\x1b[33m[DM]\x1b[37m";
-	}
+	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${name} [${formatDate(new Date())} ${formatTime(new Date())}]`);
+}
 
-	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${displayName} (${username})\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
+// UTILITY: LOG INTERACTION ERROR & SEND RESPONSE
+async function errorMessage(interaction, commandName, error) {
+	console.log(`\x1b[31mERROR!! (/${commandName})\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
+	console.log(error);
+
+	logMessage(interaction, "ERROR!!");
+
+	await interaction.reply({
+		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> report issues here: [pinniped.page/contact](https://pinniped.page/contact)\n> for general <@960236750830194688> help, use \`/help\``,
+		flags: MessageFlags.Ephemeral,
+	});
 }
 
 // UTILITY: LOG DATABASE SEND/RECEIVE
@@ -638,21 +645,10 @@ async function databaseLogMessage(direction, path, content) {
 	console.log(content);
 }
 
-// UTILITY: LOG DATABASE ERRORS
+// UTILITY: LOG DATABASE ERROR
 async function databaseErrorMessage(error) {
 	console.log(`\x1b[31mERROR!!\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
 	console.log(error);
-}
-
-// UTILITY: INTERACTION ERROR RESPONSE
-async function errorMessage(interaction, commandName, error) {
-	console.log(`\x1b[31mERROR!! (/${commandName})\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
-	console.log(error);
-
-	await interaction.reply({
-		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> report issues here: [pinniped.page/contact](https://pinniped.page/contact)\n> for general <@960236750830194688> help, use \`/help\``,
-		flags: MessageFlags.Ephemeral,
-	});
 }
 
 /*
