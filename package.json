@@ -1,6 +1,6 @@
 {
 	"name": "omega-seal",
-	"version": "1.4.2",
+	"version": "1.4.3",
 	"description": "Obsidian_Seal’s personal Discord bot.",
 	"main": "omega-seal.js",
 	"scripts": {
