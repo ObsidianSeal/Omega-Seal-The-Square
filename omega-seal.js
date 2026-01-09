@@ -145,7 +145,7 @@ client.on("interactionCreate", async (interaction) => {
 		try {
 			const string = interaction.options.getString("region").toLowerCase().replaceAll(/ /g, "");
 
-			if (!interaction.inGuild() || interaction.guild.id != guildID) {
+			if (!interaction.inGuild() || interaction.guild.id != "755782483588677653") {
 				await interaction.reply({
 					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
@@ -189,7 +189,7 @@ client.on("interactionCreate", async (interaction) => {
 	// "/leave" - leave The Square
 	if (commandName === "leave") {
 		try {
-			if (!interaction.inGuild() || interaction.guild.id != guildID) {
+			if (!interaction.inGuild() || interaction.guild.id != "755782483588677653") {
 				await interaction.reply({
 					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
@@ -228,7 +228,7 @@ client.on("interactionCreate", async (interaction) => {
 	// "/populations" - regions of The Square, sorted by member count
 	if (commandName === "populations") {
 		try {
-			if (!interaction.inGuild() || interaction.guild.id != guildID) {
+			if (!interaction.inGuild() || interaction.guild.id != "755782483588677653") {
 				await interaction.reply({
 					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
@@ -515,7 +515,7 @@ function statusListener() {
 		if (receivedData == "populations") {
 			let populations = {};
 
-			const guild = client.guilds.cache.get(guildID);
+			const guild = client.guilds.cache.get("755782483588677653");
 			await guild.members.fetch();
 
 			for (let i = 0; i < regions.length; i++) {
