@@ -36,7 +36,7 @@ client.once("clientReady", async () => {
 	console.log("\x1b[32mOmega Seal is now online!\n");
 
 	client.users.fetch("390612175137406978").then((user) => {
-		user.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.4.2 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+		user.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.4.3 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 	});
 
 	statusListener();
@@ -386,6 +386,8 @@ client.on("interactionCreate", async (interaction) => {
 	// "/ion" - see when the next ION trains are coming to UW station
 	if (commandName === "ion") {
 		try {
+			await interaction.deferReply();
+
 			let southboundTime = Infinity;
 			let northboundTime = Infinity;
 
@@ -465,7 +467,7 @@ client.on("interactionCreate", async (interaction) => {
 				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))})`;
 			}
 
-			await interaction.reply(replyText);
+			await interaction.editReply(replyText);
 			commandLogMessage(interaction, `${southboundTime}, ${northboundTime}`);
 		} catch (error) {
 			errorMessage(interaction, commandName, error);
