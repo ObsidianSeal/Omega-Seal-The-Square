@@ -627,7 +627,7 @@ async function commandLogMessage(interaction, message) {
 	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${displayName} (${username})\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
 }
 
-// UTILITY: LOG DATABASE UPDATES TO CONSOLE
+// UTILITY: LOG DATABASE SEND/RECEIVE
 async function databaseLogMessage(direction, path, content) {
 	let colourText = "\x1b[34m[db] RECEIVE";
 	if (direction) colourText = "\x1b[36m[db] SEND";
@@ -642,14 +642,15 @@ async function databaseErrorMessage(error) {
 	console.log(error);
 }
 
-// UTILITY: ERROR RESPONSE & LOG TO CONSOLE
+// UTILITY: INTERACTION ERROR RESPONSE
 async function errorMessage(interaction, commandName, error) {
+	console.log(`\x1b[31mERROR!! (/${commandName})\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
+	console.log(error);
+
 	await interaction.reply({
 		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> report issues here: [pinniped.page/contact](https://pinniped.page/contact)\n> for general <@960236750830194688> help, use \`/help\``,
 		flags: MessageFlags.Ephemeral,
 	});
-	console.log(`\x1b[31mERROR!! (/${commandName})\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
-	console.log(error);
 }
 
 /*
