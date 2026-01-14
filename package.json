@@ -1,22 +1,13 @@
 {
 	"name": "omega-seal",
-	"version": "1.4.3",
-	"description": "Obsidian_Seal’s personal Discord bot.",
-	"main": "omega-seal.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
+	"version": "1.4.4",
 	"author": "Obsidian_Seal",
-	"license": "ISC",
+	"description": "Obsidian_Seal’s personal Discord bot!",
+	"main": "omega-seal.js",
 	"dependencies": {
-		"@discordjs/rest": "^1.0.0",
-		"@firebase/database": "^1.0.13",
-		"discord-api-types": "^0.36.2",
-		"discord.js": "^14.19.2",
-		"firebase": "^9.23.0",
+		"@firebase/database": "^1.1.0",
+		"discord.js": "^14.25.1",
+		"firebase": "^12.7.0",
 		"gtfs-realtime-bindings": "^1.1.1"
-	},
-	"devDependencies": {
-		"eslint": "^8.20.0"
 	}
 }

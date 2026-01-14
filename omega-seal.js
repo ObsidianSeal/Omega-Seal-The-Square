@@ -25,7 +25,7 @@ const botContactFormMessagesRef = ref(db, "omega-seal/contact-form-messages");
 // MAKE THE CLIENT
 const client = new Client({
 	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages],
-	presence: { activities: [{ name: "Obsidian_Seal", type: ActivityType.Watching }] },
+	presence: { activities: [{ type: ActivityType.Watching, name: "Obsidian_Seal & pinniped.page" }] },
 });
 
 // START THE CLIENT
