@@ -1,12 +1,9 @@
 # Omega Seal
 
-Obsidian_Seal’s personal Discord bot; made with [`discord.js`](https://discord.js.org/)
+Obsidian_Seal’s personal Discord bot!
 
-### Files ignored by GitHub
+[Discord.js](https://discord.js.org/) bot + other APIs
 
--    **node_modules** (bulky **node** folder — see package.json)
--    **config.json** (contains my top-secret Discord API key and other secret stuff)
+no `node_modules` or `config.json`
 
-### Documentation
-
--    [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal)
+[DOCUMENTATION](https://pinniped.page/projects/omega-seal)
