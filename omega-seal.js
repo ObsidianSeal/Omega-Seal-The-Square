@@ -52,7 +52,7 @@ client.on("guildMemberAdd", async (member) => {
 		],
 		"1349764046274170930": [
 			"1349764047234662503",
-			`## <:cep:1373149617557995600> Welcome to Civil Engineers’ Paradise <@${member.id}>! <:cep:1373149617557995600>\n-# member #${member.guild.memberCount}\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`,
+			`## <:cep:1373149617557995600> Welcome to Civil Engineers’ Paradise <@${member.id}>! <:cep:1373149617557995600>\n-# member #${member.guild.memberCount}\n- MUTE <#1373444936799617054>\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`,
 		],
 		"1440028630746005698": [
 			"1440055859685232840",
@@ -258,7 +258,7 @@ client.on("interactionCreate", async (interaction) => {
 
 			await interaction.reply({
 				content: `## :crown: The Square :crown:\n-# all 22 regions, sorted by member count (${memberTotal.toLocaleString(
-					"en-CA"
+					"en-CA",
 				)} total) ${regionListString}\n-# learn more about The Square at [pinniped.page/the-square](https://pinniped.page/projects/the-square)`,
 				flags: MessageFlags.SuppressEmbeds,
 			});
@@ -442,28 +442,28 @@ client.on("interactionCreate", async (interaction) => {
 
 			if (southboundTime != Infinity && northboundTime != Infinity) {
 				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
-					new Date(southboundTime * 1000)
+					new Date(southboundTime * 1000),
 				)})\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
-					new Date(northboundTime * 1000)
+					new Date(northboundTime * 1000),
 				)})\n-# theoretical & roughly estimated Transit Plaza grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
-					northboundGradeCrossingTime
+					northboundGradeCrossingTime,
 				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))})`;
 			}
 			if (southboundTime != Infinity && northboundTime == Infinity) {
 				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
-					new Date(southboundTime * 1000)
+					new Date(southboundTime * 1000),
 				)})\n- NORTHBOUND: not in service\n-# theoretical & roughly estimated Transit Plaza grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
-					northboundGradeCrossingTime
+					northboundGradeCrossingTime,
 				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))})`;
 			}
 			if (southboundTime == Infinity && northboundTime != Infinity) {
 				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
-					new Date(northboundTime * 1000)
+					new Date(northboundTime * 1000),
 				)})\n-# theoretical & roughly estimated Transit Plaza grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
-					northboundGradeCrossingTime
+					northboundGradeCrossingTime,
 				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))})`;
 			}
 
@@ -577,8 +577,8 @@ function contactFormMessagesListener() {
 				.get("1395802045998567465")
 				.send(
 					`<@390612175137406978>\n## CONTACT FORM SUBMISSION RECEIVED\n-# \`${messageID}\` @ ${timestamp} = <t:${Math.round(
-						timestamp / 1000
-					)}:R>\n**TYPE:** ${type}\n**PRIORITY:** ${priority}\n**SUBJECT:** \`${subject}\`\n\`\`\`md\n${body}\`\`\``
+						timestamp / 1000,
+					)}:R>\n**TYPE:** ${type}\n**PRIORITY:** ${priority}\n**SUBJECT:** \`${subject}\`\n\`\`\`md\n${body}\`\`\``,
 				);
 			response.react("☑️");
 			try {
