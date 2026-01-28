@@ -62,6 +62,10 @@ client.on("guildMemberAdd", async (member) => {
 			"1451787501378343075",
 			`## <:afgcircle:1451795376750465144> Welcome to ALL FUN & GAMES <@${member.id}>! <:afgcircle:1451795376750465144>\n-# member #${member.guild.memberCount}\n- please read the <#1451794710447525962>\n- catch up on the latest <#1451790467305050196>\n- check out the <#1451794754324136026>\n- say hi to everyone else here in <#1451787501378343075> and then head over to the many game-specific channels!\n-# <@390612175137406978> will verify your game ownership and apply the relevant roles`,
 		],
+		"1193403835272679424": [
+			"1193403835914391557",
+			`## <:ITEUWcircle:1461539681769488587> Welcome to [ITE UW](https://ite.fyi/ite-uw) <@${member.id}>! <:ITEUWcircle:1461539681769488587>\n-# member #${member.guild.memberCount} — thank you for reading the <#1193403835914391553> and verifying\n- **MUTE** <#1461424829952426056>\n- catch up on our latest <#1193403835914391554>\n- introduce yourself, if you want, in <#1196501729873756290>\n- follow <#1197756926503686254> both local and international\n- join our <#1421177984047513610> server, perhaps?`,
+		],
 	};
 
 	for (let serverID in joinMessages) {
