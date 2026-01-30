@@ -48,7 +48,7 @@ client.on("guildMemberAdd", async (member) => {
 	const joinMessages = {
 		"755782483588677653": [
 			"755782484117160006",
-			`## <:ssseal:1236461048270164020> Welcome to Seal Squad <@${member.id}>! <:ssseal:1236461048270164020>\n-# member #${member.guild.memberCount}\n- please read the <#755785157562335324>\n- catch up on the latest <#755784977399939214>\n- watch some <#755816833671626963>\n- vote in <#763475121788157983>\n- and start chatting in the many channels!\n\n:identification_card: **Please get a role by joining The Square.**\n> use \`/join\` to join\n> use \`/help\` for help\n-# bot commands can be used in any of the CHAT channels`,
+			`## <:ssseal:1236461048270164020> Welcome to Seal Squad <@${member.id}>! <:ssseal:1236461048270164020>\n-# member #${member.guild.memberCount}\n- please read the <#755785157562335324>\n- catch up on the latest <#755784977399939214> and watch some <#755816833671626963>\n- vote in <#763475121788157983> or make <#1244000694642540676>\n- and start chatting in the many channels!\n\n:identification_card: **Please get a role by joining The Square.**\n> use \`/join\` to join\n> use \`/help\` for help\n-# bot commands can be used in any of the CHAT channels`,
 		],
 		"1349764046274170930": [
 			"1349764047234662503",
@@ -64,7 +64,7 @@ client.on("guildMemberAdd", async (member) => {
 		],
 		"1193403835272679424": [
 			"1193403835914391557",
-			`## <:ITEUWcircle:1461539681769488587> Welcome to [ITE UW](https://ite.fyi/ite-uw) <@${member.id}>! <:ITEUWcircle:1461539681769488587>\n-# member #${member.guild.memberCount} — thank you for reading the <#1193403835914391553> and verifying\n- **MUTE** <#1461424829952426056>\n- catch up on our latest <#1193403835914391554>\n- introduce yourself, if you want, in <#1196501729873756290>\n- follow <#1197756926503686254> both local and international\n- join our <#1421177984047513610> server, perhaps?`,
+			`## <:ITEUWcircle:1461539681769488587> Welcome to [ITE UW](https://ite.fyi/ite-uw) <@${member.id}>! <:ITEUWcircle:1461539681769488587>\n-# member #${member.guild.memberCount} — thank you for reading the <#1193403835914391553> and verifying\n<#1193403835914391554> | <#1196501729873756290> | <#1197756926503686254> | <#1421177984047513610>\n-# **ALSO, WE RECOMMEND MUTING** <#1461424829952426056>`,
 		],
 	};
 
@@ -333,7 +333,7 @@ client.on("interactionCreate", async (interaction) => {
 
 			if (!/^#?[0-9A-Fa-f]{6}$/.test(colour)) {
 				await interaction.reply({
-					content: `:warning: \`${colour}\` is not a valid colour (HEX code) string. Valid colour strings follow the form \`^#?[0-9A-Fa-f]{6}$\`.`,
+					content: `:warning: \`${colour}\` is not a valid colour (HEX code) string. Valid colour strings are described by \`^#?[0-9A-Fa-f]{6}$\`.`,
 					flags: MessageFlags.Ephemeral,
 				});
 				logMessage(interaction, `${title} & ${description} & ${colour} (invalid colour)`);
@@ -356,7 +356,7 @@ client.on("interactionCreate", async (interaction) => {
 
 			if (!/^[A-Z]{4}$/.test(airport)) {
 				await interaction.reply({
-					content: `:warning: \`${airport}\` is not a valid ICAO airport code. Valid ICAO airport codes follow the form \`^[A-Z]{4}$\`.`,
+					content: `:warning: \`${airport}\` is not a valid ICAO airport code. Valid ICAO airport codes are described by \`^[A-Z]{4}$\`.`,
 					flags: MessageFlags.Ephemeral,
 				});
 				logMessage(interaction, `??? (invalid ICAO airport code)`);
