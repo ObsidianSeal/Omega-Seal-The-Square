@@ -45,26 +45,29 @@ client.once("clientReady", async () => {
 
 // CLIENT LISTENERS
 client.on("guildMemberAdd", async (member) => {
+	const memberID = member.id;
+	const memberCount = member.guild.memberCount; // cannot request more often than every 30 seconds
+
 	const joinMessages = {
 		"755782483588677653": [
 			"755782484117160006",
-			`## <:ssseal:1236461048270164020> Welcome to Seal Squad <@${member.id}>! <:ssseal:1236461048270164020>\n-# member #${member.guild.memberCount}\n- please read the <#755785157562335324>\n- catch up on the latest <#755784977399939214> and watch some <#755816833671626963>\n- vote in <#763475121788157983> or make <#1244000694642540676>\n- and start chatting in the many channels!\n\n:identification_card: **Please get a role by joining The Square.**\n> use \`/join\` to join\n> use \`/help\` for help\n-# bot commands can be used in any of the CHAT channels`,
+			`## <:ssseal:1236461048270164020> Welcome to Seal Squad <@${memberID}>! <:ssseal:1236461048270164020>\n-# member #${memberCount}\n- please read the <#755785157562335324>\n- catch up on the latest <#755784977399939214> and watch some <#755816833671626963>\n- vote in <#763475121788157983> or make <#1244000694642540676>\n- and start chatting in the many channels!\n\n:identification_card: **Please get a role by joining The Square.**\n> use \`/join\` to join\n> use \`/help\` for help\n-# bot commands can be used in any of the CHAT channels`,
 		],
 		"1349764046274170930": [
 			"1349764047234662503",
-			`## <:cep:1373149617557995600> Welcome to Civil Engineers’ Paradise <@${member.id}>! <:cep:1373149617557995600>\n-# member #${member.guild.memberCount}\n- MUTE <#1373444936799617054>\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`,
+			`## <:cep:1373149617557995600> Welcome to Civil Engineers’ Paradise <@${memberID}>! <:cep:1373149617557995600>\n-# member #${memberCount}\n- MUTE <#1373444936799617054>\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`,
 		],
 		"1440028630746005698": [
 			"1440055859685232840",
-			`## <:cive29:1440073698345357392> Welcome to CIVE ’29 <@${member.id}>! <:cive29:1440073698345357392>\n-# member #${member.guild.memberCount} — congratulations on your successful <#1440055799333523496>\n- please read the <#1440044198148575385>\n- catch up on the latest <#1440044178448056382>\n- check out the <#1440044224782405633>\n- start chatting here in <#1440055859685232840> and then head over to the many other specific channels!`,
+			`## <:cive29:1440073698345357392> Welcome to CIVE ’29 <@${memberID}>! <:cive29:1440073698345357392>\n-# member #${memberCount} — congratulations on your successful <#1440055799333523496>\n- please read the <#1440044198148575385>\n- catch up on the latest <#1440044178448056382>\n- check out the <#1440044224782405633>\n- start chatting here in <#1440055859685232840> and then head over to the many other specific channels!`,
 		],
 		"1451787499109089497": [
 			"1451787501378343075",
-			`## <:afgcircle:1451795376750465144> Welcome to ALL FUN & GAMES <@${member.id}>! <:afgcircle:1451795376750465144>\n-# member #${member.guild.memberCount}\n- please read the <#1451794710447525962>\n- catch up on the latest <#1451790467305050196>\n- check out the <#1451794754324136026>\n- say hi to everyone else here in <#1451787501378343075> and then head over to the many game-specific channels!\n-# <@390612175137406978> will verify your game ownership and apply the relevant roles`,
+			`## <:afgcircle:1451795376750465144> Welcome to ALL FUN & GAMES <@${memberID}>! <:afgcircle:1451795376750465144>\n-# member #${memberCount}\n- please read the <#1451794710447525962>\n- catch up on the latest <#1451790467305050196>\n- check out the <#1451794754324136026>\n- say hi to everyone else here in <#1451787501378343075> and then head over to the many game-specific channels!\n-# <@390612175137406978> will verify your game ownership and apply the relevant roles`,
 		],
 		"1193403835272679424": [
 			"1193403835914391557",
-			`## <:ITEUWcircle:1461539681769488587> Welcome to [ITE UW](https://ite.fyi/ite-uw) <@${member.id}>! <:ITEUWcircle:1461539681769488587>\n-# member #${member.guild.memberCount} — thank you for reading the <#1193403835914391553> and completing the verification process\n- <#1193403835914391554> | <#1196501729873756290> | <#1197756926503686254> | <#1421177984047513610>\n-# also, we recommend muting <#1461424829952426056>`,
+			`## <:ITEUWcircle:1461539681769488587> Welcome to [ITE UW](https://ite.fyi/ite-uw) <@${memberID}>! <:ITEUWcircle:1461539681769488587>\n-# member #${memberCount} — thank you for reading the <#1193403835914391553> and completing the verification process\n- <#1193403835914391554> | <#1196501729873756290> | <#1197756926503686254> | <#1421177984047513610>\n-# also, we recommend muting <#1461424829952426056>`,
 		],
 	};
 
