@@ -404,7 +404,7 @@ client.on("interactionCreate", async (interaction) => {
 			let southboundGradeCrossingTimeOffset = 50;
 			let northboundGradeCrossingTimeOffset = 10;
 
-			const request = new Request("https://webapps.regionofwaterloo.ca/api/grt-routes/api/tripupdates");
+			const request = new Request("https://webapps.regionofwaterloo.ca/api/grt-routes/api/tripupdates/2");
 			const response = await fetch(request);
 			const feed = transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
 
