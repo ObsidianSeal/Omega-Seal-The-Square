@@ -33,7 +33,7 @@ let startTime = 0;
 client.login(token);
 client.once("clientReady", async () => {
 	startTime = Date.now();
-	console.log(`\x1b[32mOmega Seal is now online!\n[${mentionResponses.length} possible mention responses]\n`);
+	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\n`);
 
 	client.users.fetch("390612175137406978").then((user) => {
 		user.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.5.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
@@ -565,7 +565,6 @@ const mentionResponses = [
 	"you smell",
 	"no thanks",
 	"yes please",
-	"have you heard of pinniped.page",
 	"...",
 	"uhh",
 	"erm",
@@ -586,6 +585,25 @@ const mentionResponses = [
 	":pensive:",
 	":fearful:",
 	":eyes:",
+	"indubitably",
+	"BASED",
+	"100% agree",
+	"100% disagree",
+	"nope",
+	"LET’S GO",
+	"yippee",
+	"YIPPEE",
+	"oh em gee",
+	"understandable have a nice day",
+	":gun:",
+	"who else up pinniped they page",
+	"what the freak",
+	"go outside",
+	"uninstall your operating system",
+	"may your pillow always be cool",
+	"yeah you’re getting banned",
+	"can I see your manager",
+	"spaghetti",
 	// GIFs
 	"https://tenor.com/view/peak-peak-game-stare-roblox-funny-gif-14204149163935063245",
 	"https://tenor.com/view/dog-funny-dog-dog-nose-big-nose-smelling-gif-8587307285099365553",
@@ -608,6 +626,18 @@ const mentionResponses = [
 	"https://giphy.com/gifs/cool-giggle-non-chalant-TZ9VXG4Dm4AeBAHPK2",
 	"https://giphy.com/gifs/cool-giggle-non-chalant-TZ9VXG4Dm4AeBAHPK2",
 	"https://giphy.com/gifs/disappointed-leave-quit-jx6ufu5mL8V9JgfLbb",
+	"https://tenor.com/view/longestsoloever-lse-yapper-yapping-alert-gif-16222796328902842371",
+	"https://tenor.com/view/shut-up-shush-shh-ok-bird-gif-17679708",
+	"https://tenor.com/view/sure-john-cena-are-you-sure-gif-5783187",
+	"https://tenor.com/view/yeah-bwoi-grin-chef-gif-18525191",
+	"https://tenor.com/view/noice-nice-click-gif-8843762",
+	"https://tenor.com/view/barney-no-himym-barney-smile-no-hm-no-barney-gif-26652793",
+	"https://tenor.com/view/nope-scratch-that-reverse-it-willy-wonka-wonka-movie-wait-let%27s-do-that-again-timoth%C3%A9e-chalamet-gif-5727248394743768372",
+	"https://tenor.com/view/hehehe-yup-hehehe-yup-vine-gif-24362208",
+	"https://tenor.com/view/cat-bite-catbitcord-cat-cat-meme-cat-explosion-gif-17827142058596640794",
+	"https://tenor.com/view/hiii-cat-wave-cat-wave-hi-gif-174708314057938083",
+	"https://tenor.com/view/what-the-dog-doin-dogs-funny-gif-14571748077449260169",
+	"https://giphy.com/gifs/ywGp4PMJdeLyuRq7vJ",
 ];
 
 // RESPOND TO MENTIONS
