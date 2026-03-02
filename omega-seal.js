@@ -24,8 +24,8 @@ const botContactFormMessagesRef = ref(db, "omega-seal/contact-form-messages");
 
 // MAKE THE CLIENT
 const client = new Client({
-	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages],
-	presence: { activities: [{ type: ActivityType.Watching, name: "Obsidian_Seal & pinniped.page" }] },
+	intents: [GatewayIntentBits.DirectMessages, GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+	presence: { activities: [{ type: ActivityType.Watching, name: "try the new “/music” command!" }] },
 });
 
 // START THE CLIENT
@@ -33,10 +33,10 @@ let startTime = 0;
 client.login(token);
 client.once("clientReady", async () => {
 	startTime = Date.now();
-	console.log("\x1b[32mOmega Seal is now online!\n");
+	console.log(`\x1b[32mOmega Seal is now online!\n[${mentionResponses.length} possible mention responses]\n`);
 
 	client.users.fetch("390612175137406978").then((user) => {
-		user.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.4.4 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+		user.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.5.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 	});
 
 	statusListener();
@@ -143,7 +143,7 @@ client.on("interactionCreate", async (interaction) => {
 
 			logMessage(interaction, `${botPing} & ${wsPing}`);
 		} catch (error) {
-			errorMessage(interaction, commandName, error);
+			errorMessage(interaction, error);
 		}
 	}
 
@@ -189,7 +189,7 @@ client.on("interactionCreate", async (interaction) => {
 
 			logMessage(interaction, `${string}`);
 		} catch (error) {
-			errorMessage(interaction, commandName, error);
+			errorMessage(interaction, error);
 		}
 	}
 
@@ -228,7 +228,7 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.reply(`:pensive: You are no longer a <@&${role.id}>\n-# please note that you can move regions without leaving The Square`);
 			logMessage(interaction, `${region}`);
 		} catch (error) {
-			errorMessage(interaction, commandName, error);
+			errorMessage(interaction, error);
 		}
 	}
 
@@ -271,7 +271,7 @@ client.on("interactionCreate", async (interaction) => {
 			});
 			logMessage(interaction, `...`);
 		} catch (error) {
-			errorMessage(interaction, commandName, error);
+			errorMessage(interaction, error);
 		}
 	}
 
@@ -310,7 +310,7 @@ client.on("interactionCreate", async (interaction) => {
 			});
 			logMessage(interaction, `${text}`);
 		} catch (error) {
-			errorMessage(interaction, commandName, error);
+			errorMessage(interaction, error);
 		}
 	}
 
@@ -323,7 +323,7 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.reply(`:pen_ballpoint: The text you entered (\`${text}\`) has been expanded.\n${newText}\n-# WARNING: user-generated content`);
 			logMessage(interaction, `“${text}” >>> “${newText}”`);
 		} catch (error) {
-			errorMessage(interaction, commandName, error);
+			errorMessage(interaction, error);
 		}
 	}
 
@@ -348,7 +348,7 @@ client.on("interactionCreate", async (interaction) => {
 
 			logMessage(interaction, `${title} & ${description} & ${colour}`);
 		} catch (error) {
-			errorMessage(interaction, commandName, error);
+			errorMessage(interaction, error);
 		}
 	}
 
@@ -386,7 +386,7 @@ client.on("interactionCreate", async (interaction) => {
 			});
 			logMessage(interaction, text);
 		} catch (error) {
-			errorMessage(interaction, commandName, error);
+			errorMessage(interaction, error);
 		}
 	}
 
@@ -477,7 +477,46 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.editReply(replyText);
 			logMessage(interaction, `${southboundTime}, ${northboundTime}`);
 		} catch (error) {
-			errorMessage(interaction, commandName, error);
+			errorMessage(interaction, error);
+		}
+	}
+
+	// "/music" - random song
+	if (commandName === "music") {
+		try {
+			const requestURL = `https://pinniped.page/files/playlists.json`;
+			const request = new Request(requestURL);
+			const response = await fetch(request);
+			const responseJSON = await response.json();
+
+			let playlists = responseJSON.music;
+			let monthlyPlaylistNames = responseJSON.monthly;
+
+			let playlist = monthlyPlaylistNames[Math.floor(Math.random() * monthlyPlaylistNames.length)];
+			let track = playlists[playlist].tracks[Math.floor(Math.random() * 20)];
+			let colour = randomHex();
+
+			const musicEmbed = new EmbedBuilder()
+				.setTitle("**RANDOM MUSIC RECOMMENDATION**")
+				.setDescription(
+					`**:saxophone: TRACK:**\n${entitiesToText(track[0])}\n\n**:speaking_head: ARTIST:**\n${entitiesToText(track[1])}\n\n**:minidisc: ALBUM:**\n${entitiesToText(track[2])} (${track[3]})\n\n**:musical_note: PLAYLIST:**\n[${playlist.substring(4)}](https://music.youtube.com/playlist?list=${playlists[playlist].link}) @ [pinniped.page/playlists](https://pinniped.page/projects/playlists)\n-# added ${playlists[playlist].added} & updated ${playlists[playlist].updated}\n\n-# ${colour} — ${monthlyPlaylistNames.length} monthly playlists, ${monthlyPlaylistNames.length * 20} tracks`,
+				)
+				.setColor(colour);
+			interaction.reply({ embeds: [musicEmbed] });
+
+			logMessage(interaction, track[0]);
+		} catch (error) {
+			errorMessage(interaction, error);
+		}
+	}
+
+	// "/playlist" - get playlists link
+	if (commandName === "playlist") {
+		try {
+			await interaction.reply(`:notes: <@390612175137406978>’s latest monthly playlist can be found at [ite.fyi/playlist](https://ite.fyi/playlist).`);
+			logMessage(interaction, `ite.fyi/playlist`);
+		} catch (error) {
+			errorMessage(interaction, error);
 		}
 	}
 
@@ -491,8 +530,97 @@ client.on("interactionCreate", async (interaction) => {
 
 			logMessage(interaction, `...`);
 		} catch (error) {
-			errorMessage(interaction, commandName, error);
+			errorMessage(interaction, error);
 		}
+	}
+});
+
+const mentionResponses = [
+	// regular
+	"??",
+	"!!",
+	"hi",
+	"hello",
+	"hey there",
+	"?!",
+	":D",
+	":)",
+	":/",
+	":|",
+	"._.",
+	"o.o",
+	"0.o",
+	"o.0",
+	"WHAT",
+	"huh?",
+	"yes",
+	"no",
+	"get silly, some say",
+	"don’t be daft",
+	"woah",
+	"HUH",
+	"WOW",
+	"excuse me",
+	"mmmmmmm large celery",
+	"you smell",
+	"no thanks",
+	"yes please",
+	"have you heard of pinniped.page",
+	"...",
+	"uhh",
+	"erm",
+	"oops",
+	"skull emoji",
+	"SKULL EMOJI",
+	"actually no",
+	"literally",
+	"pause",
+	":knife::knife::knife:",
+	":fire:",
+	":heart:",
+	":thumbsup:",
+	":skull:",
+	":sob:",
+	":saluting_face:",
+	":yum:",
+	":pensive:",
+	":fearful:",
+	":eyes:",
+	// GIFs
+	"https://tenor.com/view/peak-peak-game-stare-roblox-funny-gif-14204149163935063245",
+	"https://tenor.com/view/dog-funny-dog-dog-nose-big-nose-smelling-gif-8587307285099365553",
+	"https://giphy.com/gifs/crazy-ugo-ugolize-qkZ1TVtqlGfx1n9XKk",
+	"https://tenor.com/view/madeline-celeste-celeste-game-celeste-madeline-get-silly-gif-2583692932322118232",
+	"https://tenor.com/view/celeste-game-madeline-celeste-mountain-celeste-game-gif-5143604707485029548",
+	"https://tenor.com/view/looker-peak-game-peak-aggrocrab-looking-gif-17841365269857828453",
+	"https://tenor.com/view/bebe-gif-5526812072482676565",
+	"https://tenor.com/view/severance-mark-s-gif-12484533603517447045",
+	"https://tenor.com/view/is-this-supposed-to-be-here-bjorn-the-phoenician-scheme-is-this-necessary-do-we-need-this-gif-1905594004031913065",
+	"https://tenor.com/view/dam-damn-gif-27530020",
+	"https://tenor.com/view/horse-nodding-nodding-yes-horse-nodding-silly-gif-5152303604886252799",
+	"https://tenor.com/view/galaxy-brain-meme-gif-25947987",
+	"https://tenor.com/view/dono-wall-gif-24048347",
+	"https://tenor.com/view/burned-food-wtf-gif-22978287",
+	"https://tenor.com/view/rock-one-eyebrow-raised-rock-staring-the-rock-gif-22113367",
+	"https://giphy.com/gifs/G0gQWdeRxefSJgBalK",
+	"https://giphy.com/gifs/gfejYZkgqE3OS7MU4r",
+	"https://giphy.com/gifs/celebrate-agree-gay-larry-DzVLZDneVYzE7Ux2YR",
+	"https://giphy.com/gifs/cool-giggle-non-chalant-TZ9VXG4Dm4AeBAHPK2",
+	"https://giphy.com/gifs/cool-giggle-non-chalant-TZ9VXG4Dm4AeBAHPK2",
+	"https://giphy.com/gifs/disappointed-leave-quit-jx6ufu5mL8V9JgfLbb",
+];
+
+// RESPOND TO MENTIONS
+client.on("messageCreate", (message) => {
+	try {
+		if (message.author.bot) return;
+		if (message.mentions.has(client.user)) {
+			response = mentionResponses[Math.floor(Math.random() * mentionResponses.length)];
+			message.reply(response);
+			conversationLogMessage(message, response);
+		}
+	} catch (error) {
+		conversationErrorMessage(message, error);
 	}
 });
 
@@ -621,26 +749,50 @@ function formatTime(date) {
 	return `${hour}:${minute.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")} ${half}`;
 }
 
+// UTILITY: RANDOM HEX COLOUR CODE
+function randomHex() {
+	let characters = "0123456789abcdef";
+	let string = "#";
+	for (let i = 0; i < 6; i++) string += characters[Math.floor(Math.random() * characters.length)];
+	return string;
+}
+
+// UTILITY: CONVERT HTML ENTITIES TO TEXT
+function entitiesToText(string) {
+	return string.replaceAll("&ldquo;", "“").replaceAll("&rdquo;", "”").replaceAll("&lsquo;", "‘").replaceAll("&rsquo;", "’").replaceAll("&amp;", "&");
+}
+
 // UTILITY: LOG INTERACTION
 async function logMessage(interaction, message) {
-	let name;
-	if (interaction.inGuild()) name = interaction.user.username;
-	else name = `\x1b[33m[DM]\x1b[37m ${interaction.user.username}`;
+	let name = interaction.user.username;
+	if (!interaction.inGuild()) name = `\x1b[33m[DM]\x1b[37m ${name}`;
 
 	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${name} [${formatDate(new Date())} ${formatTime(new Date())}]`);
 }
 
 // UTILITY: LOG INTERACTION ERROR & SEND RESPONSE
-async function errorMessage(interaction, commandName, error) {
-	console.log(`\x1b[31mERROR!! (/${commandName})\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
+async function errorMessage(interaction, error) {
+	logMessage(interaction, "\x1b[31mERROR!!\x1b[37m");
 	console.log(error);
-
-	logMessage(interaction, "ERROR!!");
 
 	await interaction.reply({
 		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> report issues here: [pinniped.page/contact](https://pinniped.page/contact)\n> for general <@${botID}> help, use \`/help\``,
 		flags: MessageFlags.Ephemeral,
 	});
+}
+
+// UTILITY: LOG CONVERSATION
+function conversationLogMessage(message, reply) {
+	let name = message.author.username;
+	if (!message.inGuild()) name = `\x1b[33m[DM]\x1b[37m ${name}`;
+
+	console.log(`\x1b[35m${message.content}\x1b[37m >>> ${reply} | ${name} [${formatDate(new Date())} ${formatTime(new Date())}]`);
+}
+
+// UTILITY: LOG CONVERSATION ERROR
+function conversationErrorMessage(message, error) {
+	conversationLogMessage(message, "\x1b[31mERROR!!\x1b[37m");
+	console.log(error);
 }
 
 // UTILITY: LOG DATABASE SEND/RECEIVE
@@ -654,7 +806,7 @@ async function databaseLogMessage(direction, path, content) {
 
 // UTILITY: LOG DATABASE ERROR
 async function databaseErrorMessage(error) {
-	console.log(`\x1b[31mERROR!!\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
+	console.log(`\x1b[31m[db] ERROR!!\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
 	console.log(error);
 }
 

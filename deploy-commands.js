@@ -1,7 +1,6 @@
 // IMPORT THINGS
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { REST } = require("@discordjs/rest");
-const { Routes } = require("discord-api-types/v9");
+const { REST, Routes } = require("discord.js");
 const { botID, token } = require("./config.json");
 
 // MAKE COMMANDS
@@ -46,11 +45,17 @@ const commands = [
 		.setName("metar")
 		.setDescription("Prepare for flight with this quick weather report.")
 		.addStringOption((option) =>
-			option.setName("airport").setDescription("The ICAO airport code for the location you want a weather report from.").setRequired(true).setMinLength(4).setMaxLength(4)
+			option.setName("airport").setDescription("The ICAO airport code for the location you want a weather report from.").setRequired(true).setMinLength(4).setMaxLength(4),
 		),
 
 	// "/ion"
 	new SlashCommandBuilder().setName("ion").setDescription("See when the next ION trains are coming to University of Waterloo Station."),
+
+	// "/music"
+	new SlashCommandBuilder().setName("music").setDescription("Get a random track from one of Obsidian_Seal’s monthly playlists."),
+
+	// "/playlist"
+	new SlashCommandBuilder().setName("playlist").setDescription("Get the link to Obsidian_Seal’s latest monthly playlist."),
 
 	// "/help"
 	new SlashCommandBuilder().setName("help").setDescription("Send this command if you don’t know how to use the bot or if you just want to learn more about it."),
