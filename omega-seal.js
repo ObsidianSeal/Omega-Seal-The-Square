@@ -604,6 +604,17 @@ const mentionResponses = [
 	"yeah you’re getting banned",
 	"can I see your manager",
 	"spaghetti",
+	"false",
+	"that’s nice dear",
+	":ok:",
+	"I love it",
+	"fire",
+	"I speak for the trees",
+	"listen...",
+	"please be quiet",
+	"putting you on a list",
+	"huge",
+	"I don’t want anyone else From the hours of 12 to 12 I am not the least compelled By anyone but yourself Look at me, it makes me melt I know you wanna see me in hell, my love I’m dealing with the cards I’ve dealt While you’re dancing with somebody else\n\nWas it always in your plan to leave eventually? Because to me, there’s no one else that could make sense to me The last and final puzzle piece\n\nIn a room full of people, I look for you Would you avoid me or would you look for me too? Tell me, is our story through? (Through) Or do our hearts still beat in tune?\n\nI’ve never felt anything Like the love from my final days Why’d you wait To show me you could do it this way? Woo, I’ll never look at you, look at you the same We met in The Paris café I said, “Can I sit with you? Comment ça se fait?” My mistake If I’d known it would have been this way I’d never looked at you, looked in the first place\n\nWas it always in your plan to leave eventually? Because to me, there’s no one else that could make sense to me The last and final puzzle piece\n\nIn a room full of people, I look for you Would you avoid me or would you look for me too? Tell me, is our story through? (Through) Or do our hearts still beat in tune?\n\nMaybe I’m delusional And the way you act is usual Maybe in another world I won’t feel so unlovable (Unlovable) Oh (Unlovable)\n\nIn a room full of people, I look for you Would you avoid me or would you look for me too? Tell me, is our story through? (Through) Or do our hearts still beat in tune? In a room full of people, I look for you Would you avoid me or would you see me through? Tell me, is our story through? (Through) Or do our hearts still beat in tune?",
 	// GIFs
 	"https://tenor.com/view/peak-peak-game-stare-roblox-funny-gif-14204149163935063245",
 	"https://tenor.com/view/dog-funny-dog-dog-nose-big-nose-smelling-gif-8587307285099365553",
@@ -624,7 +635,6 @@ const mentionResponses = [
 	"https://giphy.com/gifs/gfejYZkgqE3OS7MU4r",
 	"https://giphy.com/gifs/celebrate-agree-gay-larry-DzVLZDneVYzE7Ux2YR",
 	"https://giphy.com/gifs/cool-giggle-non-chalant-TZ9VXG4Dm4AeBAHPK2",
-	"https://giphy.com/gifs/cool-giggle-non-chalant-TZ9VXG4Dm4AeBAHPK2",
 	"https://giphy.com/gifs/disappointed-leave-quit-jx6ufu5mL8V9JgfLbb",
 	"https://tenor.com/view/longestsoloever-lse-yapper-yapping-alert-gif-16222796328902842371",
 	"https://tenor.com/view/shut-up-shush-shh-ok-bird-gif-17679708",
@@ -638,6 +648,7 @@ const mentionResponses = [
 	"https://tenor.com/view/hiii-cat-wave-cat-wave-hi-gif-174708314057938083",
 	"https://tenor.com/view/what-the-dog-doin-dogs-funny-gif-14571748077449260169",
 	"https://giphy.com/gifs/ywGp4PMJdeLyuRq7vJ",
+	"https://tenor.com/view/no-correlation-gif-1271746605347850530",
 ];
 
 // RESPOND TO MENTIONS
