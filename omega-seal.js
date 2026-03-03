@@ -596,7 +596,7 @@ const mentionResponses = [
 	"oh em gee",
 	"understandable have a nice day",
 	":gun:",
-	"who else up pinniped they page",
+	"true!",
 	"what the freak",
 	"go outside",
 	"uninstall your operating system",
