@@ -816,6 +816,11 @@ function entitiesToText(string) {
 		.replaceAll("&amp;", "&");
 }
 
+// UTILITY: WAIT (FROM THE GAME OF NUMBERS)
+function sleep(duration) {
+	return new Promise((resolve) => setTimeout(resolve, duration));
+}
+
 // UTILITY: LOG INTERACTION
 async function logMessage(interaction, message) {
 	let name = interaction.user.username;
