@@ -1,8 +1,8 @@
 // IMPORT THINGS
-const { botID, token, fApiKey, fAuthDomain, fDatabaseURL, fProjectId, fStorageBucket, fMessagingSenderId, fAppId } = require("./config.json");
-const { Client, GatewayIntentBits, InteractionType, EmbedBuilder, ActivityType, MessageFlags } = require("discord.js");
+const { botID, fApiKey, fAppId, fAuthDomain, fDatabaseURL, fMessagingSenderId, fProjectId, fStorageBucket, token } = require("./config.json");
+const { ActivityType, Client, EmbedBuilder, GatewayIntentBits, InteractionType, MessageFlags, PermissionFlagsBits } = require("discord.js");
 const { initializeApp } = require("firebase/app");
-const { getDatabase, ref, push, set, onValue } = require("firebase/database");
+const { getDatabase, onValue, push, ref, set } = require("firebase/database");
 const { transit_realtime } = require("gtfs-realtime-bindings");
 
 // FIREBASE CONFIGURATION
@@ -658,6 +658,9 @@ const mentionResponses = [
 client.on("messageCreate", (message) => {
 	try {
 		if (message.author.bot) return;
+		if (message.inGuild()) {
+			if (!message.channel.permissionsFor(client.user).has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages])) return;
+		}
 		if (message.mentions.has(client.user)) {
 			response = mentionResponses[Math.floor(Math.random() * mentionResponses.length)];
 			message.reply(response);
