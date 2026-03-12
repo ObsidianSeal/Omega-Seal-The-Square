@@ -498,7 +498,10 @@ client.on("interactionCreate", async (interaction) => {
 
 			let description = `**:saxophone: TITLE:**\n${entitiesToText(track[0])}\n\n**:speaking_head: ARTIST:**\n${entitiesToText(track[1])}\n\n**:minidisc: ALBUM:**\n${entitiesToText(track[2])} (${track[3]})\n\n**:musical_note: PLAYLIST:**\n[${playlist.substring(4)}](https://music.youtube.com/playlist?list=${playlists[playlist].link}) @ [pinniped.page/playlists](https://pinniped.page/projects/playlists)\n-# added ${playlists[playlist].added} & updated ${playlists[playlist].updated}\n\n-# ${colour} — ${monthlyPlaylistNames.length} monthly playlists, ${monthlyPlaylistNames.length * 20} tracks`;
 			if (track[3] == "unknown") {
-				description = `**:floppy_disk: VIDEO TITLE:**\n${entitiesToText(track[0])}\n\n**:technologist: UPLOADER:**\n${entitiesToText(track[1])}\n\n**:musical_note: PLAYLIST:**\n[${playlist.substring(4)}](https://music.youtube.com/playlist?list=${playlists[playlist].link}) @ [pinniped.page/playlists](https://pinniped.page/projects/playlists)\n-# added ${playlists[playlist].added} & updated ${playlists[playlist].updated}\n\n-# ${colour} — ${monthlyPlaylistNames.length} monthly playlists, ${monthlyPlaylistNames.length * 20} tracks`;
+				if (track[0] == "Circles" && track[1] == "Chilli Jesson" && track[2] == "Circles")
+					description = `:(\n\n**:musical_note: PLAYLIST:**\n[${playlist.substring(4)}](https://music.youtube.com/playlist?list=${playlists[playlist].link}) @ [pinniped.page/playlists](https://pinniped.page/projects/playlists)\n-# added ${playlists[playlist].added} & updated ${playlists[playlist].updated}\n\n-# ${colour} — ${monthlyPlaylistNames.length} monthly playlists, ${monthlyPlaylistNames.length * 20} tracks`;
+				else
+					description = `**:floppy_disk: VIDEO TITLE:**\n${entitiesToText(track[0])}\n\n**:technologist: UPLOADER:**\n${entitiesToText(track[1])}\n\n**:musical_note: PLAYLIST:**\n[${playlist.substring(4)}](https://music.youtube.com/playlist?list=${playlists[playlist].link}) @ [pinniped.page/playlists](https://pinniped.page/projects/playlists)\n-# added ${playlists[playlist].added} & updated ${playlists[playlist].updated}\n\n-# ${colour} — ${monthlyPlaylistNames.length} monthly playlists, ${monthlyPlaylistNames.length * 20} tracks`;
 			}
 
 			const musicEmbed = new EmbedBuilder().setTitle("**RANDOM MUSIC RECOMMENDATION**").setDescription(description).setColor(colour);
@@ -800,7 +803,14 @@ function randomHex() {
 
 // UTILITY: CONVERT HTML ENTITIES TO TEXT
 function entitiesToText(string) {
-	return string.replaceAll("&ldquo;", "“").replaceAll("&rdquo;", "”").replaceAll("&lsquo;", "‘").replaceAll("&rsquo;", "’").replaceAll("&amp;", "&");
+	return string
+		.replaceAll("&lt;", "<")
+		.replaceAll("&gt;", ">")
+		.replaceAll("&ldquo;", "“")
+		.replaceAll("&rdquo;", "”")
+		.replaceAll("&lsquo;", "‘")
+		.replaceAll("&rsquo;", "’")
+		.replaceAll("&amp;", "&");
 }
 
 // UTILITY: LOG INTERACTION
