@@ -137,11 +137,13 @@ client.on("interactionCreate", async (interaction) => {
 	if (commandName === "ping") {
 		try {
 			let botPing = Date.now() - interaction.createdTimestamp;
-			let wsPing = client.ws.ping;
+			let webSocketPing = client.ws.ping;
 
-			await interaction.reply(`:ping_pong: **Pong!**\n> bot ping: \`${botPing}\`ms\n> API ping: \`${wsPing}\`ms`);
+			await interaction.reply(
+				`:ping_pong: **Pong!**\n> this interaction was received **${botPing}ms** after it was created\n> it takes **${webSocketPing}ms** to communicate with the Discord API via the websocket`,
+			);
 
-			logMessage(interaction, `${botPing} & ${wsPing}`);
+			logMessage(interaction, `${botPing} & ${webSocketPing}`);
 		} catch (error) {
 			errorMessage(interaction, error);
 		}
@@ -527,7 +529,7 @@ client.on("interactionCreate", async (interaction) => {
 	if (commandName === "help") {
 		try {
 			await interaction.reply({
-				content: `:palm_up_hand: **This might help.**\n> documentation + about <@${botID}>: [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal)\n> about The Square: [pinniped.page/the-square](https://pinniped.page/projects/the-square)\n> <@${botID}>’s GitHub repository: [github.com/ObsidianSeal/Omega-Seal-The-Square](https://github.com/ObsidianSeal/Omega-Seal-The-Square)\n> bot status: [pinniped.page/status#DISCORD-BOT](https://pinniped.page/status#DISCORD-BOT)\n> more help: [pinniped.page/contact](https://pinniped.page/contact)`,
+				content: `:palm_up_hand: **This might help.**\n> documentation/about: [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal)\n> The Square: [pinniped.page/the-square](https://pinniped.page/projects/the-square)\n> GitHub repository: [github.com/ObsidianSeal/Omega-Seal-The-Square](https://github.com/ObsidianSeal/Omega-Seal-The-Square)\n> bot status: [pinniped.page/status#DISCORD-BOT](https://pinniped.page/status#DISCORD-BOT)\n> if all else fails: [pinniped.page/contact](https://pinniped.page/contact)`,
 				flags: MessageFlags.SuppressEmbeds,
 			});
 
@@ -835,7 +837,7 @@ async function errorMessage(interaction, error) {
 	console.log(error);
 
 	await interaction.reply({
-		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> report issues here: [pinniped.page/contact](https://pinniped.page/contact)\n> for general <@${botID}> help, use \`/help\``,
+		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> report issues here: [pinniped.page/contact](https://pinniped.page/contact)\n> for general help, use \`/help\``,
 		flags: MessageFlags.Ephemeral,
 	});
 }
