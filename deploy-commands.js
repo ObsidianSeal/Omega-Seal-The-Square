@@ -65,7 +65,7 @@ const rest = new REST().setToken(token);
 
 // SEND THE COMMANDS TO DISCORD
 rest.put(Routes.applicationCommands(botID), { body: commands }) // use "body: []" to remove all; requires re-adding the bot to servers after commands are restored
-	.then(() => console.log("\x1b[32mOmega Seal’s “application commands” have successfully been registered with Discord."))
+	.then(() => console.log("\x1b[32mOmega Seal’s application commands have successfully been registered with Discord."))
 	.catch(console.error);
 
 // DELETE A COMMAND
