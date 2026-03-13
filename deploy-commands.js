@@ -6,7 +6,7 @@ const { botID, token } = require("./config.json");
 // MAKE COMMANDS
 const commands = [
 	// "/ping"
-	new SlashCommandBuilder().setName("ping").setDescription("Latency information."),
+	new SlashCommandBuilder().setName("ping").setDescription("Latency and network speed details."),
 
 	// "/join"
 	new SlashCommandBuilder()

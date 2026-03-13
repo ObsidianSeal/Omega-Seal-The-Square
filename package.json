@@ -1,10 +1,11 @@
 {
 	"name": "omega-seal",
-	"version": "1.5.2",
+	"version": "1.5.3",
 	"author": "Obsidian_Seal",
 	"description": "Obsidian_Seal’s personal Discord bot!",
 	"main": "omega-seal.js",
 	"dependencies": {
+		"@cloudflare/speedtest": "^1.7.0",
 		"@firebase/database": "^1.1.0",
 		"discord.js": "^14.25.1",
 		"firebase": "^12.7.0",

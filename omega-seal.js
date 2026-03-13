@@ -4,6 +4,7 @@ const { ActivityType, Client, EmbedBuilder, GatewayIntentBits, InteractionType, 
 const { initializeApp } = require("firebase/app");
 const { getDatabase, onValue, push, ref, set } = require("firebase/database");
 const { transit_realtime } = require("gtfs-realtime-bindings");
+const SpeedTest = require("@cloudflare/speedtest").default;
 
 // FIREBASE CONFIGURATION
 const firebaseConfig = {
@@ -36,7 +37,7 @@ client.once("clientReady", async () => {
 	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\n`);
 
 	client.users.fetch("390612175137406978").then((user) => {
-		user.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.5.2 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+		user.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.5.3 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 	});
 
 	statusListener();
@@ -137,13 +138,19 @@ client.on("interactionCreate", async (interaction) => {
 	if (commandName === "ping") {
 		try {
 			let botPing = Date.now() - interaction.createdTimestamp;
-			let webSocketPing = client.ws.ping;
+			console.log("\x1b[33m----- BEGIN /ping LOG -----");
+			await interaction.deferReply();
 
-			await interaction.reply(
-				`:ping_pong: **Pong!**\n> this interaction was received **${botPing}ms** after it was created\n> it takes **${webSocketPing}ms** to communicate with the Discord API via the websocket`,
-			);
+			new SpeedTest().onFinish = async (results) => {
+				let webSocketPing = client.ws.ping;
+				console.log("\x1b[33m----- END /ping LOG -----");
 
-			logMessage(interaction, `${botPing} & ${webSocketPing}`);
+				await interaction.editReply(
+					`:ping_pong: **Pong!**\n> this interaction was received **${botPing}ms** after it was created\n> the Discord API websocket is reporting a latency of **${webSocketPing}ms**\n> on a network with upload/download speeds of **${Math.round(results.getSummary().upload / 1000000)}Mbps** and **${Math.round(results.getSummary().download / 1000000)}Mbps**\n> network latency is **${Math.round(results.getSummary().latency)}ms**`,
+				);
+
+				logMessage(interaction, `${botPing} & ${webSocketPing}`);
+			};
 		} catch (error) {
 			errorMessage(interaction, error);
 		}
@@ -837,7 +844,7 @@ async function errorMessage(interaction, error) {
 	console.log(error);
 
 	await interaction.reply({
-		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> report issues here: [pinniped.page/contact](https://pinniped.page/contact)\n> for general help, use \`/help\``,
+		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> submit a bug report: [pinniped.page/contact](https://pinniped.page/contact)\n> or, for general help, use \`/help\``,
 		flags: MessageFlags.Ephemeral,
 	});
 }
