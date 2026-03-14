@@ -138,18 +138,19 @@ client.on("interactionCreate", async (interaction) => {
 	if (commandName === "ping") {
 		try {
 			let botPing = Date.now() - interaction.createdTimestamp;
-			console.log("\x1b[33m----- BEGIN /ping LOG -----");
 			await interaction.deferReply();
 
 			new SpeedTest().onFinish = async (results) => {
 				let webSocketPing = client.ws.ping;
-				console.log("\x1b[33m----- END /ping LOG -----");
 
 				await interaction.editReply(
 					`:ping_pong: **Pong!**\n> this interaction was received **${botPing}ms** after it was created\n> the Discord API websocket is reporting a latency of **${webSocketPing}ms**\n> on a network with upload/download speeds of **${Math.round(results.getSummary().upload / 1000000)}Mbps** and **${Math.round(results.getSummary().download / 1000000)}Mbps**\n> network latency is **${Math.round(results.getSummary().latency)}ms**`,
 				);
 
-				logMessage(interaction, `${botPing} & ${webSocketPing}`);
+				logMessage(
+					interaction,
+					`${botPing}, ${webSocketPing}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().latency)}`,
+				);
 			};
 		} catch (error) {
 			errorMessage(interaction, error);
