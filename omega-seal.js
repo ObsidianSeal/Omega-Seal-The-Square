@@ -37,7 +37,9 @@ client.once("clientReady", async () => {
 	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\n`);
 
 	client.users.fetch("390612175137406978").then((user) => {
-		user.send(`## <:ss5:1120342653259759686> Omega Seal is now online! <:ss5:1120342653259759686>\n-# v1.5.3 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
+		user.send(
+			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v1.5.3 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
+		);
 	});
 
 	statusListener();
