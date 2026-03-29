@@ -1,4 +1,4 @@
-// IMPORT THINGS
+// IMPORTS
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { REST, Routes } = require("discord.js");
 const { botID, token } = require("./config.json");
@@ -57,13 +57,20 @@ const commands = [
 	// "/playlist"
 	new SlashCommandBuilder().setName("playlist").setDescription("Get the link to Obsidian_Seal’s latest monthly playlist."),
 
+	// "/math"
+	new SlashCommandBuilder()
+		.setName("math")
+		.setDescription("Convert text (LaTeX) into math.")
+		.addStringOption((option) => option.setName("latex").setDescription("The code you want to be rendered as an image.").setRequired(true)),
+
 	// "/help"
 	new SlashCommandBuilder().setName("help").setDescription("Send this command if you don’t know how to use the bot or if you just want to learn more about it."),
 ].map((command) => command.toJSON());
 
+// FOR ALL COMMAND OPERATIONS
 const rest = new REST().setToken(token);
 
-// SEND THE COMMANDS TO DISCORD
+// SEND ALL COMMANDS TO DISCORD
 rest.put(Routes.applicationCommands(botID), { body: commands }) // use "body: []" to remove all; requires re-adding the bot to servers after commands are restored
 	.then(() => console.log("\x1b[32mOmega Seal’s application commands have successfully been registered with Discord."))
 	.catch(console.error);

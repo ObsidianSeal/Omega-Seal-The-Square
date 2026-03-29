@@ -1,12 +1,14 @@
-// IMPORT THINGS
-const { botID, fApiKey, fAppId, fAuthDomain, fDatabaseURL, fMessagingSenderId, fProjectId, fStorageBucket, token } = require("./config.json");
+// IMPORTS
+const { fApiKey, fAppId, fAuthDomain, fDatabaseURL, fMessagingSenderId, fProjectId, fStorageBucket, token } = require("./config.json");
 const { ActivityType, Client, EmbedBuilder, GatewayIntentBits, InteractionType, MessageFlags, PermissionFlagsBits } = require("discord.js");
 const { initializeApp } = require("firebase/app");
 const { getDatabase, onValue, push, ref, set } = require("firebase/database");
 const { transit_realtime } = require("gtfs-realtime-bindings");
 const SpeedTest = require("@cloudflare/speedtest").default;
+const mathjax = require("mathjax");
+const sharp = require("sharp");
 
-// FIREBASE CONFIGURATION
+// FIREBASE CONFIGURATION & INITIAL DATABASE STUFF
 const firebaseConfig = {
 	apiKey: fApiKey,
 	authDomain: fAuthDomain,
@@ -17,12 +19,20 @@ const firebaseConfig = {
 	appId: fAppId,
 };
 initializeApp(firebaseConfig);
-
-// INITIAL DATABASE STUFF
 const db = getDatabase();
 const botStatusRef = ref(db, "omega-seal/status");
 const botContactFormMessagesRef = ref(db, "omega-seal/contact-form-messages");
 const wordleleleWordRef = ref(db, "wordlelele/word");
+
+// INITIAL MATHJAX STUFF
+let MathJax;
+async function startMathJax() {
+	MathJax = await mathjax.init({
+		loader: { load: ["input/tex", "output/svg", "[tex]/color", "[tex]/ams"] },
+		tex: { packages: { "[+]": ["color", "ams"] } },
+		svg: { fontCache: "none" },
+	});
+}
 
 // MAKE THE CLIENT
 const client = new Client({
@@ -34,51 +44,22 @@ const client = new Client({
 let startTime = 0;
 client.login(token);
 client.once("clientReady", async () => {
+	// LOG
 	startTime = Date.now();
 	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\n`);
-
 	client.users.fetch("390612175137406978").then((user) => {
 		user.send(
-			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v1.6.1 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
+			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v1.7.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
 		);
 	});
 
+	// BEGIN DATABASE LISTENERS
 	statusListener();
 	contactFormMessagesListener();
 	wordleleleListener();
-});
 
-// CLIENT LISTENERS
-client.on("guildMemberAdd", async (member) => {
-	const memberID = member.id;
-	const memberCount = member.guild.memberCount; // cannot request more often than every 30 seconds
-
-	const joinMessages = {
-		"755782483588677653": [
-			"755782484117160006",
-			`## <:ssseal:1236461048270164020> Welcome to Seal Squad <@${memberID}>! <:ssseal:1236461048270164020>\n-# member #${memberCount}\n- please read the <#755785157562335324>\n- catch up on the latest <#755784977399939214> and watch some <#755816833671626963>\n- vote in <#763475121788157983> or make <#1244000694642540676>\n- and start chatting in the many channels!\n\n:identification_card: **Please get a role by joining The Square.**\n> use \`/join\` to join\n> use \`/help\` for help\n-# bot commands can be used in any of the CHAT channels`,
-		],
-		"1349764046274170930": [
-			"1349764047234662503",
-			`## <:cep:1373149617557995600> Welcome to Civil Engineers’ Paradise <@${memberID}>! <:cep:1373149617557995600>\n-# member #${memberCount}\n- MUTE <#1373444936799617054>\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`,
-		],
-		"1440028630746005698": [
-			"1440055859685232840",
-			`## <:cive29:1440073698345357392> Welcome to CIVE ’29 <@${memberID}>! <:cive29:1440073698345357392>\n-# member #${memberCount} — congratulations on your successful <#1440055799333523496>\n- please read the <#1440044198148575385>\n- catch up on the latest <#1440044178448056382>\n- check out the <#1440044224782405633>\n- start chatting here in <#1440055859685232840> and then head over to the many other specific channels!`,
-		],
-		"1451787499109089497": [
-			"1451787501378343075",
-			`## <:afgcircle:1451795376750465144> Welcome to ALL FUN & GAMES <@${memberID}>! <:afgcircle:1451795376750465144>\n-# member #${memberCount}\n- please read the <#1451794710447525962>\n- catch up on the latest <#1451790467305050196>\n- check out the <#1451794754324136026>\n- say hi to everyone else here in <#1451787501378343075> and then head over to the many game-specific channels!\n-# <@390612175137406978> will verify your game ownership and apply the relevant roles`,
-		],
-		"1193403835272679424": [
-			"1193403835914391557",
-			`## <:ITEUWcircle:1461539681769488587> Welcome to [ITE UW](https://ite.fyi/ite-uw) <@${memberID}>! <:ITEUWcircle:1461539681769488587>\n-# member #${memberCount} — thank you for reading the <#1193403835914391553> and completing the verification process\n- <#1193403835914391554> | <#1196501729873756290> | <#1197756926503686254> | <#1421177984047513610>\n-# also, we recommend muting <#1461424829952426056>`,
-		],
-	};
-
-	for (let serverID in joinMessages) {
-		if (member.guild.id == serverID) await client.channels.cache.get(joinMessages[serverID][0]).send(joinMessages[serverID][1]);
-	}
+	// START MATHJAX
+	startMathJax();
 });
 
 // REGION LIST ("THE SQUARE")
@@ -145,19 +126,25 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.deferReply();
 
 			new SpeedTest().onFinish = async (results) => {
-				let webSocketPing = client.ws.ping;
+				try {
+					let webSocketPing = client.ws.ping;
 
-				await interaction.editReply(
-					`:ping_pong: **Pong!**\n> this interaction was received **${botPing}ms** after it was created\n> the Discord API websocket is reporting a latency of **${webSocketPing}ms**\n> on a network with upload/download speeds of **${Math.round(results.getSummary().upload / 1000000)}Mbps** and **${Math.round(results.getSummary().download / 1000000)}Mbps**\n> network latency is **${Math.round(results.getSummary().latency)}ms**`,
-				);
+					g;
 
-				logMessage(
-					interaction,
-					`${botPing}, ${webSocketPing}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().latency)}`,
-				);
+					await interaction.editReply(
+						`:ping_pong: **Pong!**\n> this interaction was received **${botPing}ms** after it was created\n> the Discord API websocket is reporting a latency of **${webSocketPing}ms**\n> on a network with upload/download speeds of **${Math.round(results.getSummary().upload / 1000000)}Mbps** and **${Math.round(results.getSummary().download / 1000000)}Mbps**\n> network latency is **${Math.round(results.getSummary().latency)}ms**`,
+					);
+
+					logMessage(
+						interaction,
+						`${botPing}, ${webSocketPing}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().latency)}`,
+					);
+				} catch (error) {
+					errorMessage(interaction, error, true);
+				}
 			};
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, error, true);
 		}
 	}
 
@@ -203,7 +190,7 @@ client.on("interactionCreate", async (interaction) => {
 
 			logMessage(interaction, `${string}`);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, error, false);
 		}
 	}
 
@@ -242,7 +229,7 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.reply(`:pensive: You are no longer a <@&${role.id}>\n-# please note that you can move regions without leaving The Square`);
 			logMessage(interaction, `${region}`);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, error, false);
 		}
 	}
 
@@ -285,7 +272,7 @@ client.on("interactionCreate", async (interaction) => {
 			});
 			logMessage(interaction, `...`);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, error, false);
 		}
 	}
 
@@ -324,7 +311,7 @@ client.on("interactionCreate", async (interaction) => {
 			});
 			logMessage(interaction, `${text}`);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, error, false);
 		}
 	}
 
@@ -337,7 +324,7 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.reply(`:pen_ballpoint: The text you entered (\`${text}\`) has been expanded.\n${newText}\n-# WARNING: user-generated content`);
 			logMessage(interaction, `“${text}” >>> “${newText}”`);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, error, false);
 		}
 	}
 
@@ -362,7 +349,7 @@ client.on("interactionCreate", async (interaction) => {
 
 			logMessage(interaction, `${title} & ${description} & ${colour}`);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, error, false);
 		}
 	}
 
@@ -400,7 +387,7 @@ client.on("interactionCreate", async (interaction) => {
 			});
 			logMessage(interaction, text);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, error, false);
 		}
 	}
 
@@ -491,7 +478,7 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.editReply(replyText);
 			logMessage(interaction, `${southboundTime}, ${northboundTime}`);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, error, true);
 		}
 	}
 
@@ -523,7 +510,7 @@ client.on("interactionCreate", async (interaction) => {
 
 			logMessage(interaction, track[0]);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, error, false);
 		}
 	}
 
@@ -533,7 +520,20 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.reply(`:notes: <@390612175137406978>’s latest monthly playlist can be found at [ite.fyi/playlist](https://ite.fyi/playlist).`);
 			logMessage(interaction, `ite.fyi/playlist`);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, error, false);
+		}
+	}
+
+	// "/math" - render LaTeX
+	if (commandName === "math") {
+		try {
+			await interaction.deferReply();
+			const latex = interaction.options.getString("latex");
+			const buffer = await generateMathPNG(latex);
+			await interaction.editReply({ files: [{ attachment: buffer, name: "math.png" }] });
+			logMessage(interaction, latex);
+		} catch (error) {
+			errorMessage(interaction, error, true);
 		}
 	}
 
@@ -547,11 +547,45 @@ client.on("interactionCreate", async (interaction) => {
 
 			logMessage(interaction, `...`);
 		} catch (error) {
-			errorMessage(interaction, error);
+			errorMessage(interaction, error, false);
 		}
 	}
 });
 
+// WELCOME MESSAGES
+client.on("guildMemberAdd", async (member) => {
+	const memberID = member.id;
+	const memberCount = member.guild.memberCount; // cannot request more often than every 30 seconds
+
+	const joinMessages = {
+		"755782483588677653": [
+			"755782484117160006",
+			`## <:ssseal:1236461048270164020> Welcome to Seal Squad <@${memberID}>! <:ssseal:1236461048270164020>\n-# member #${memberCount}\n- please read the <#755785157562335324>\n- catch up on the latest <#755784977399939214> and watch some <#755816833671626963>\n- vote in <#763475121788157983> or make <#1244000694642540676>\n- and start chatting in the many channels!\n\n:identification_card: **Please get a role by joining The Square.**\n> use \`/join\` to join\n> use \`/help\` for help\n-# bot commands can be used in any of the CHAT channels`,
+		],
+		"1349764046274170930": [
+			"1349764047234662503",
+			`## <:cep:1373149617557995600> Welcome to Civil Engineers’ Paradise <@${memberID}>! <:cep:1373149617557995600>\n-# member #${memberCount}\n- MUTE <#1373444936799617054>\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`,
+		],
+		"1440028630746005698": [
+			"1440055859685232840",
+			`## <:cive29:1440073698345357392> Welcome to CIVE ’29 <@${memberID}>! <:cive29:1440073698345357392>\n-# member #${memberCount} — congratulations on your successful <#1440055799333523496>\n- please read the <#1440044198148575385>\n- catch up on the latest <#1440044178448056382>\n- check out the <#1440044224782405633>\n- start chatting here in <#1440055859685232840> and then head over to the many other specific channels!`,
+		],
+		"1451787499109089497": [
+			"1451787501378343075",
+			`## <:afgcircle:1451795376750465144> Welcome to ALL FUN & GAMES <@${memberID}>! <:afgcircle:1451795376750465144>\n-# member #${memberCount}\n- please read the <#1451794710447525962>\n- catch up on the latest <#1451790467305050196>\n- check out the <#1451794754324136026>\n- say hi to everyone else here in <#1451787501378343075> and then head over to the many game-specific channels!\n-# <@390612175137406978> will verify your game ownership and apply the relevant roles`,
+		],
+		"1193403835272679424": [
+			"1193403835914391557",
+			`## <:ITEUWcircle:1461539681769488587> Welcome to [ITE UW](https://ite.fyi/ite-uw) <@${memberID}>! <:ITEUWcircle:1461539681769488587>\n-# member #${memberCount} — thank you for reading the <#1193403835914391553> and completing the verification process\n- <#1193403835914391554> | <#1196501729873756290> | <#1197756926503686254> | <#1421177984047513610>\n-# also, we recommend muting <#1461424829952426056>`,
+		],
+	};
+
+	for (let serverID in joinMessages) {
+		if (member.guild.id == serverID) await client.channels.cache.get(joinMessages[serverID][0]).send(joinMessages[serverID][1]);
+	}
+});
+
+// RESPOND TO MENTIONS
 const mentionResponses = [
 	// regular
 	"??",
@@ -667,8 +701,6 @@ const mentionResponses = [
 	"https://giphy.com/gifs/ywGp4PMJdeLyuRq7vJ",
 	"https://tenor.com/view/no-correlation-gif-1271746605347850530",
 ];
-
-// RESPOND TO MENTIONS
 client.on("messageCreate", (message) => {
 	try {
 		if (message.author.bot) return;
@@ -730,10 +762,8 @@ function statusListener() {
 	});
 }
 
-// prevent sending alerts more than once
-let messageIDs = [];
-
 // LISTEN TO 'omega-seal/contact-form-messages'
+let messageIDs = []; // prevent sending alerts more than once
 function contactFormMessagesListener() {
 	onValue(botContactFormMessagesRef, async (snapshot) => {
 		const receivedData = snapshot.val();
@@ -787,10 +817,8 @@ function contactFormMessagesListener() {
 	});
 }
 
-// the wordlelele message must not be sent more than every half hour
-let lastWordleleleTime = Date.now();
-
 // LISTEN TO 'wordlelele/word'
+let lastWordleleleTime = Date.now(); // the wordlelele message must not be sent more than every half hour
 function wordleleleListener() {
 	onValue(wordleleleWordRef, async (snapshot) => {
 		const receivedData = snapshot.val();
@@ -806,7 +834,25 @@ function wordleleleListener() {
 	});
 }
 
-// UTILITY: FORMATE DATE FROM DATE
+// UTILITY: LATEX TO PNG
+async function generateMathPNG(latex) {
+	latex = `\\color{white} \\displaystyle ${latex.replaceAll("\\\\", "\\\\ \\color{white} \\displaystyle ")}`;
+	const node = await MathJax.tex2svgPromise(latex);
+	const string = MathJax.startup.adaptor.innerHTML(node);
+	if (string.includes("data-mjx-error")) throw new Error("invalid LaTeX syntax");
+	return await sharp(Buffer.from(string), { density: 300 })
+		.extend({
+			top: 10,
+			bottom: 10,
+			left: 20,
+			right: 20,
+			background: { r: 0, g: 0, b: 0, alpha: 0 },
+		})
+		.png()
+		.toBuffer();
+}
+
+// UTILITY: FORMAT DATE STRING FROM DATE OBJECT
 function formatDate(date) {
 	let year = date.getFullYear();
 	let month = date.getMonth() + 1;
@@ -815,7 +861,7 @@ function formatDate(date) {
 	return `${year}/${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}`;
 }
 
-// UTILITY: FORMATE TIME FROM DATE (ADAPTED FROM THE GAME OF NUMBERS)
+// UTILITY: FORMAT TIME FROM DATE (ADAPTED FROM THE GAME OF NUMBERS)
 function formatTime(date) {
 	let hour = date.getHours();
 	let minute = date.getMinutes();
@@ -863,14 +909,25 @@ async function logMessage(interaction, message) {
 }
 
 // UTILITY: LOG INTERACTION ERROR & SEND RESPONSE
-async function errorMessage(interaction, error) {
-	logMessage(interaction, "\x1b[31mERROR!!\x1b[37m");
-	console.log(error);
+async function errorMessage(interaction, error, deferred) {
+	try {
+		logMessage(interaction, "\x1b[31mERROR!!\x1b[37m");
+		console.log(error);
 
-	await interaction.reply({
-		content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> submit a bug report: [pinniped.page/contact](https://pinniped.page/contact)\n> or, for general help, use \`/help\``,
-		flags: MessageFlags.Ephemeral,
-	});
+		if (deferred) {
+			await interaction.editReply({
+				content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> submit a bug report: [pinniped.page/contact](https://pinniped.page/contact)\n> or, for general help, use \`/help\``,
+				flags: MessageFlags.Ephemeral,
+			});
+		} else {
+			await interaction.reply({
+				content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> submit a bug report: [pinniped.page/contact](https://pinniped.page/contact)\n> or, for general help, use \`/help\``,
+				flags: MessageFlags.Ephemeral,
+			});
+		}
+	} catch (error2) {
+		console.log(error2);
+	}
 }
 
 // UTILITY: LOG CONVERSATION
