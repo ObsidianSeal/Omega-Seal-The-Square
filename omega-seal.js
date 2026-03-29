@@ -37,7 +37,7 @@ async function startMathJax() {
 // MAKE THE CLIENT
 const client = new Client({
 	intents: [GatewayIntentBits.DirectMessages, GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
-	presence: { activities: [{ type: ActivityType.Watching, name: "try the new “/music” command!" }] },
+	presence: { activities: [{ type: ActivityType.Watching, name: "try the new “/math” command!" }] },
 });
 
 // START THE CLIENT
@@ -46,7 +46,7 @@ client.login(token);
 client.once("clientReady", async () => {
 	// LOG
 	startTime = Date.now();
-	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\n`);
+	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\x1b[37m\n`);
 	client.users.fetch("390612175137406978").then((user) => {
 		user.send(
 			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v1.7.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
@@ -905,7 +905,7 @@ async function logMessage(interaction, message) {
 	let name = interaction.user.username;
 	if (!interaction.inGuild()) name = `\x1b[33m[DM]\x1b[37m ${name}`;
 
-	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${name} [${formatDate(new Date())} ${formatTime(new Date())}]`);
+	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${name} [${formatDate(new Date())} ${formatTime(new Date())}]\x1b[37m`);
 }
 
 // UTILITY: LOG INTERACTION ERROR & SEND RESPONSE
@@ -935,7 +935,7 @@ function conversationLogMessage(message, reply) {
 	let name = message.author.username;
 	if (!message.inGuild()) name = `\x1b[33m[DM]\x1b[37m ${name}`;
 
-	console.log(`\x1b[35m${message.content}\x1b[37m >>> ${reply} | ${name} [${formatDate(new Date())} ${formatTime(new Date())}]`);
+	console.log(`\x1b[35m${message.content}\x1b[37m >>> ${reply} | ${name} [${formatDate(new Date())} ${formatTime(new Date())}]\x1b[37m`);
 }
 
 // UTILITY: LOG CONVERSATION ERROR
@@ -949,13 +949,13 @@ async function databaseLogMessage(direction, path, content) {
 	let colourText = "\x1b[34m[db] RECEIVE";
 	if (direction) colourText = "\x1b[36m[db] SEND";
 
-	console.log(`${colourText} @ ${path}\x1b[37m ${content} [${formatDate(new Date())} ${formatTime(new Date())}]`);
+	console.log(`${colourText} @ ${path}\x1b[37m ${content} [${formatDate(new Date())} ${formatTime(new Date())}]\x1b[37m`);
 	console.log(content);
 }
 
 // UTILITY: LOG DATABASE ERROR
 async function databaseErrorMessage(error) {
-	console.log(`\x1b[31m[db] ERROR!!\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
+	console.log(`\x1b[31m[db] ERROR!!\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]\x1b[37m`);
 	console.log(error);
 }
 
@@ -971,4 +971,4 @@ async function databaseErrorMessage(error) {
  * reset = \x1b[37m
  */
 
-console.log("\x1b[31m.\x1b[34m.\x1b[33m.\x1b[32m.\x1b[36m.\x1b[35m.\n");
+console.log("\x1b[31m.\x1b[34m.\x1b[33m.\x1b[32m.\x1b[36m.\x1b[35m.\x1b[37m\n");
