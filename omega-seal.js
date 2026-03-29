@@ -129,8 +129,6 @@ client.on("interactionCreate", async (interaction) => {
 				try {
 					let webSocketPing = client.ws.ping;
 
-					g;
-
 					await interaction.editReply(
 						`:ping_pong: **Pong!**\n> this interaction was received **${botPing}ms** after it was created\n> the Discord API websocket is reporting a latency of **${webSocketPing}ms**\n> on a network with upload/download speeds of **${Math.round(results.getSummary().upload / 1000000)}Mbps** and **${Math.round(results.getSummary().download / 1000000)}Mbps**\n> network latency is **${Math.round(results.getSummary().latency)}ms**`,
 					);
