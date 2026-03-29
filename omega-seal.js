@@ -22,6 +22,7 @@ initializeApp(firebaseConfig);
 const db = getDatabase();
 const botStatusRef = ref(db, "omega-seal/status");
 const botContactFormMessagesRef = ref(db, "omega-seal/contact-form-messages");
+const wordleleleWordRef = ref(db, "wordlelele/word");
 
 // MAKE THE CLIENT
 const client = new Client({
@@ -38,12 +39,13 @@ client.once("clientReady", async () => {
 
 	client.users.fetch("390612175137406978").then((user) => {
 		user.send(
-			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v1.5.3 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
+			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v1.6.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
 		);
 	});
 
 	statusListener();
 	contactFormMessagesListener();
+	wordleleleListener();
 });
 
 // CLIENT LISTENERS
@@ -781,6 +783,23 @@ function contactFormMessagesListener() {
 			} catch (error) {
 				databaseErrorMessage(error);
 			}
+		}
+	});
+}
+
+// the wordlelele message must not be sent more than every half hour
+let lastWordleleleTime = Date.now();
+
+// LISTEN TO 'wordlelele/word'
+function wordleleleListener() {
+	onValue(wordleleleWordRef, async (snapshot) => {
+		const receivedData = snapshot.val();
+
+		databaseLogMessage(false, "wordlelele/words", receivedData);
+
+		if (/^[a-z]{1,20}$/.test(receivedData) && Date.now() - lastWordleleleTime >= 1800000) {
+			await client.channels.cache.get("1384875686904205396").send(`### someone just set the [wordlelele](https://pinniped.page/w)!`);
+			lastWordleleleTime = Date.now();
 		}
 	});
 }
