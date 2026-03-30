@@ -834,8 +834,8 @@ function wordleleleListener() {
 
 // UTILITY: LATEX TO PNG
 async function generateMathPNG(latex) {
-	latex = `\\color{white} \\displaystyle ${latex.replaceAll("\\\\", "\\\\ \\color{white} \\displaystyle ")}`;
-	const node = await MathJax.tex2svgPromise(latex);
+	latex = `\\color{white} ${latex.replaceAll("\\\\", "\\\\ \\color{white} ")}`;
+	const node = await MathJax.tex2svgPromise(latex, { display: true });
 	const string = MathJax.startup.adaptor.innerHTML(node);
 	if (string.includes("data-mjx-error")) throw new Error("invalid LaTeX syntax");
 	return await sharp(Buffer.from(string), { density: 300 })
@@ -913,7 +913,8 @@ async function errorMessage(interaction, error, deferred) {
 		console.log(error);
 
 		if (deferred) {
-			await interaction.editReply({
+			await interaction.editReply(":bangbang: Deferred interaction experienced an error.");
+			await interaction.followUp({
 				content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> submit a bug report: [pinniped.page/contact](https://pinniped.page/contact)\n> or, for general help, use \`/help\``,
 				flags: MessageFlags.Ephemeral,
 			});
