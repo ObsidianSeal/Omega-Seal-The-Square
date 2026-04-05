@@ -49,7 +49,7 @@ client.once("clientReady", async () => {
 	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\x1b[37m\n`);
 	client.users.fetch("390612175137406978").then((user) => {
 		user.send(
-			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v1.8.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
+			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v1.8.1 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
 		);
 	});
 
@@ -275,7 +275,7 @@ client.on("interactionCreate", async (interaction) => {
 				)} total) ${regionListString}\n-# learn more about The Square at [pinniped.page/the-square](https://pinniped.page/projects/the-square)`,
 				flags: MessageFlags.SuppressEmbeds,
 			});
-			logMessage(interaction, `...`);
+			logMessage(interaction, memberTotal);
 		} catch (error) {
 			errorMessage(interaction, error, false);
 		}
@@ -382,7 +382,7 @@ client.on("interactionCreate", async (interaction) => {
 					content: `:airplane_small: There is no [METAR](https://en.wikipedia.org/wiki/METAR) data available for \`${airport}\`. Either that airport doesn’t exist or its METAR reports are not public. Sorry!`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
-				logMessage(interaction, `??? (no response)`);
+				logMessage(interaction, `!!! (no response)`);
 				return;
 			}
 
@@ -511,7 +511,7 @@ client.on("interactionCreate", async (interaction) => {
 			}
 
 			const musicEmbed = new EmbedBuilder().setTitle("**RANDOM MUSIC RECOMMENDATION**").setDescription(description).setColor(colour);
-			interaction.reply({ embeds: [musicEmbed] });
+			await interaction.reply({ embeds: [musicEmbed] });
 
 			logMessage(interaction, track[0]);
 		} catch (error) {
@@ -545,15 +545,23 @@ client.on("interactionCreate", async (interaction) => {
 	// "/role" - role details
 	if (commandName === "role") {
 		try {
-			const role = interaction.options.getRole("role");
-			const roleEmbed = new EmbedBuilder()
-				.setTitle("**ROLE DETAILS**")
-				.setDescription(
-					`**:identification_card: TITLE:**\n${role.name}\n\n**:people_holding_hands: MEMBER COUNT:**\n${role.members.size}\n\n**:art: COLOUR:**\n${role.hexColor}\n\n**:date: CREATED:**\n${formatDate(role.createdAt)} ${formatTime(role.createdAt)}\n\n-# ${role.id}`,
-				)
-				.setColor(role.hexColor);
-			interaction.reply({ embeds: [roleEmbed] });
-			logMessage(interaction, role.id);
+			if (interaction.member.permissions.has(PermissionFlagsBits.ManageRoles)) {
+				const role = interaction.options.getRole("role");
+				const roleEmbed = new EmbedBuilder()
+					.setTitle("**ROLE DETAILS**")
+					.setDescription(
+						`**:identification_card: NAME:**\n${role.name}\n\n**:people_holding_hands: MEMBER COUNT:**\n${role.members.size}\n\n**:art: COLOUR:**\n${role.hexColor}\n\n**:date: CREATED:**\n${formatDate(role.createdAt)} @ ${formatTime(role.createdAt)}\n\n-# ${role.id}`,
+					)
+					.setColor(role.hexColor);
+				await interaction.reply({ embeds: [roleEmbed] });
+				logMessage(interaction, role.id);
+			} else {
+				await interaction.reply({
+					content: ":warning: You need the `Manage Roles` permission in this server to use this command.",
+					ephemeral: true,
+				});
+				logMessage(interaction, "insufficient permissions");
+			}
 		} catch (error) {
 			errorMessage(interaction, error, false);
 		}
@@ -567,7 +575,7 @@ client.on("interactionCreate", async (interaction) => {
 				flags: MessageFlags.SuppressEmbeds,
 			});
 
-			logMessage(interaction, `...`);
+			logMessage(interaction, "pinniped.page/omega-seal");
 		} catch (error) {
 			errorMessage(interaction, error, false);
 		}
