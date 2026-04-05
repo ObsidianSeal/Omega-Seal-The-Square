@@ -63,6 +63,12 @@ const commands = [
 		.setDescription("Convert text (LaTeX) into math.")
 		.addStringOption((option) => option.setName("latex").setDescription("The code you want to be rendered as an image.").setRequired(true)),
 
+	// "/role"
+	new SlashCommandBuilder()
+		.setName("role")
+		.setDescription("Get some role information.")
+		.addRoleOption((option) => option.setName("role").setDescription("The role to investigate.").setRequired(true)),
+
 	// "/help"
 	new SlashCommandBuilder().setName("help").setDescription("Send this command if you don’t know how to use the bot or if you just want to learn more about it."),
 ].map((command) => command.toJSON());

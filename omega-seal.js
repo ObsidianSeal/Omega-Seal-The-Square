@@ -49,7 +49,7 @@ client.once("clientReady", async () => {
 	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\x1b[37m\n`);
 	client.users.fetch("390612175137406978").then((user) => {
 		user.send(
-			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v1.7.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
+			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v1.8.0 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
 		);
 	});
 
@@ -483,7 +483,7 @@ client.on("interactionCreate", async (interaction) => {
 	// "/music" - random song
 	if (commandName === "music") {
 		try {
-			const requestURL = `https://pinniped.page/files/playlists.json`;
+			const requestURL = `https://pinniped.page/assets/json/playlists.json`;
 			const request = new Request(requestURL);
 			const response = await fetch(request);
 			const responseJSON = await response.json();
@@ -532,6 +532,25 @@ client.on("interactionCreate", async (interaction) => {
 			logMessage(interaction, latex);
 		} catch (error) {
 			errorMessage(interaction, error, true);
+		}
+	}
+
+	// "/role" - role details
+	if (commandName === "role") {
+		try {
+			await interaction.guild.members.fetch();
+
+			const role = interaction.options.getRole("role");
+			const roleEmbed = new EmbedBuilder()
+				.setTitle("**ROLE DETAILS**")
+				.setDescription(
+					`**:identification_card: TITLE:**\n${role.name}\n\n**:people_holding_hands: MEMBER COUNT:**\n${role.members.size}\n\n**:art: COLOUR:**\n${role.hexColor}\n\n**:date: CREATED:**\n${formatDate(role.createdAt)} ${formatTime(role.createdAt)}\n\n-# ${role.id}`,
+				)
+				.setColor(role.hexColor);
+			interaction.reply({ embeds: [roleEmbed] });
+			logMessage(interaction, role.id);
+		} catch (error) {
+			errorMessage(interaction, error, false);
 		}
 	}
 
@@ -825,9 +844,13 @@ function wordleleleListener() {
 
 		if (/^[a-z]{1,20}$/.test(receivedData) && Date.now() - lastWordleleleTime >= 1800000) {
 			lastWordleleleTime = Date.now();
+			let n = "";
+			if ([8, 11, 18].includes(receivedData.length)) n = "n";
 			await client.channels.cache
 				.get("1384875686904205396")
-				.send(`:bell: Someone set the [wordlelele](https://pinniped.page/w) <t:${Math.round(lastWordleleleTime / 1000)}:R> to a ${receivedData.length}-letter word!`);
+				.send(
+					`:bell: Someone set the [wordlelele](https://pinniped.page/w) <t:${Math.round(lastWordleleleTime / 1000)}:R> to a${n} ${receivedData.length}-letter word!`,
+				);
 		}
 	});
 }
