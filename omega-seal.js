@@ -558,7 +558,7 @@ client.on("interactionCreate", async (interaction) => {
 			} else {
 				await interaction.reply({
 					content: ":warning: You need the `Manage Roles` permission in this server to use this command.",
-					ephemeral: true,
+					flags: MessageFlags.Ephemeral,
 				});
 				logMessage(interaction, "insufficient permissions");
 			}
