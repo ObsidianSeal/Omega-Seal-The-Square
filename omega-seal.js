@@ -876,7 +876,7 @@ function wordleleleListener() {
 			if ([8, 11, 18].includes(receivedData.length)) n = "n";
 			try {
 				await client.channels.cache
-					.get("1384875686904205396")
+					.get("1490729689239519312")
 					.send(
 						`:bell: Someone set the [wordlelele](https://pinniped.page/w) <t:${Math.round(lastWordleleleTime / 1000)}:R> to a${n} ${receivedData.length}-letter word!`,
 					);
