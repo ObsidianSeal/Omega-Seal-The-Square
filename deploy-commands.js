@@ -69,6 +69,14 @@ const commands = [
 		.setDescription("Get some role information.")
 		.addRoleOption((option) => option.setName("role").setDescription("The role to investigate.").setRequired(true)),
 
+	// "/roles"
+	new SlashCommandBuilder()
+		.setName("roles")
+		.setDescription("Roles in the server, sorted by member count.")
+		.addStringOption((option) =>
+			option.setName("filter").setDescription("Filter to specific roles by providing a hex code.").setRequired(false).setMinLength(6).setMaxLength(7),
+		),
+
 	// "/help"
 	new SlashCommandBuilder().setName("help").setDescription("Send this command if you don’t know how to use the bot or if you just want to learn more about it."),
 ].map((command) => command.toJSON());

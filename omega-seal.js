@@ -1,3 +1,6 @@
+// VERSION
+const VERSION = "1.9.0";
+
 // IMPORTS
 const { fApiKey, fAppId, fAuthDomain, fDatabaseURL, fMessagingSenderId, fProjectId, fStorageBucket, token } = require("./config.json");
 const { ActivityType, Client, EmbedBuilder, GatewayIntentBits, InteractionType, MessageFlags, PermissionFlagsBits } = require("discord.js");
@@ -49,7 +52,7 @@ client.once("clientReady", async () => {
 	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\x1b[37m\n`);
 	client.users.fetch("390612175137406978").then((user) => {
 		user.send(
-			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v1.8.1 @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
+			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v${VERSION} @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
 		);
 	});
 
@@ -139,7 +142,7 @@ client.on("interactionCreate", async (interaction) => {
 					let webSocketPing = client.ws.ping;
 
 					await interaction.editReply(
-						`:ping_pong: **Pong!**\n> this interaction was received **${botPing}ms** after it was created\n> the Discord API websocket is reporting a latency of **${webSocketPing}ms**\n> on a network with upload/download speeds of **${Math.round(results.getSummary().upload / 1000000)}Mbps** and **${Math.round(results.getSummary().download / 1000000)}Mbps**\n> network latency is **${Math.round(results.getSummary().latency)}ms**`,
+						`:ping_pong: **Pong!**\n> - interaction received **${botPing}ms** after its creation\n> - Discord API websocket is reporting a latency of **${webSocketPing}ms**\n> - on a network with upload/download speeds of **${Math.round(results.getSummary().upload / 1000000)}Mbps** and **${Math.round(results.getSummary().download / 1000000)}Mbps**\n> - network latency is **${Math.round(results.getSummary().latency)}ms**\n> - went online <t:${Math.round(startTime / 1000)}:R>\n-# <@960236750830194688> v${VERSION}`,
 					);
 
 					logMessage(
@@ -233,7 +236,7 @@ client.on("interactionCreate", async (interaction) => {
 				return;
 			}
 
-			await interaction.reply(`:pensive: You are no longer a <@&${role.id}>\n-# please note that you can move regions without leaving The Square`);
+			await interaction.reply(`:pensive: You are no longer a <@&${role.id}>.\n-# please note that you can move regions without leaving The Square, just use \`/join\``);
 			logMessage(interaction, `${region}`);
 		} catch (error) {
 			errorMessage(interaction, error, false);
@@ -265,14 +268,10 @@ client.on("interactionCreate", async (interaction) => {
 			});
 
 			let regionListString = "";
-			for (let i = 0; i < regions.length; i++) {
-				regionListString += `\n${i + 1}. \`${memberCounts[i][0]}\` **${memberCounts[i][1].toLocaleString("en-CA")}**`;
-			}
+			for (let i = 0; i < regions.length; i++) regionListString += `\n${i + 1}. \`${memberCounts[i][0]}\` **${memberCounts[i][1]}**`;
 
 			await interaction.reply({
-				content: `## :crown: The Square :crown:\n-# all 22 regions, sorted by member count (${memberTotal.toLocaleString(
-					"en-CA",
-				)} total) ${regionListString}\n-# learn more about The Square at [pinniped.page/the-square](https://pinniped.page/projects/the-square)`,
+				content: `## :crown: The Square :crown:\n-# all 22 regions, sorted by member count (${memberTotal} total) ${regionListString}\n-# learn more about The Square at [pinniped.page/the-square](https://pinniped.page/projects/the-square)`,
 				flags: MessageFlags.SuppressEmbeds,
 			});
 			logMessage(interaction, memberTotal);
@@ -326,8 +325,8 @@ client.on("interactionCreate", async (interaction) => {
 			const text = interaction.options.getString("text");
 			const newText = text.split("").join(" ");
 
-			await interaction.reply(`:pen_ballpoint: The text you entered (\`${text}\`) has been expanded.\n${newText}\n-# WARNING: user-generated content`);
-			logMessage(interaction, `“${text}” >>> “${newText}”`);
+			await interaction.reply(newText);
+			logMessage(interaction, newText);
 		} catch (error) {
 			errorMessage(interaction, error, false);
 		}
@@ -338,19 +337,21 @@ client.on("interactionCreate", async (interaction) => {
 		try {
 			const title = interaction.options.getString("title");
 			const description = interaction.options.getString("description");
-			const colour = interaction.options.getString("colour");
+			let colour = interaction.options.getString("colour");
 
-			if (!/^#?[0-9A-Fa-f]{6}$/.test(colour)) {
-				await interaction.reply({
-					content: `:warning: \`${colour}\` is not a valid colour (HEX code) string. Valid colour strings are described by \`^#?[0-9A-Fa-f]{6}$\`.`,
-					flags: MessageFlags.Ephemeral,
-				});
-				logMessage(interaction, `${title} & ${description} & ${colour} (invalid colour)`);
-				return;
-			}
+			if (colour) {
+				if (!/^#?[0-9A-Fa-f]{6}$/.test(colour)) {
+					await interaction.reply({
+						content: `:warning: \`${colour}\` is not a valid [hex code](https://en.wikipedia.org/wiki/Web_colors#Hex_triplet) as described by \`^#?[0-9A-Fa-f]{6}$\`.`,
+						flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
+					});
+					logMessage(interaction, `${title} & ${description} & ${colour} (invalid colour)`);
+					return;
+				}
+			} else colour = randomHex();
 
 			const embed = new EmbedBuilder().setTitle(title).setDescription(description).setColor(colour);
-			await interaction.reply({ content: `:tools: Embed generated!\n-# WARNING: user-generated content`, embeds: [embed] });
+			await interaction.reply({ embeds: [embed] });
 
 			logMessage(interaction, `${title} & ${description} & ${colour}`);
 		} catch (error) {
@@ -365,8 +366,8 @@ client.on("interactionCreate", async (interaction) => {
 
 			if (!/^[A-Z]{4}$/.test(airport)) {
 				await interaction.reply({
-					content: `:warning: \`${airport}\` is not a valid ICAO airport code. Valid ICAO airport codes are described by \`^[A-Z]{4}$\`.`,
-					flags: MessageFlags.Ephemeral,
+					content: `:warning: \`${airport}\` is not a valid [ICAO airport code](https://en.wikipedia.org/wiki/ICAO_airport_code). Valid ICAO airport codes are described by \`^[A-Z]{4}$\`.`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
 				logMessage(interaction, `??? (invalid ICAO airport code)`);
 				return;
@@ -387,7 +388,7 @@ client.on("interactionCreate", async (interaction) => {
 			}
 
 			await interaction.reply({
-				content: `:airplane: Here is the latest [METAR](https://en.wikipedia.org/wiki/METAR) report for \`${airport}\`.\n-# source: [aviationweather.gov/api/data/metar?ids=${airport}](https://aviationweather.gov/api/data/metar?ids=${airport})\n\`\`\`${text}\`\`\``,
+				content: `:airplane: Here is the latest [METAR](https://en.wikipedia.org/wiki/METAR) report for \`${airport}\`.\n-# source: [aviationweather.gov/api/data/metar?ids=${airport}](https://aviationweather.gov/api/data/metar?ids=${airport})\n-# learn how to decode: [weather.gov/media/wrh/mesowest/metar_decode_key.pdf](https://www.weather.gov/media/wrh/mesowest/metar_decode_key.pdf)\n\`\`\`${text}\`\`\``,
 				flags: MessageFlags.SuppressEmbeds,
 			});
 			logMessage(interaction, text);
@@ -451,10 +452,10 @@ client.on("interactionCreate", async (interaction) => {
 				}
 			}
 
-			replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: not in service\n-# please submit a bug report if you believe there is an error`;
+			replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: not in service\n-# please submit a bug report if you believe there is an error`;
 
 			if (southboundTime != Infinity && northboundTime != Infinity) {
-				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
+				replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
 					new Date(southboundTime * 1000),
 				)})\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
 					new Date(northboundTime * 1000),
@@ -464,7 +465,7 @@ client.on("interactionCreate", async (interaction) => {
 				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))})`;
 			}
 			if (southboundTime != Infinity && northboundTime == Infinity) {
-				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
+				replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
 					new Date(southboundTime * 1000),
 				)})\n- NORTHBOUND: not in service\n-# theoretical & roughly estimated Transit Plaza grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
@@ -472,7 +473,7 @@ client.on("interactionCreate", async (interaction) => {
 				)}:R> (${formatTime(new Date(Math.min(southboundGradeCrossingTime, northboundGradeCrossingTime) * 1000))})`;
 			}
 			if (southboundTime == Infinity && northboundTime != Infinity) {
-				replyText = `## :station: ION train arrivals :alarm_clock:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
+				replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
 					new Date(northboundTime * 1000),
 				)})\n-# theoretical & roughly estimated Transit Plaza grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
@@ -545,22 +546,87 @@ client.on("interactionCreate", async (interaction) => {
 	// "/role" - role details
 	if (commandName === "role") {
 		try {
-			if (interaction.member.permissions.has(PermissionFlagsBits.ManageRoles)) {
-				const role = interaction.options.getRole("role");
-				const roleEmbed = new EmbedBuilder()
-					.setTitle("**ROLE DETAILS**")
-					.setDescription(
-						`**:identification_card: NAME:**\n${role.name}\n\n**:people_holding_hands: MEMBER COUNT:**\n${role.members.size}\n\n**:art: COLOUR:**\n${role.hexColor}\n\n**:date: CREATED:**\n${formatDate(role.createdAt)} @ ${formatTime(role.createdAt)}\n\n-# ${role.id}`,
-					)
-					.setColor(role.hexColor);
-				await interaction.reply({ embeds: [roleEmbed] });
-				logMessage(interaction, role.id);
+			if (interaction.inGuild()) {
+				if (interaction.member.permissions.has(PermissionFlagsBits.ManageRoles)) {
+					const role = interaction.options.getRole("role");
+					const roleEmbed = new EmbedBuilder()
+						.setTitle("**ROLE DETAILS**")
+						.setDescription(
+							`**:identification_card: NAME:**\n${role.name}\n\n**:people_holding_hands: MEMBER COUNT:**\n${role.members.size}\n\n**:art: COLOUR:**\n${role.hexColor}\n\n**:date: CREATED:**\n${formatDate(role.createdAt)} @ ${formatTime(role.createdAt)}\n\n-# ${role.id}`,
+						)
+						.setColor(role.hexColor);
+					await interaction.reply({ embeds: [roleEmbed] });
+					logMessage(interaction, role.id);
+				} else {
+					await interaction.reply({
+						content: ":warning: You need the `Manage Roles` permission in this server to use this command.",
+						flags: MessageFlags.Ephemeral,
+					});
+					logMessage(interaction, "insufficient permissions");
+				}
 			} else {
 				await interaction.reply({
-					content: ":warning: You need the `Manage Roles` permission in this server to use this command.",
+					content: ":warning: This command can only be run in servers. There are no roles in a DM.",
 					flags: MessageFlags.Ephemeral,
 				});
-				logMessage(interaction, "insufficient permissions");
+				logMessage(interaction, "!!! (DM; no roles)");
+			}
+		} catch (error) {
+			errorMessage(interaction, error, false);
+		}
+	}
+
+	// "/roles" - role leaderboard
+	if (commandName === "roles") {
+		try {
+			if (interaction.inGuild()) {
+				if (interaction.member.permissions.has(PermissionFlagsBits.ManageRoles)) {
+					let filter = interaction.options.getString("filter");
+					let roles;
+					if (filter) {
+						if (!/^#?[0-9A-Fa-f]{6}$/.test(filter)) {
+							await interaction.reply({
+								content: `:warning: \`${filter}\` is not a valid [hex code](https://en.wikipedia.org/wiki/Web_colors#Hex_triplet) as described by \`^#?[0-9A-Fa-f]{6}$\`.`,
+								flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
+							});
+							logMessage(interaction, `${filter} (invalid colour)`);
+							return;
+						} else {
+							if (filter.length == 6) filter = "#" + filter;
+							roles = interaction.guild.roles.cache.filter((role) => role.hexColor == filter);
+						}
+					} else {
+						roles = interaction.guild.roles.cache;
+					}
+
+					let memberCounts = [];
+					roles.forEach((role) => memberCounts.push([role.name, role.members.filter((member) => !member.user.bot).size]));
+					memberCounts.sort(function (a, b) {
+						return b[1] - a[1];
+					});
+
+					let roleLeaderboardString = "";
+					for (let i = 0; i < memberCounts.length; i++) roleLeaderboardString += `\n${i + 1}. \`${memberCounts[i][0]}\` **${memberCounts[i][1]}**`;
+
+					if (roleLeaderboardString == "") roleLeaderboardString = "\nno roles found";
+
+					await interaction.reply(
+						`## :people_holding_hands: role leaderboard :people_holding_hands:\n-# filter: \`${filter}\`${roleLeaderboardString}\n-# from ${interaction.guild.members.cache.filter((member) => !member.user.bot).size} server members, excluding bots`,
+					);
+					logMessage(interaction, `${filter} >>> ${roles.size}`);
+				} else {
+					await interaction.reply({
+						content: ":warning: You need the `Manage Roles` permission in this server to use this command.",
+						flags: MessageFlags.Ephemeral,
+					});
+					logMessage(interaction, "insufficient permissions");
+				}
+			} else {
+				await interaction.reply({
+					content: ":warning: This command can only be run in servers. There are no roles in a DM.",
+					flags: MessageFlags.Ephemeral,
+				});
+				logMessage(interaction, "!!! (DM; no roles)");
 			}
 		} catch (error) {
 			errorMessage(interaction, error, false);
@@ -571,7 +637,7 @@ client.on("interactionCreate", async (interaction) => {
 	if (commandName === "help") {
 		try {
 			await interaction.reply({
-				content: `:palm_up_hand: **This might help.**\n> documentation/about: [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal)\n> The Square: [pinniped.page/the-square](https://pinniped.page/projects/the-square)\n> GitHub repository: [github.com/ObsidianSeal/Omega-Seal-The-Square](https://github.com/ObsidianSeal/Omega-Seal-The-Square)\n> bot status: [pinniped.page/status#DISCORD-BOT](https://pinniped.page/status#DISCORD-BOT)\n> if all else fails: [pinniped.page/contact](https://pinniped.page/contact)`,
+				content: `:palm_up_hand: **This might help.**\n> [documentation/about](https://pinniped.page/projects/omega-seal) | [The Square](https://pinniped.page/projects/the-square) | [GitHub repository](https://github.com/ObsidianSeal/Omega-Seal-The-Square) | [bot status](https://pinniped.page/status#DISCORD-BOT) | [if all else fails, contact me](https://pinniped.page/contact)\n-# <@960236750830194688> v${VERSION}`,
 				flags: MessageFlags.SuppressEmbeds,
 			});
 
@@ -586,7 +652,7 @@ client.on("interactionCreate", async (interaction) => {
 client.on("guildMemberAdd", async (member) => {
 	try {
 		const memberID = member.id;
-		const memberCount = member.guild.memberCount; // cannot request more often than every 30 seconds
+		const memberCount = member.guild.members.cache.filter((member) => !member.user.bot).size;
 
 		const joinMessages = {
 			"755782483588677653": [
