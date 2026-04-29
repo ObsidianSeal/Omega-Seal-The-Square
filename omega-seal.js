@@ -452,7 +452,7 @@ client.on("interactionCreate", async (interaction) => {
 				}
 			}
 
-			replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: not in service\n-# please submit a bug report if you believe there is an error`;
+			replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: not in service\n-# please tell me if you believe there is an error`;
 
 			if (southboundTime != Infinity && northboundTime != Infinity) {
 				replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
@@ -637,7 +637,7 @@ client.on("interactionCreate", async (interaction) => {
 	if (commandName === "help") {
 		try {
 			await interaction.reply({
-				content: `:palm_up_hand: **This might help.**\n> [documentation/about](https://pinniped.page/projects/omega-seal) | [The Square](https://pinniped.page/projects/the-square) | [GitHub repository](https://github.com/ObsidianSeal/Omega-Seal-The-Square) | [bot status](https://pinniped.page/status#DISCORD-BOT) | [if all else fails, contact me](https://pinniped.page/contact)\n-# <@960236750830194688> v${VERSION}`,
+				content: `:palm_up_hand: **This might help.**\n> [documentation/about](https://pinniped.page/projects/omega-seal) | [The Square](https://pinniped.page/projects/the-square) | [bot status](https://pinniped.page/status#DISCORD-BOT) | [GitHub repository](https://github.com/ObsidianSeal/Omega-Seal-The-Square) | [support via Seal Squad](https://ite.fyi/ss) | [if all else fails, contact me](https://pinniped.page/contact)\n-# <@960236750830194688> v${VERSION}`,
 				flags: MessageFlags.SuppressEmbeds,
 			});
 
@@ -1040,13 +1040,13 @@ async function errorMessage(interaction, error, deferred) {
 		if (deferred) {
 			await interaction.editReply(":bangbang: Deferred interaction experienced an error.");
 			await interaction.followUp({
-				content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> submit a bug report: [pinniped.page/contact](https://pinniped.page/contact)\n> or, for general help, use \`/help\``,
-				flags: MessageFlags.Ephemeral,
+				content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> 1. check [the “DISCORD BOT” status entry](https://pinniped.page/status#DISCORD-BOT) and [GitHub](https://github.com/ObsidianSeal/Omega-Seal-The-Square/issues) to see if this is a known problem\n> 2. if the issue has yet to be reported, bring it up in [Seal Squad](https://ite.fyi/ss) or through [the contact page](https://pinniped.page/contact)\n > 3. be happy\n-# <@960236750830194688> v${VERSION}`,
+				flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 			});
 		} else {
 			await interaction.reply({
-				content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> submit a bug report: [pinniped.page/contact](https://pinniped.page/contact)\n> or, for general help, use \`/help\``,
-				flags: MessageFlags.Ephemeral,
+				content: `:fearful: Something went wrong....\n\`\`\`diff\n- ERROR!!\n- ${error}\n\`\`\`\n:bug: **Please report bugs!**\n> 1. check [the “DISCORD BOT” status entry](https://pinniped.page/status#DISCORD-BOT) and [GitHub](https://github.com/ObsidianSeal/Omega-Seal-The-Square/issues) to see if this is a known problem\n> 2. if the issue has yet to be reported, bring it up in [Seal Squad](https://ite.fyi/ss) or through [the contact page](https://pinniped.page/contact)\n > 3. be happy\n-# <@960236750830194688> v${VERSION}`,
+				flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 			});
 		}
 	} catch (error2) {
