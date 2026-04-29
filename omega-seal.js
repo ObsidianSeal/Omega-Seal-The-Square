@@ -611,7 +611,7 @@ client.on("interactionCreate", async (interaction) => {
 					if (roleLeaderboardString == "") roleLeaderboardString = "\nno roles found";
 
 					await interaction.reply(
-						`## :people_holding_hands: role leaderboard :people_holding_hands:\n-# filter: \`${filter}\`${roleLeaderboardString}\n-# from ${interaction.guild.members.cache.filter((member) => !member.user.bot).size} server members, excluding bots`,
+						`## :people_holding_hands: role leaderboard :people_holding_hands:\n-# filter: \`${filter}\`${roleLeaderboardString}\n-# from ${interaction.guild.members.cache.filter((member) => !member.user.bot).size} server member${interaction.guild.members.cache.filter((member) => !member.user.bot).size != 1 ? "s" : ""}, excluding bots`,
 					);
 					logMessage(interaction, `${filter} >>> ${roles.size}`);
 				} else {
