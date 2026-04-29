@@ -1,5 +1,5 @@
 // VERSION
-const VERSION = "1.9.0";
+const VERSION = "1.9.1";
 
 // IMPORTS
 const { fApiKey, fAppId, fAuthDomain, fDatabaseURL, fMessagingSenderId, fProjectId, fStorageBucket, token } = require("./config.json");
