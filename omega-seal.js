@@ -1028,7 +1028,7 @@ async function logMessage(interaction, message) {
 	let name = interaction.user.username;
 	if (!interaction.inGuild()) name = `\x1b[33m[DM]\x1b[37m ${name}`;
 
-	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${name} [${formatDate(new Date())} ${formatTime(new Date())}]\x1b[37m`);
+	console.log(`\x1b[35m> /${interaction.commandName}\x1b[37m — ${message} | ${name} [${formatDate(new Date())} ${formatTime(new Date())}]`);
 }
 
 // UTILITY: LOG INTERACTION ERROR & SEND RESPONSE
@@ -1059,7 +1059,7 @@ function conversationLogMessage(message, reply) {
 	let name = message.author.username;
 	if (!message.inGuild()) name = `\x1b[33m[DM]\x1b[37m ${name}`;
 
-	console.log(`\x1b[35m${message.content}\x1b[37m >>> ${reply} | ${name} [${formatDate(new Date())} ${formatTime(new Date())}]\x1b[37m`);
+	console.log(`\x1b[35m${message.content}\x1b[37m >>> ${reply} | ${name} [${formatDate(new Date())} ${formatTime(new Date())}]`);
 }
 
 // UTILITY: LOG CONVERSATION ERROR
@@ -1073,19 +1073,19 @@ async function databaseLogMessage(direction, path, content) {
 	let colourText = "\x1b[34m[db] RECEIVE";
 	if (direction) colourText = "\x1b[36m[db] SEND";
 
-	console.log(`${colourText} @ ${path}\x1b[37m ${content} [${formatDate(new Date())} ${formatTime(new Date())}]\x1b[37m`);
+	console.log(`${colourText} @ ${path}\x1b[37m ${content} [${formatDate(new Date())} ${formatTime(new Date())}]`);
 	console.log(content);
 }
 
 // UTILITY: LOG DATABASE ERROR
 async function databaseErrorMessage(error) {
-	console.log(`\x1b[31m[db] ERROR!!\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]\x1b[37m`);
+	console.log(`\x1b[31m[db] ERROR!!\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
 	console.log(error);
 }
 
 // UTILITY: OTHER ERROR
 function otherErrorMessage(error) {
-	console.log(`\x1b[31mERROR!!\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]\x1b[37m`);
+	console.log(`\x1b[31mERROR!!\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
 	console.log(error);
 }
 
