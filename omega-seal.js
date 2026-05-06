@@ -11,6 +11,10 @@ const SpeedTest = require("@cloudflare/speedtest").default;
 const mathjax = require("mathjax");
 const sharp = require("sharp");
 
+// (HOPEFULLY TEMPORARY) FIX FOR GRT DATA
+const tls = require("node:tls");
+tls.DEFAULT_CIPHERS += ":!DH:!DHE";
+
 // FIREBASE CONFIGURATION & INITIAL DATABASE STUFF
 const firebaseConfig = {
 	apiKey: fApiKey,
@@ -51,9 +55,7 @@ client.once("clientReady", async () => {
 	startTime = Date.now();
 	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\x1b[37m\n`);
 	client.users.fetch("390612175137406978").then((user) => {
-		user.send(
-			`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v${VERSION} @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`,
-		);
+		user.send(`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v${VERSION} @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 	});
 
 	// BEGIN DATABASE LISTENERS
@@ -75,30 +77,7 @@ client.once("clientReady", async () => {
 });
 
 // REGION LIST ("THE SQUARE")
-const regions = [
-	"dark-red",
-	"red",
-	"orange",
-	"dark-yellow",
-	"yellow",
-	"gold",
-	"lime",
-	"green",
-	"dark-green",
-	"olive",
-	"teal",
-	"turquoise",
-	"light-blue",
-	"cyan",
-	"blue",
-	"dark-blue",
-	"magenta",
-	"fuchsia",
-	"pink",
-	"lavender",
-	"violet",
-	"purple",
-];
+const regions = ["dark-red", "red", "orange", "dark-yellow", "yellow", "gold", "lime", "green", "dark-green", "olive", "teal", "turquoise", "light-blue", "cyan", "blue", "dark-blue", "magenta", "fuchsia", "pink", "lavender", "violet", "purple"];
 
 // ROLE LIST ("THE SQUARE")
 const roles = [
@@ -145,10 +124,7 @@ client.on("interactionCreate", async (interaction) => {
 						`:ping_pong: **Pong!**\n> - interaction received **${botPing}ms** after its creation\n> - Discord API websocket is reporting a latency of **${webSocketPing}ms**\n> - on a network with upload/download speeds of **${Math.round(results.getSummary().upload / 1000000)}Mbps** and **${Math.round(results.getSummary().download / 1000000)}Mbps**\n> - network latency is **${Math.round(results.getSummary().latency)}ms**\n> - went online <t:${Math.round(startTime / 1000)}:R>\n-# <@960236750830194688> v${VERSION}`,
 					);
 
-					logMessage(
-						interaction,
-						`${botPing}, ${webSocketPing}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().latency)}`,
-					);
+					logMessage(interaction, `${botPing}, ${webSocketPing}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().latency)}`);
 				} catch (error) {
 					errorMessage(interaction, error, true);
 				}
@@ -455,9 +431,7 @@ client.on("interactionCreate", async (interaction) => {
 			replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: not in service\n-# please tell me if you believe there is an error`;
 
 			if (southboundTime != Infinity && northboundTime != Infinity) {
-				replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(
-					new Date(southboundTime * 1000),
-				)})\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
+				replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(new Date(southboundTime * 1000))})\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
 					new Date(northboundTime * 1000),
 				)})\n-# theoretical & roughly estimated Transit Plaza grade crossing activation time: <t:${Math.min(
 					southboundGradeCrossingTime,
@@ -941,11 +915,7 @@ function wordleleleListener() {
 			let n = "";
 			if ([8, 11, 18].includes(receivedData.length)) n = "n";
 			try {
-				await client.channels.cache
-					.get("1490729689239519312")
-					.send(
-						`:bell: Someone set the [wordlelele](https://pinniped.page/w) <t:${Math.round(lastWordleleleTime / 1000)}:R> to a${n} ${receivedData.length}-letter word!`,
-					);
+				await client.channels.cache.get("1490729689239519312").send(`:bell: Someone set the [wordlelele](https://pinniped.page/w) <t:${Math.round(lastWordleleleTime / 1000)}:R> to a${n} ${receivedData.length}-letter word!`);
 			} catch (error) {
 				otherErrorMessage(error);
 			}
@@ -1008,14 +978,7 @@ function randomHex() {
 
 // UTILITY: CONVERT HTML ENTITIES TO TEXT
 function entitiesToText(string) {
-	return string
-		.replaceAll("&lt;", "<")
-		.replaceAll("&gt;", ">")
-		.replaceAll("&ldquo;", "“")
-		.replaceAll("&rdquo;", "”")
-		.replaceAll("&lsquo;", "‘")
-		.replaceAll("&rsquo;", "’")
-		.replaceAll("&amp;", "&");
+	return string.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&ldquo;", "“").replaceAll("&rdquo;", "”").replaceAll("&lsquo;", "‘").replaceAll("&rsquo;", "’").replaceAll("&amp;", "&");
 }
 
 // UTILITY: WAIT (FROM THE GAME OF NUMBERS)
