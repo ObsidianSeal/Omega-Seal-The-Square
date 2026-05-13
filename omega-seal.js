@@ -636,11 +636,11 @@ client.on("guildMemberAdd", async (member) => {
 			],
 			"1349764046274170930": [
 				"1349764047234662503",
-				`## <:cepc:1499489869364461832> Welcome to Civil Engineers’ Paradise <@${memberID}>! <:cepc:1499489869364461832>\n-# member #${memberCount}\n- MUTE <#1373444936799617054>\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!`,
+				`## <:cepc:1499489869364461832> Welcome to Civil Engineers’ Paradise <@${memberID}>! <:cepc:1499489869364461832>\n-# member #${memberCount}\n- MUTE <#1373444936799617054>\n- please read the <#1349772402808324168>\n- catch up on the latest <#1349772354389016627>\n- become familiar with the server <#1349772421355536406>\n- look at who else is here in the list of <#1349773357037650002>\n- and start chatting in the many channels!\n-# also, you should probably mute <#1373444936799617054>`,
 			],
 			"1440028630746005698": [
 				"1440055859685232840",
-				`## <:cive29:1440073698345357392> Welcome to CIVE ’29 <@${memberID}>! <:cive29:1440073698345357392>\n-# member #${memberCount} — congratulations on your successful <#1440055799333523496>\n- please read the <#1440044198148575385>\n- catch up on the latest <#1440044178448056382>\n- check out the <#1440044224782405633>\n- start chatting here in <#1440055859685232840> and then head over to the many other specific channels!\n-# also, you should probably mute <#1373444936799617054>`,
+				`## <:cive29:1440073698345357392> Welcome to CIVE ’29 <@${memberID}>! <:cive29:1440073698345357392>\n-# member #${memberCount} — congratulations on your successful <#1440055799333523496>\n- please read the <#1440044198148575385>\n- catch up on the latest <#1440044178448056382>\n- check out the <#1440044224782405633>\n- start chatting here in <#1440055859685232840> and then head over to the many other specific channels!`,
 			],
 			"1451787499109089497": [
 				"1451787501378343075",
