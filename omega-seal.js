@@ -14,7 +14,6 @@ const sharp = require("sharp");
 // (HOPEFULLY TEMPORARY) FIX FOR GRT GTFS REQUESTS
 const tls = require("node:tls");
 tls.DEFAULT_CIPHERS += ":!DH:!DHE";
-console.log("NODE_OPTIONS:", process.env.NODE_OPTIONS);
 
 // FIREBASE CONFIGURATION & INITIAL DATABASE STUFF
 const firebaseConfig = {
