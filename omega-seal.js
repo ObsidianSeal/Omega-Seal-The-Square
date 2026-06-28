@@ -15,7 +15,7 @@ const sharp = require("sharp");
 const tls = require("node:tls");
 tls.DEFAULT_CIPHERS += ":!DH:!DHE";
 
-// (HOPEFULLY TEMPORARY) FIX FOR CLOUDFLARE SPEEDTEST
+// (HOPEFULLY TEMPORARY) FIX FOR CLOUDFLARE SPEEDTEST, provided by Gemini
 if (typeof window === "undefined") {
 	global.window = {
 		location: {
