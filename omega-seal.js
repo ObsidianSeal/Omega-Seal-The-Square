@@ -15,6 +15,15 @@ const sharp = require("sharp");
 const tls = require("node:tls");
 tls.DEFAULT_CIPHERS += ":!DH:!DHE";
 
+// (HOPEFULLY TEMPORARY) FIX FOR CLOUDFLARE SPEEDTEST
+if (typeof window === "undefined") {
+	global.window = {
+		location: {
+			origin: "https://speed.cloudflare.com",
+		},
+	};
+}
+
 // FIREBASE CONFIGURATION & INITIAL DATABASE STUFF
 const firebaseConfig = {
 	apiKey: fApiKey,
