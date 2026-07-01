@@ -53,7 +53,7 @@ async function startMathJax() {
 // MAKE THE CLIENT
 const client = new Client({
 	intents: [GatewayIntentBits.DirectMessages, GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
-	presence: { activities: [{ type: ActivityType.Watching, name: "try the new “/math” command!" }] },
+	presence: { activities: [{ type: ActivityType.Watching, name: "ite.fyi/bot" }] },
 });
 
 // START THE CLIENT
