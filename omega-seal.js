@@ -8,7 +8,7 @@ const { initializeApp } = require("firebase/app");
 const { getDatabase, onValue, push, ref, set } = require("firebase/database");
 const { transit_realtime } = require("gtfs-realtime-bindings");
 const SpeedTest = require("@cloudflare/speedtest").default;
-const mathjax = require("mathjax");
+const MathJax = require("mathjax");
 const sharp = require("sharp");
 
 // (HOPEFULLY TEMPORARY) FIX FOR GRT GTFS REQUESTS
@@ -40,40 +40,40 @@ const botStatusRef = ref(db, "omega-seal/status");
 const botContactFormMessagesRef = ref(db, "omega-seal/contact-form-messages");
 const wordleleleWordRef = ref(db, "wordlelele/word");
 
-// INITIAL MATHJAX STUFF
-let MathJax;
-async function startMathJax() {
-	MathJax = await mathjax.init({
-		loader: { load: ["input/tex", "output/svg", "[tex]/color", "[tex]/ams"] },
-		tex: { packages: { "[+]": ["color", "ams"] } },
-		svg: { fontCache: "none" },
-	});
-}
-
 // MAKE THE CLIENT
 const client = new Client({
 	intents: [GatewayIntentBits.DirectMessages, GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
 	presence: { activities: [{ type: ActivityType.Watching, name: "ite.fyi/bot" }] },
 });
 
-// START THE CLIENT
+// START THE CLIENT & MAKE MATHJAX INSTANCE
 let startTime = 0;
+let mathJaxInstance;
 client.login(token);
 client.once("clientReady", async () => {
 	// LOG
 	startTime = Date.now();
-	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\x1b[37m\n`);
+	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\x1b[37m`);
 	client.users.fetch("390612175137406978").then((user) => {
 		user.send(`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v${VERSION} @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 	});
+
+	// START MATHJAX
+	await MathJax.init({
+		loader: { load: ["input/tex", "output/svg", "[tex]/color", "[tex]/ams"] },
+		tex: { packages: { "[+]": ["color", "ams"] } },
+		svg: { fontCache: "none" },
+	})
+		.then((mathJaxReady) => {
+			mathJaxInstance = mathJaxReady;
+			console.log("\x1b[32mMathJax is ready!\x1b[37m\n");
+		})
+		.catch((error) => otherErrorMessage(error));
 
 	// BEGIN DATABASE LISTENERS
 	statusListener();
 	contactFormMessagesListener();
 	wordleleleListener();
-
-	// START MATHJAX
-	startMathJax();
 
 	// UPDATE GUILD MEMBER CACHES
 	client.guilds.cache.forEach(async (guild) => {
@@ -519,6 +519,7 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.deferReply();
 			const latex = interaction.options.getString("latex");
 			const buffer = await generateMathPNG(latex);
+			if (!buffer) throw new Error("no image was provided by MathJax, please report this bug");
 			await interaction.editReply({ files: [{ attachment: buffer, name: "math.png" }] });
 			logMessage(interaction, latex);
 		} catch (error) {
@@ -935,10 +936,13 @@ function wordleleleListener() {
 // UTILITY: LATEX TO PNG
 async function generateMathPNG(latex) {
 	try {
+		if (!MathJax) throw new Error("MathJax is not available, please report this bug");
+		if (!mathJaxInstance) throw new Error("no MathJax instance exists, please report this bug");
+		if (typeof MathJaxInstance.tex2svgPromise !== "function") throw new Error("the TEX to SVG conversion function is not available, please report this bug");
 		latex = `\\color{white} ${latex.replaceAll("\\\\", "\\\\ \\color{white} ")}`;
-		const node = await MathJax.tex2svgPromise(latex, { display: true });
-		const string = MathJax.startup.adaptor.innerHTML(node);
-		if (string.includes("data-mjx-error")) throw new Error("invalid LaTeX syntax");
+		const node = await mathJaxInstance.tex2svgPromise(latex, { display: true });
+		const string = mathJaxInstance.startup.adaptor.innerHTML(node);
+		if (string.includes("data-mjx-error")) throw new Error("invalid LaTeX syntax, please try again");
 		return await sharp(Buffer.from(string), { density: 300 })
 			.extend({
 				top: 10,
@@ -951,6 +955,7 @@ async function generateMathPNG(latex) {
 			.toBuffer();
 	} catch (error) {
 		otherErrorMessage(error);
+		return null;
 	}
 }
 
