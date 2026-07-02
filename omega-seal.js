@@ -46,29 +46,26 @@ const client = new Client({
 	presence: { activities: [{ type: ActivityType.Watching, name: "ite.fyi/bot" }] },
 });
 
-// START THE CLIENT & MAKE MATHJAX INSTANCE
+// START THE CLIENT & MAKE THE MATHJAX INSTANCE
 let startTime = 0;
 let mathJaxInstance;
 client.login(token);
 client.once("clientReady", async () => {
 	// LOG
 	startTime = Date.now();
-	console.log(`\x1b[32mOmega Seal is now online!\n\x1b[32m[${mentionResponses.length} possible mention responses]\x1b[37m`);
+	console.log(`\x1b[32mOmega Seal is now online with ${mentionResponses.length} possible mention responses!\x1b[37m\n`);
 	client.users.fetch("390612175137406978").then((user) => {
 		user.send(`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v${VERSION} @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 	});
 
 	// START MATHJAX
-	await MathJax.init({
+	console.log("\x1b[33m----- MATHJAX -----\x1b[37m");
+	mathJaxInstance = await MathJax.init({
 		loader: { load: ["input/tex", "output/svg", "[tex]/color", "[tex]/ams"] },
 		tex: { packages: { "[+]": ["color", "ams"] } },
 		svg: { fontCache: "none" },
-	})
-		.then((mathJaxReady) => {
-			mathJaxInstance = mathJaxReady;
-			console.log("\x1b[32mMathJax is ready!\x1b[37m\n");
-		})
-		.catch((error) => otherErrorMessage(error));
+	});
+	console.log("\x1b[33m-------------------\x1b[37m\n");
 
 	// BEGIN DATABASE LISTENERS
 	statusListener();
@@ -519,7 +516,7 @@ client.on("interactionCreate", async (interaction) => {
 			await interaction.deferReply();
 			const latex = interaction.options.getString("latex");
 			const buffer = await generateMathPNG(latex);
-			if (!buffer) throw new Error("no image was provided by MathJax, please report this bug");
+			if (!buffer) throw new Error("no image was provided by MathJax, please report this bug immediately");
 			await interaction.editReply({ files: [{ attachment: buffer, name: "math.png" }] });
 			logMessage(interaction, latex);
 		} catch (error) {
@@ -936,9 +933,6 @@ function wordleleleListener() {
 // UTILITY: LATEX TO PNG
 async function generateMathPNG(latex) {
 	try {
-		if (!MathJax) throw new Error("MathJax is not available, please report this bug");
-		if (!mathJaxInstance) throw new Error("no MathJax instance exists, please report this bug");
-		if (typeof MathJaxInstance.tex2svgPromise !== "function") throw new Error("the TEX to SVG conversion function is not available, please report this bug");
 		latex = `\\color{white} ${latex.replaceAll("\\\\", "\\\\ \\color{white} ")}`;
 		const node = await mathJaxInstance.tex2svgPromise(latex, { display: true });
 		const string = mathJaxInstance.startup.adaptor.innerHTML(node);
