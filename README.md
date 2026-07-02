@@ -4,7 +4,7 @@
 
 Obsidian_Seal’s personal Discord bot!
 
-[Discord.js](https://discord.js.org/) bot + other APIs
+[Discord.js](https://discord.js.org/) + a bunch of APIs and other packages
 
 no `node_modules` or `config.json`
 

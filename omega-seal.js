@@ -986,7 +986,7 @@ function randomHex() {
 
 // UTILITY: CONVERT HTML ENTITIES TO TEXT
 function entitiesToText(string) {
-	return string.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&ldquo;", "“").replaceAll("&rdquo;", "”").replaceAll("&lsquo;", "‘").replaceAll("&rsquo;", "’").replaceAll("&amp;", "&").replaceAll("&reg;", "®");
+	return string.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&ldquo;", "“").replaceAll("&rdquo;", "”").replaceAll("&lsquo;", "‘").replaceAll("&rsquo;", "’").replaceAll("&reg;", "®").replaceAll("&amp;", "&");
 }
 
 // UTILITY: WAIT (FROM THE GAME OF NUMBERS)
