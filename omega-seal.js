@@ -53,7 +53,7 @@ client.login(token);
 client.once("clientReady", async () => {
 	// LOG
 	startTime = Date.now();
-	console.log(`\x1b[32mOmega Seal is now online with ${mentionResponses.length} possible mention responses!\x1b[37m\n`);
+	console.log(`\x1b[32mOmega Seal is now online with ${mentionResponses.length} normal and ${specialResponses.length} special mention responses!\x1b[37m\n`);
 	client.users.fetch("390612175137406978").then((user) => {
 		user.send(`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v${VERSION} @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 	});
@@ -72,14 +72,8 @@ client.once("clientReady", async () => {
 	contactFormMessagesListener();
 	wordleleleListener();
 
-	// UPDATE GUILD MEMBER CACHES
-	client.guilds.cache.forEach(async (guild) => {
-		try {
-			await guild.members.fetch();
-		} catch (error) {
-			otherErrorMessage(error);
-		}
-	});
+	// UPDATE GUILD MEMBER CACHE
+	updateMembers();
 });
 
 // REGION LIST ("THE SQUARE")
@@ -782,6 +776,19 @@ const mentionResponses = [
 	"https://giphy.com/gifs/ywGp4PMJdeLyuRq7vJ",
 	"https://tenor.com/view/no-correlation-gif-1271746605347850530",
 ];
+const specialResponses = [
+	"let me cook",
+	"on it",
+	"sure, just a second",
+	"whatever you say",
+	"ok chief",
+	"do I have to",
+	"of everything you could have asked...why this",
+	"what if I don’t want to",
+	"bruh I just did",
+	"sir yes sir right away sir",
+	":expressionless:",
+];
 client.on("messageCreate", (message) => {
 	try {
 		if (message.author.bot) return;
@@ -789,7 +796,12 @@ client.on("messageCreate", (message) => {
 			if (!message.channel.permissionsFor(client.user).has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages])) return;
 		}
 		if (message.mentions.has(client.user)) {
-			response = mentionResponses[Math.floor(Math.random() * mentionResponses.length)];
+			if (message.content == "<@960236750830194688> please refresh the guild member cache" && message.author.id == "390612175137406978") {
+				response = specialResponses[Math.floor(Math.random() * specialResponses.length)];
+				updateMembers();
+			} else {
+				response = mentionResponses[Math.floor(Math.random() * mentionResponses.length)];
+			}
 			message.reply(response);
 			conversationLogMessage(message, response);
 		}
@@ -951,6 +963,17 @@ async function generateMathPNG(latex) {
 		otherErrorMessage(error);
 		return null;
 	}
+}
+
+// UTILITY: update guild member cache
+function updateMembers() {
+	client.guilds.cache.forEach(async (guild) => {
+		try {
+			await guild.members.fetch();
+		} catch (error) {
+			otherErrorMessage(error);
+		}
+	});
 }
 
 // UTILITY: FORMAT DATE STRING FROM DATE OBJECT
