@@ -789,7 +789,12 @@ const specialResponses = [
 	"sir yes sir right away sir",
 	":expressionless:",
 ];
-client.on("messageCreate", (message) => {
+
+const skullTrigger = "67";
+const skullReaction = "💀";
+
+client.on("messageCreate", async (message) => {
+
 	try {
 		if (message.author.bot) return;
 		if (message.inGuild()) {
@@ -804,6 +809,14 @@ client.on("messageCreate", (message) => {
 			}
 			message.reply(response);
 			conversationLogMessage(message, response);
+		}
+
+		// react to any message containing "67"
+		if (message.content.includes(skullTrigger)) {
+			if (!message.inGuild() || message.channel.permissionsFor(client.user).has(PermissionFlagsBits.AddReactions)) {
+				await message.react(skullReaction);
+				conversationLogMessage(message, `${skullReaction} (reaction)`);
+			}
 		}
 	} catch (error) {
 		conversationErrorMessage(message, error);
