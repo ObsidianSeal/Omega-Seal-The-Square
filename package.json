@@ -8,7 +8,7 @@
 		"@cloudflare/speedtest": "^1.13.0",
 		"@firebase/database": "^1.1.4",
 		"discord.js": "^14.27.0",
-		"firebase": "^12.16.0",
+		"firebase": "^12.17.0",
 		"gtfs-realtime-bindings": "^2.1.0",
 		"mathjax": "^3.2.2",
 		"sharp": "^0.35.3"
