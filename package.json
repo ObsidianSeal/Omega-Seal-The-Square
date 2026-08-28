@@ -5,7 +5,7 @@
 	"description": "Obsidian_Seal’s personal Discord bot!",
 	"main": "omega-seal.js",
 	"dependencies": {
-		"@cloudflare/speedtest": "^1.13.0",
+		"@cloudflare/speedtest": "^1.13.1",
 		"@firebase/database": "^1.1.4",
 		"discord.js": "^14.27.0",
 		"firebase": "^12.18.0",
