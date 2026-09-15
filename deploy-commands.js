@@ -64,6 +64,23 @@ const commands = [
 		.setDescription("Roles in the server, sorted by member count.")
 		.addStringOption((option) => option.setName("filter").setDescription("Filter to specific roles by providing a hex code.").setRequired(false).setMinLength(6).setMaxLength(7)),
 
+	// "/tag"
+	new SlashCommandBuilder()
+		.setName("tag")
+		.setDescription("Quickly update the tags applied to this forum post.")
+		.addSubcommand((subcommand) =>
+			subcommand
+				.setName("add")
+				.setDescription("Add a tag to this forum post.")
+				.addStringOption((option) => option.setName("tag").setDescription("The name of an existing tag.").setRequired(true)),
+		)
+		.addSubcommand((subcommand) =>
+			subcommand
+				.setName("remove")
+				.setDescription("Remove a tag from this forum post.")
+				.addStringOption((option) => option.setName("tag").setDescription("The name of one of the tags on this post.").setRequired(true)),
+		),
+
 	// "/text"
 	new SlashCommandBuilder()
 		.setName("text")

@@ -8,7 +8,7 @@
 
 no `node_modules` (to reduce repository bloat) or `config.json` (for security)
 
-[DOCUMENTATION — v1.9.1](https://pinniped.page/projects/omega-seal)
+[DOCUMENTATION — v1.10.0](https://pinniped.page/projects/omega-seal)
 
 ---
 
@@ -31,6 +31,7 @@ The name of this repository comes from the original purpose of the bot. Now that
 - /populations — regions of The Square, sorted by member count
 - /role — role details
 - /roles — role leaderboard
+- /tag - forum post tag editing
 - /text — post a message to pinniped.page/text
 - /text-space — special text emphasis
 

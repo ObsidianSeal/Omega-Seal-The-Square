@@ -1,5 +1,5 @@
 // VERSION
-const VERSION = "1.9.1";
+const VERSION = "1.10.0";
 
 // IMPORTS
 const { fApiKey, fAppId, fAuthDomain, fDatabaseURL, fMessagingSenderId, fProjectId, fStorageBucket, token } = require("./config.json");
@@ -565,6 +565,15 @@ client.on("interactionCreate", async (interaction) => {
 				});
 				logMessage(interaction, "!!! (DM; no roles)");
 			}
+		} catch (error) {
+			errorMessage(interaction, error, false);
+		}
+	}
+
+	// "/tag" - forum post tag editing
+	if (commandName === "tag") {
+		try {
+			logMessage(interaction, "!!!");
 		} catch (error) {
 			errorMessage(interaction, error, false);
 		}
