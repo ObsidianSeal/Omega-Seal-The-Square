@@ -8,7 +8,7 @@
 
 no `node_modules` (to reduce repository bloat) or `config.json` (for security)
 
-[DOCUMENTATION @ v1.9.1](https://pinniped.page/projects/omega-seal)
+[DOCUMENTATION — v1.9.1](https://pinniped.page/projects/omega-seal)
 
 ---
 
@@ -33,6 +33,8 @@ The name of this repository comes from the original purpose of the bot. Now that
 - /roles — role leaderboard
 - /text — post a message to pinniped.page/text
 - /text-space — special text emphasis
+
+full explanations and further reading at [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal)
 
 ---
 
