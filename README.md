@@ -6,29 +6,33 @@
 
 [Discord.js](https://discord.js.org/) + [a bunch of APIs and other packages](https://pinniped.page/projects/omega-seal)
 
-no `node_modules` or `config.json`
+no `node_modules` (to reduce repository bloat) or `config.json` (for security)
 
-[v1.9.1 | DOCUMENTATION](https://pinniped.page/projects/omega-seal)
+[DOCUMENTATION @ v1.9.1](https://pinniped.page/projects/omega-seal)
+
+---
+
+The name of this repository comes from the original purpose of the bot. Now that it does much more, I&rsquo;ve separated [The Square](https://pinniped.page/projects/the-square) from [Omega Seal](https://pinniped.page/projects/omega-seal).
 
 ---
 
 ## commands
 
-- /embed - generate a custom embed
-- /help - help message
-- /ion - see when the next ION trains are coming to UW station
-- /join - join a region of The Square
-- /leave - leave The Square
-- /math - render LaTeX
-- /metar - get a METAR report from a specified airport
-- /music - random song
-- /ping - send latency information
-- /playlist - get playlists link
-- /populations - regions of The Square, sorted by member count
-- /role - role details
-- /roles - role leaderboard
-- /text - post a message to pinniped.page/text
-- /text-space - special text emphasis
+- /embed — generate a custom embed
+- /help — help message
+- /ion — see when the next ION trains are coming to UW station
+- /join — join a region of The Square
+- /leave — leave The Square
+- /math — render LaTeX
+- /metar — get a METAR report from a specified airport
+- /music — random song
+- /ping — send latency information
+- /playlist — get playlists link
+- /populations — regions of The Square, sorted by member count
+- /role — role details
+- /roles — role leaderboard
+- /text — post a message to pinniped.page/text
+- /text-space — special text emphasis
 
 ---
 
