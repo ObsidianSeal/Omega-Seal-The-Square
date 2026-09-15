@@ -110,204 +110,6 @@ client.on("interactionCreate", async (interaction) => {
 	if (interaction.type !== InteractionType.ApplicationCommand) return;
 	const { commandName } = interaction;
 
-	// "/ping" - send latency information
-	if (commandName === "ping") {
-		try {
-			let botPing = Date.now() - interaction.createdTimestamp;
-			await interaction.deferReply();
-
-			new SpeedTest().onFinish = async (results) => {
-				try {
-					let webSocketPing = client.ws.ping;
-
-					await interaction.editReply(
-						`:ping_pong: **Pong!**\n> - interaction received **${botPing}ms** after its creation\n> - Discord API websocket is reporting a latency of **${webSocketPing}ms**\n> - on a network with upload/download speeds of **${Math.round(results.getSummary().upload / 1000000)}Mbps** and **${Math.round(results.getSummary().download / 1000000)}Mbps**\n> - network latency is **${Math.round(results.getSummary().latency)}ms**\n> - went online <t:${Math.round(startTime / 1000)}:R>\n-# <@960236750830194688> v${VERSION}`,
-					);
-
-					logMessage(interaction, `${botPing}, ${webSocketPing}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().latency)}`);
-				} catch (error) {
-					errorMessage(interaction, error, true);
-				}
-			};
-		} catch (error) {
-			errorMessage(interaction, error, true);
-		}
-	}
-
-	// "/join" - join a region of The Square
-	if (commandName === "join") {
-		try {
-			const string = interaction.options.getString("region").toLowerCase().replaceAll(/ /g, "");
-
-			if (!interaction.inGuild() || interaction.guild.id != "755782483588677653") {
-				await interaction.reply({
-					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
-					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
-				});
-				logMessage(interaction, `!!! (not Seal Squad)`);
-				return;
-			}
-
-			let member = interaction.member;
-
-			if (regions.includes(string)) {
-				roles.forEach((id) => {
-					if (member.roles.cache.has(id)) {
-						let role = member.guild.roles.cache.find((role) => role.id === id);
-						member.roles.remove(role);
-					}
-				});
-
-				let role = member.guild.roles.cache.find((role) => role.id === roles[regions.indexOf(string)]);
-				member.roles.add(role);
-
-				await interaction.reply({
-					content: `:grin: You are now a <@&${role.id}>!\n-# learn more about your region at [pinniped.page/the-square#${string}](https://pinniped.page/projects/the-square#${string})`,
-					flags: MessageFlags.SuppressEmbeds,
-				});
-			} else {
-				await interaction.reply({
-					content: `:warning: \`${string}\` is not one of [**The Square**](https://pinniped.page/projects/the-square)’s regions. Visit [pinniped.page/the-square](https://pinniped.page/projects/the-square) for more information.`,
-					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
-				});
-				logMessage(interaction, `??? (${string})`);
-				return;
-			}
-
-			logMessage(interaction, `${string}`);
-		} catch (error) {
-			errorMessage(interaction, error, false);
-		}
-	}
-
-	// "/leave" - leave The Square
-	if (commandName === "leave") {
-		try {
-			if (!interaction.inGuild() || interaction.guild.id != "755782483588677653") {
-				await interaction.reply({
-					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
-					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
-				});
-				logMessage(interaction, `!!! (not Seal Squad)`);
-				return;
-			}
-
-			let member = interaction.member;
-			let role, region;
-
-			roles.forEach((id) => {
-				if (member.roles.cache.has(id)) {
-					role = member.guild.roles.cache.find((role) => role.id === id);
-					member.roles.remove(role);
-					region = regions[roles.indexOf(id)];
-				}
-			});
-
-			if (region == null) {
-				await interaction.reply({
-					content: `:warning: You have to join [**The Square**](https://pinniped.page/projects/the-square) before you can leave! Visit [pinniped.page/the-square](https://pinniped.page/projects/the-square) for more information.`,
-					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
-				});
-				logMessage(interaction, `!!! (not in The Square)`);
-				return;
-			}
-
-			await interaction.reply(`:pensive: You are no longer a <@&${role.id}>.\n-# please note that you can move regions without leaving The Square, just use \`/join\``);
-			logMessage(interaction, `${region}`);
-		} catch (error) {
-			errorMessage(interaction, error, false);
-		}
-	}
-
-	// "/populations" - regions of The Square, sorted by member count
-	if (commandName === "populations") {
-		try {
-			if (!interaction.inGuild() || interaction.guild.id != "755782483588677653") {
-				await interaction.reply({
-					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
-					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
-				});
-				logMessage(interaction, `!!! (not Seal Squad)`);
-				return;
-			}
-
-			let memberCounts = [];
-			let memberTotal = 0;
-			for (let i = 0; i < regions.length; i++) {
-				const role = interaction.guild.roles.cache.find((role) => role.id === roles[i]);
-				const memberCount = role.members.size;
-				memberCounts.push([regions[i], memberCount]);
-				memberTotal += memberCount;
-			}
-			memberCounts.sort(function (a, b) {
-				return b[1] - a[1];
-			});
-
-			let regionListString = "";
-			for (let i = 0; i < regions.length; i++) regionListString += `\n${i + 1}. \`${memberCounts[i][0]}\` **${memberCounts[i][1]}**`;
-
-			await interaction.reply({
-				content: `## :crown: The Square :crown:\n-# all 22 regions, sorted by member count (${memberTotal} total) ${regionListString}\n-# learn more about The Square at [pinniped.page/the-square](https://pinniped.page/projects/the-square)`,
-				flags: MessageFlags.SuppressEmbeds,
-			});
-			logMessage(interaction, memberTotal);
-		} catch (error) {
-			errorMessage(interaction, error, false);
-		}
-	}
-
-	// "/text" - post a message to pinniped.page/text
-	if (commandName === "text") {
-		try {
-			const text = interaction.options.getString("message");
-
-			const date = new Date();
-			let year = date.getFullYear();
-			let month = date.getMonth() + 1;
-			let day = date.getDate();
-			let hours = date.getUTCHours();
-			let minutes = date.getMinutes();
-
-			if (month < 10) month = `0${month}`;
-			if (day < 10) day = `0${day}`;
-
-			const db = getDatabase();
-			push(ref(db, "text"), {
-				text: text,
-				date: {
-					year: year,
-					month: month,
-					day: day,
-				},
-				time: {
-					hours: hours,
-					minutes: minutes,
-				},
-			});
-
-			await interaction.reply({
-				content: ":pencil: Your message has been sent to [pinniped.page/text](https://pinniped.page/projects/text).",
-				flags: MessageFlags.SuppressEmbeds,
-			});
-			logMessage(interaction, `${text}`);
-		} catch (error) {
-			errorMessage(interaction, error, false);
-		}
-	}
-
-	// "/text-space" - special text emphasis
-	if (commandName === "text-space") {
-		try {
-			const text = interaction.options.getString("text");
-			const newText = text.split("").join(" ");
-
-			await interaction.reply(newText);
-			logMessage(interaction, newText);
-		} catch (error) {
-			errorMessage(interaction, error, false);
-		}
-	}
-
 	// "/embed" - generate a custom embed
 	if (commandName === "embed") {
 		try {
@@ -335,39 +137,15 @@ client.on("interactionCreate", async (interaction) => {
 		}
 	}
 
-	// "/metar" - get a METAR report from a specified airport
-	if (commandName === "metar") {
+	// "/help" - help message
+	if (commandName === "help") {
 		try {
-			const airport = interaction.options.getString("airport").toUpperCase();
-
-			if (!/^[A-Z]{4}$/.test(airport)) {
-				await interaction.reply({
-					content: `:warning: \`${airport}\` is not a valid [ICAO airport code](https://en.wikipedia.org/wiki/ICAO_airport_code). Valid ICAO airport codes are described by \`^[A-Z]{4}$\`.`,
-					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
-				});
-				logMessage(interaction, `??? (invalid ICAO airport code)`);
-				return;
-			}
-
-			const requestURL = `https://aviationweather.gov/api/data/metar?ids=${airport}`;
-			const request = new Request(requestURL);
-			const response = await fetch(request);
-			const text = await response.text();
-
-			if (text == "") {
-				await interaction.reply({
-					content: `:airplane_small: There is no [METAR](https://en.wikipedia.org/wiki/METAR) data available for \`${airport}\`. Either that airport doesn’t exist or its METAR reports are not public. Sorry!`,
-					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
-				});
-				logMessage(interaction, `!!! (no response)`);
-				return;
-			}
-
 			await interaction.reply({
-				content: `:airplane: Here is the latest [METAR](https://en.wikipedia.org/wiki/METAR) report for \`${airport}\`.\n-# source: [aviationweather.gov/api/data/metar?ids=${airport}](https://aviationweather.gov/api/data/metar?ids=${airport})\n-# learn how to decode: [weather.gov/media/wrh/mesowest/metar_decode_key.pdf](https://www.weather.gov/media/wrh/mesowest/metar_decode_key.pdf)\n\`\`\`${text}\`\`\``,
+				content: `:palm_up_hand: **This might help.**\n> [documentation/about](https://pinniped.page/projects/omega-seal) | [The Square](https://pinniped.page/projects/the-square) | [bot status](https://pinniped.page/status#DISCORD-BOT) | [GitHub repository](https://github.com/ObsidianSeal/Omega-Seal-The-Square) | [support via Seal Squad](https://ite.fyi/ss) | [if all else fails, contact me](https://pinniped.page/contact)\n-# <@960236750830194688> v${VERSION}`,
 				flags: MessageFlags.SuppressEmbeds,
 			});
-			logMessage(interaction, text);
+
+			logMessage(interaction, "pinniped.page/omega-seal");
 		} catch (error) {
 			errorMessage(interaction, error, false);
 		}
@@ -462,6 +240,143 @@ client.on("interactionCreate", async (interaction) => {
 		}
 	}
 
+	// "/join" - join a region of The Square
+	if (commandName === "join") {
+		try {
+			const string = interaction.options.getString("region").toLowerCase().replaceAll(/ /g, "");
+
+			if (!interaction.inGuild() || interaction.guild.id != "755782483588677653") {
+				await interaction.reply({
+					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
+				});
+				logMessage(interaction, `!!! (not Seal Squad)`);
+				return;
+			}
+
+			let member = interaction.member;
+
+			if (regions.includes(string)) {
+				roles.forEach((id) => {
+					if (member.roles.cache.has(id)) {
+						let role = member.guild.roles.cache.find((role) => role.id === id);
+						member.roles.remove(role);
+					}
+				});
+
+				let role = member.guild.roles.cache.find((role) => role.id === roles[regions.indexOf(string)]);
+				member.roles.add(role);
+
+				await interaction.reply({
+					content: `:grin: You are now a <@&${role.id}>!\n-# learn more about your region at [pinniped.page/the-square#${string}](https://pinniped.page/projects/the-square#${string})`,
+					flags: MessageFlags.SuppressEmbeds,
+				});
+			} else {
+				await interaction.reply({
+					content: `:warning: \`${string}\` is not one of [**The Square**](https://pinniped.page/projects/the-square)’s regions. Visit [pinniped.page/the-square](https://pinniped.page/projects/the-square) for more information.`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
+				});
+				logMessage(interaction, `??? (${string})`);
+				return;
+			}
+
+			logMessage(interaction, `${string}`);
+		} catch (error) {
+			errorMessage(interaction, error, false);
+		}
+	}
+
+	// "/leave" - leave The Square
+	if (commandName === "leave") {
+		try {
+			if (!interaction.inGuild() || interaction.guild.id != "755782483588677653") {
+				await interaction.reply({
+					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
+				});
+				logMessage(interaction, `!!! (not Seal Squad)`);
+				return;
+			}
+
+			let member = interaction.member;
+			let role, region;
+
+			roles.forEach((id) => {
+				if (member.roles.cache.has(id)) {
+					role = member.guild.roles.cache.find((role) => role.id === id);
+					member.roles.remove(role);
+					region = regions[roles.indexOf(id)];
+				}
+			});
+
+			if (region == null) {
+				await interaction.reply({
+					content: `:warning: You have to join [**The Square**](https://pinniped.page/projects/the-square) before you can leave! Visit [pinniped.page/the-square](https://pinniped.page/projects/the-square) for more information.`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
+				});
+				logMessage(interaction, `!!! (not in The Square)`);
+				return;
+			}
+
+			await interaction.reply(`:pensive: You are no longer a <@&${role.id}>.\n-# please note that you can move regions without leaving The Square, just use \`/join\``);
+			logMessage(interaction, `${region}`);
+		} catch (error) {
+			errorMessage(interaction, error, false);
+		}
+	}
+
+	// "/math" - render LaTeX
+	if (commandName === "math") {
+		try {
+			await interaction.deferReply();
+			const latex = interaction.options.getString("latex");
+			const buffer = await generateMathPNG(latex);
+			if (!buffer) throw new Error("no image was provided by MathJax, please report this bug immediately");
+			await interaction.editReply({ files: [{ attachment: buffer, name: "math.png" }] });
+			logMessage(interaction, latex);
+		} catch (error) {
+			errorMessage(interaction, error, true);
+		}
+	}
+
+	// "/metar" - get a METAR report from a specified airport
+	if (commandName === "metar") {
+		try {
+			const airport = interaction.options.getString("airport").toUpperCase();
+
+			if (!/^[A-Z]{4}$/.test(airport)) {
+				await interaction.reply({
+					content: `:warning: \`${airport}\` is not a valid [ICAO airport code](https://en.wikipedia.org/wiki/ICAO_airport_code). Valid ICAO airport codes are described by \`^[A-Z]{4}$\`.`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
+				});
+				logMessage(interaction, `??? (invalid ICAO airport code)`);
+				return;
+			}
+
+			const requestURL = `https://aviationweather.gov/api/data/metar?ids=${airport}`;
+			const request = new Request(requestURL);
+			const response = await fetch(request);
+			const text = await response.text();
+
+			if (text == "") {
+				await interaction.reply({
+					content: `:airplane_small: There is no [METAR](https://en.wikipedia.org/wiki/METAR) data available for \`${airport}\`. Either that airport doesn’t exist or its METAR reports are not public. Sorry!`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
+				});
+				logMessage(interaction, `!!! (no response)`);
+				return;
+			}
+
+			await interaction.reply({
+				content: `:airplane: Here is the latest [METAR](https://en.wikipedia.org/wiki/METAR) report for \`${airport}\`.\n-# source: [aviationweather.gov/api/data/metar?ids=${airport}](https://aviationweather.gov/api/data/metar?ids=${airport})\n-# learn how to decode: [weather.gov/media/wrh/mesowest/metar_decode_key.pdf](https://www.weather.gov/media/wrh/mesowest/metar_decode_key.pdf)\n\`\`\`${text}\`\`\``,
+				flags: MessageFlags.SuppressEmbeds,
+			});
+			logMessage(interaction, text);
+		} catch (error) {
+			errorMessage(interaction, error, false);
+		}
+	}
+
 	// "/music" - random song
 	if (commandName === "music") {
 		try {
@@ -494,6 +409,30 @@ client.on("interactionCreate", async (interaction) => {
 		}
 	}
 
+	// "/ping" - send latency information
+	if (commandName === "ping") {
+		try {
+			let botPing = Date.now() - interaction.createdTimestamp;
+			await interaction.deferReply();
+
+			new SpeedTest().onFinish = async (results) => {
+				try {
+					let webSocketPing = client.ws.ping;
+
+					await interaction.editReply(
+						`:ping_pong: **Pong!**\n> - interaction received **${botPing}ms** after its creation\n> - Discord API websocket is reporting a latency of **${webSocketPing}ms**\n> - on a network with upload/download speeds of **${Math.round(results.getSummary().upload / 1000000)}Mbps** and **${Math.round(results.getSummary().download / 1000000)}Mbps**\n> - network latency is **${Math.round(results.getSummary().latency)}ms**\n> - went online <t:${Math.round(startTime / 1000)}:R>\n-# <@960236750830194688> v${VERSION}`,
+					);
+
+					logMessage(interaction, `${botPing}, ${webSocketPing}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().upload / 1000000)}, ${Math.round(results.getSummary().latency)}`);
+				} catch (error) {
+					errorMessage(interaction, error, true);
+				}
+			};
+		} catch (error) {
+			errorMessage(interaction, error, true);
+		}
+	}
+
 	// "/playlist" - get playlists link
 	if (commandName === "playlist") {
 		try {
@@ -504,17 +443,40 @@ client.on("interactionCreate", async (interaction) => {
 		}
 	}
 
-	// "/math" - render LaTeX
-	if (commandName === "math") {
+	// "/populations" - regions of The Square, sorted by member count
+	if (commandName === "populations") {
 		try {
-			await interaction.deferReply();
-			const latex = interaction.options.getString("latex");
-			const buffer = await generateMathPNG(latex);
-			if (!buffer) throw new Error("no image was provided by MathJax, please report this bug immediately");
-			await interaction.editReply({ files: [{ attachment: buffer, name: "math.png" }] });
-			logMessage(interaction, latex);
+			if (!interaction.inGuild() || interaction.guild.id != "755782483588677653") {
+				await interaction.reply({
+					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
+					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
+				});
+				logMessage(interaction, `!!! (not Seal Squad)`);
+				return;
+			}
+
+			let memberCounts = [];
+			let memberTotal = 0;
+			for (let i = 0; i < regions.length; i++) {
+				const role = interaction.guild.roles.cache.find((role) => role.id === roles[i]);
+				const memberCount = role.members.size;
+				memberCounts.push([regions[i], memberCount]);
+				memberTotal += memberCount;
+			}
+			memberCounts.sort(function (a, b) {
+				return b[1] - a[1];
+			});
+
+			let regionListString = "";
+			for (let i = 0; i < regions.length; i++) regionListString += `\n${i + 1}. \`${memberCounts[i][0]}\` **${memberCounts[i][1]}**`;
+
+			await interaction.reply({
+				content: `## :crown: The Square :crown:\n-# all 22 regions, sorted by member count (${memberTotal} total) ${regionListString}\n-# learn more about The Square at [pinniped.page/the-square](https://pinniped.page/projects/the-square)`,
+				flags: MessageFlags.SuppressEmbeds,
+			});
+			logMessage(interaction, memberTotal);
 		} catch (error) {
-			errorMessage(interaction, error, true);
+			errorMessage(interaction, error, false);
 		}
 	}
 
@@ -608,15 +570,53 @@ client.on("interactionCreate", async (interaction) => {
 		}
 	}
 
-	// "/help" - help message
-	if (commandName === "help") {
+	// "/text" - post a message to pinniped.page/text
+	if (commandName === "text") {
 		try {
-			await interaction.reply({
-				content: `:palm_up_hand: **This might help.**\n> [documentation/about](https://pinniped.page/projects/omega-seal) | [The Square](https://pinniped.page/projects/the-square) | [bot status](https://pinniped.page/status#DISCORD-BOT) | [GitHub repository](https://github.com/ObsidianSeal/Omega-Seal-The-Square) | [support via Seal Squad](https://ite.fyi/ss) | [if all else fails, contact me](https://pinniped.page/contact)\n-# <@960236750830194688> v${VERSION}`,
-				flags: MessageFlags.SuppressEmbeds,
+			const text = interaction.options.getString("message");
+
+			const date = new Date();
+			let year = date.getFullYear();
+			let month = date.getMonth() + 1;
+			let day = date.getDate();
+			let hours = date.getUTCHours();
+			let minutes = date.getMinutes();
+
+			if (month < 10) month = `0${month}`;
+			if (day < 10) day = `0${day}`;
+
+			const db = getDatabase();
+			push(ref(db, "text"), {
+				text: text,
+				date: {
+					year: year,
+					month: month,
+					day: day,
+				},
+				time: {
+					hours: hours,
+					minutes: minutes,
+				},
 			});
 
-			logMessage(interaction, "pinniped.page/omega-seal");
+			await interaction.reply({
+				content: ":pencil: Your message has been sent to [pinniped.page/text](https://pinniped.page/projects/text).",
+				flags: MessageFlags.SuppressEmbeds,
+			});
+			logMessage(interaction, `${text}`);
+		} catch (error) {
+			errorMessage(interaction, error, false);
+		}
+	}
+
+	// "/text-space" - special text emphasis
+	if (commandName === "text-space") {
+		try {
+			const text = interaction.options.getString("text");
+			const newText = text.split("").join(" ");
+
+			await interaction.reply(newText);
+			logMessage(interaction, newText);
 		} catch (error) {
 			errorMessage(interaction, error, false);
 		}
