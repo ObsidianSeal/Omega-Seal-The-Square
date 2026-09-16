@@ -53,7 +53,7 @@ client.login(token);
 client.once("clientReady", async () => {
 	// LOG
 	startTime = Date.now();
-	console.log(`\x1b[32mOmega Seal is now online with ${mentionResponses.length} normal and ${specialResponses.length} special mention responses!\x1b[37m\n`);
+	console.log(`\x1b[32mOmega Seal is now online with ${mentionResponses.length} general and ${specialResponses.length} "action complete" mention responses!\x1b[37m\n`);
 	client.users.fetch("390612175137406978").then((user) => {
 		user.send(`## <:ss5:1120342653259759686> [Omega Seal](https://pinniped.page/omega-seal) is now online! <:ss5:1120342653259759686>\n-# v${VERSION} @ ${startTime} = <t:${Math.round(startTime / 1000)}:R>`);
 	});
@@ -671,7 +671,7 @@ client.on("guildMemberAdd", async (member) => {
 
 // RESPOND TO MENTIONS
 const mentionResponses = [
-	// regular
+	// text
 	"??",
 	"!!",
 	"hi",
@@ -750,10 +750,39 @@ const mentionResponses = [
 	"putting you on a list",
 	"huge",
 	"I don’t want anyone else From the hours of 12 to 12 I am not the least compelled By anyone but yourself Look at me, it makes me melt I know you wanna see me in hell, my love I’m dealing with the cards I’ve dealt While you’re dancing with somebody else\n\nWas it always in your plan to leave eventually? Because to me, there’s no one else that could make sense to me The last and final puzzle piece\n\nIn a room full of people, I look for you Would you avoid me or would you look for me too? Tell me, is our story through? (Through) Or do our hearts still beat in tune?\n\nI’ve never felt anything Like the love from my final days Why’d you wait To show me you could do it this way? Woo, I’ll never look at you, look at you the same We met in The Paris café I said, “Can I sit with you? Comment ça se fait?” My mistake If I’d known it would have been this way I’d never looked at you, looked in the first place\n\nWas it always in your plan to leave eventually? Because to me, there’s no one else that could make sense to me The last and final puzzle piece\n\nIn a room full of people, I look for you Would you avoid me or would you look for me too? Tell me, is our story through? (Through) Or do our hearts still beat in tune?\n\nMaybe I’m delusional And the way you act is usual Maybe in another world I won’t feel so unlovable (Unlovable) Oh (Unlovable)\n\nIn a room full of people, I look for you Would you avoid me or would you look for me too? Tell me, is our story through? (Through) Or do our hearts still beat in tune? In a room full of people, I look for you Would you avoid me or would you see me through? Tell me, is our story through? (Through) Or do our hearts still beat in tune?",
+	"real",
+	":person_doing_cartwheel:\n:manual_wheelchair: :person_golfing:",
+	"please go touch grass",
+	"replacing your service with a bus",
+	"why",
+	"you can’t be serious",
+	"as a large language model...nah just kidding I’ll do it",
+	"mmmmmmm...\nInstagram Reels",
+	":bulb: idea",
+	"bad idea",
+	"what a great idea",
+	"no more bike lanes for you",
+	"You’re right to point that out! My mistake!",
+	"Good afternoon, this is your 13:34 westbound Kitchener Line train making all station stops to Kitchener. My name is Omega Seal, your Customer Service Ambassador located in accessibility coach 2435 approximately in the middle of the train. On behalf of GO Transit and the operating crew, thank you for riding with us today. Our first station stop is Bloor, Bloor is our first station stop.",
+	"begone",
+	"not funny, didn’t laugh",
+	// images
+	"https://media.tenor.com/vtQAn0rWsPkAAAAe/shocked-banana.png",
+	"https://ite.fyi/assets/png/omega-seal/next-week-has-been-exhausting-cat.png",
+	"https://ite.fyi/assets/png/omega-seal/celeste-grab-lunch.png",
+	"https://ite.fyi/assets/png/omega-seal/microsoft-humour.png",
+	"https://ite.fyi/assets/png/omega-seal/lying-today.png",
+	"https://ite.fyi/assets/png/omega-seal/excitement-immeasurable.png",
+	"https://ite.fyi/assets/png/omega-seal/typing-1000.png",
+	"https://ite.fyi/assets/png/omega-seal/cat-tongue.png",
+	"https://ite.fyi/assets/png/omega-seal/log.png",
+	"https://ite.fyi/assets/png/omega-seal/shop-too-heavy-seal.png",
+	"https://ite.fyi/assets/png/omega-seal/yippee.png",
+	"https://ite.fyi/assets/png/omega-seal/this-might-have-been-a-mistake.png",
+	"https://ite.fyi/assets/png/omega-seal/monke.png",
 	// GIFs
 	"https://tenor.com/view/peak-peak-game-stare-roblox-funny-gif-14204149163935063245",
 	"https://tenor.com/view/dog-funny-dog-dog-nose-big-nose-smelling-gif-8587307285099365553",
-	"https://giphy.com/gifs/crazy-ugo-ugolize-qkZ1TVtqlGfx1n9XKk",
 	"https://tenor.com/view/madeline-celeste-celeste-game-celeste-madeline-get-silly-gif-2583692932322118232",
 	"https://tenor.com/view/celeste-game-madeline-celeste-mountain-celeste-game-gif-5143604707485029548",
 	"https://tenor.com/view/looker-peak-game-peak-aggrocrab-looking-gif-17841365269857828453",
@@ -766,11 +795,6 @@ const mentionResponses = [
 	"https://tenor.com/view/dono-wall-gif-24048347",
 	"https://tenor.com/view/burned-food-wtf-gif-22978287",
 	"https://tenor.com/view/rock-one-eyebrow-raised-rock-staring-the-rock-gif-22113367",
-	"https://giphy.com/gifs/G0gQWdeRxefSJgBalK",
-	"https://giphy.com/gifs/gfejYZkgqE3OS7MU4r",
-	"https://giphy.com/gifs/celebrate-agree-gay-larry-DzVLZDneVYzE7Ux2YR",
-	"https://giphy.com/gifs/cool-giggle-non-chalant-TZ9VXG4Dm4AeBAHPK2",
-	"https://giphy.com/gifs/disappointed-leave-quit-jx6ufu5mL8V9JgfLbb",
 	"https://tenor.com/view/longestsoloever-lse-yapper-yapping-alert-gif-16222796328902842371",
 	"https://tenor.com/view/shut-up-shush-shh-ok-bird-gif-17679708",
 	"https://tenor.com/view/sure-john-cena-are-you-sure-gif-5783187",
@@ -782,8 +806,29 @@ const mentionResponses = [
 	"https://tenor.com/view/cat-bite-catbitcord-cat-cat-meme-cat-explosion-gif-17827142058596640794",
 	"https://tenor.com/view/hiii-cat-wave-cat-wave-hi-gif-174708314057938083",
 	"https://tenor.com/view/what-the-dog-doin-dogs-funny-gif-14571748077449260169",
-	"https://giphy.com/gifs/ywGp4PMJdeLyuRq7vJ",
 	"https://tenor.com/view/no-correlation-gif-1271746605347850530",
+	"https://tenor.com/view/samuel-arte-danse-dance-tronche-gif-2515245561940582384",
+	"https://tenor.com/view/hampter-gif-20240312",
+	"https://giphy.com/gifs/crazy-ugo-ugolize-qkZ1TVtqlGfx1n9XKk",
+	"https://giphy.com/gifs/G0gQWdeRxefSJgBalK",
+	"https://giphy.com/gifs/gfejYZkgqE3OS7MU4r",
+	"https://giphy.com/gifs/celebrate-agree-gay-larry-DzVLZDneVYzE7Ux2YR",
+	"https://giphy.com/gifs/cool-giggle-non-chalant-TZ9VXG4Dm4AeBAHPK2",
+	"https://giphy.com/gifs/disappointed-leave-quit-jx6ufu5mL8V9JgfLbb",
+	"https://giphy.com/gifs/ywGp4PMJdeLyuRq7vJ",
+	"https://klipy.com/gifs/seal-happy-4",
+	"https://klipy.com/gifs/snake-85",
+	"https://klipy.com/gifs/live-nuclear-reaction-live-tucker-reaction",
+	"https://klipy.com/gifs/mishel",
+	"https://ite.fyi/assets/gif/omega-seal/itst-thanks.gif",
+	"https://ite.fyi/assets/gif/omega-seal/actually-no.gif",
+	"https://ite.fyi/assets/gif/omega-seal/he-fall.gif",
+	"https://ite.fyi/assets/gif/omega-seal/itst-thanks.gif",
+	"https://ite.fyi/assets/gif/omega-seal/le-bird-2.gif",
+	"https://ite.fyi/assets/gif/omega-seal/roof-duck.gif",
+	"https://ite.fyi/assets/gif/omega-seal/ta-energy.gif",
+	"https://ite.fyi/assets/gif/omega-seal/uh-oh.gif",
+	"https://ite.fyi/assets/gif/omega-seal/for-sure.gif",
 ];
 const specialResponses = [
 	"let me cook",
