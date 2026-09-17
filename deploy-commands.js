@@ -80,7 +80,7 @@ const commands = [
 				.setDescription("Add a tag to this forum post.")
 				.addStringOption((option) => option.setName("tag").setDescription("The name of an existing tag.").setRequired(true)),
 		)
-		.addSubcommand((subcommand) => subcommand.setName("list").setDescription("List all the tags applicable to this forum post."))
+		.addSubcommand((subcommand) => subcommand.setName("list").setDescription("List all the tags applicable to this forum post and see which have been applied."))
 		.addSubcommand((subcommand) =>
 			subcommand
 				.setName("remove")
