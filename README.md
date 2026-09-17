@@ -19,6 +19,7 @@ The name of this repository comes from the original purpose of the bot. Now that
 ## commands
 
 - /embed — generate a custom embed
+- /explode — special text emphasis
 - /help — help message
 - /ion — see when the next ION trains are coming to UW station
 - /join — join a region of The Square
@@ -31,9 +32,8 @@ The name of this repository comes from the original purpose of the bot. Now that
 - /populations — regions of The Square, sorted by member count
 - /role — role details
 - /roles — role leaderboard
-- /tag - forum post tag editing
+- /tag - forum post tag editing, list
 - /text — post a message to pinniped.page/text
-- /text-space — special text emphasis
 
 full explanations and further reading at [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal)
 

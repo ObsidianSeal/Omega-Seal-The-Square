@@ -13,6 +13,12 @@ const commands = [
 		.addStringOption((option) => option.setName("description").setDescription("The embed’s description.").setRequired(true))
 		.addStringOption((option) => option.setName("colour").setDescription("The embed’s accent colour.").setRequired(false).setMinLength(6).setMaxLength(7)),
 
+	// "/explode"
+	new SlashCommandBuilder()
+		.setName("explode")
+		.setDescription("Put a space between every character in some text.")
+		.addStringOption((option) => option.setName("text").setDescription("The text you want to add spaces to.").setRequired(true)),
+
 	// "/help"
 	new SlashCommandBuilder().setName("help").setDescription("Send this command if you don’t know how to use the bot or if you just want to learn more about it."),
 
@@ -74,6 +80,7 @@ const commands = [
 				.setDescription("Add a tag to this forum post.")
 				.addStringOption((option) => option.setName("tag").setDescription("The name of an existing tag.").setRequired(true)),
 		)
+		.addSubcommand((subcommand) => subcommand.setName("list").setDescription("List all the tags applicable to this forum post."))
 		.addSubcommand((subcommand) =>
 			subcommand
 				.setName("remove")
@@ -84,26 +91,14 @@ const commands = [
 	// "/text"
 	new SlashCommandBuilder()
 		.setName("text")
-		.setDescription("Send a message on my website’s chat page.")
+		.setDescription("Send a message on pinniped.page/text.")
 		.addStringOption((option) => option.setName("message").setDescription("The text you want to send.").setRequired(true).setMaxLength(120)),
-
-	// "/text-space"
-	new SlashCommandBuilder()
-		.setName("text-space")
-		.setDescription("Put a space between every character in some text.")
-		.addStringOption((option) => option.setName("text").setDescription("The text you want to add spaces to.").setRequired(true)),
 ].map((command) => command.toJSON());
 
 // FOR ALL COMMAND OPERATIONS
 const rest = new REST().setToken(token);
 
 // SEND ALL COMMANDS TO DISCORD
-rest.put(Routes.applicationCommands(botID), { body: commands }) // use "body: []" to remove all; requires re-adding the bot to servers after commands are restored
+rest.put(Routes.applicationCommands(botID), { body: commands })
 	.then(() => console.log("\x1b[32mOmega Seal’s application commands have successfully been registered with Discord."))
 	.catch(console.error);
-
-// DELETE A COMMAND
-// let commandID = 0;
-// rest.delete(Routes.applicationCommands(botID, commandID))
-// 	.then(() => console.log(`\x1b[32m${commandID} has successfully been deleted from Discord.`))
-// 	.catch(console.error);

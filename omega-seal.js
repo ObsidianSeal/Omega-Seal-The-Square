@@ -3,7 +3,7 @@ const VERSION = "1.10.0";
 
 // IMPORTS
 const { fApiKey, fAppId, fAuthDomain, fDatabaseURL, fMessagingSenderId, fProjectId, fStorageBucket, token } = require("./config.json");
-const { ActivityType, Client, EmbedBuilder, GatewayIntentBits, InteractionType, MessageFlags, PermissionFlagsBits } = require("discord.js");
+const { ActivityType, ChannelFlags, Client, EmbedBuilder, GatewayIntentBits, InteractionType, MessageFlags, PermissionFlagsBits } = require("discord.js");
 const { initializeApp } = require("firebase/app");
 const { getDatabase, onValue, push, ref, set } = require("firebase/database");
 const { transit_realtime } = require("gtfs-realtime-bindings");
@@ -137,6 +137,19 @@ client.on("interactionCreate", async (interaction) => {
 		}
 	}
 
+	// "/explode" - special text emphasis
+	if (commandName === "explode") {
+		try {
+			const text = interaction.options.getString("text");
+			const newText = text.split("").join(" ");
+
+			await interaction.reply(newText);
+			logMessage(interaction, newText);
+		} catch (error) {
+			errorMessage(interaction, error, false);
+		}
+	}
+
 	// "/help" - help message
 	if (commandName === "help") {
 		try {
@@ -247,7 +260,7 @@ client.on("interactionCreate", async (interaction) => {
 
 			if (!interaction.inGuild() || interaction.guild.id != "755782483588677653") {
 				await interaction.reply({
-					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
+					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord), Obsidian_Seal’s public Discord server.`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
 				logMessage(interaction, `!!! (not Seal Squad)`);
@@ -291,7 +304,7 @@ client.on("interactionCreate", async (interaction) => {
 		try {
 			if (!interaction.inGuild() || interaction.guild.id != "755782483588677653") {
 				await interaction.reply({
-					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
+					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord), Obsidian_Seal’s public Discord server.`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
 				logMessage(interaction, `!!! (not Seal Squad)`);
@@ -448,7 +461,7 @@ client.on("interactionCreate", async (interaction) => {
 		try {
 			if (!interaction.inGuild() || interaction.guild.id != "755782483588677653") {
 				await interaction.reply({
-					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord). Visit [pinniped.page/omega-seal](https://pinniped.page/projects/omega-seal) for more information.`,
+					content: `:warning: This command is only available in [**Seal Squad**](https://pinniped.page/discord), Obsidian_Seal’s public Discord server.`,
 					flags: [MessageFlags.Ephemeral, MessageFlags.SuppressEmbeds],
 				});
 				logMessage(interaction, `!!! (not Seal Squad)`);
@@ -496,7 +509,7 @@ client.on("interactionCreate", async (interaction) => {
 					logMessage(interaction, role.id);
 				} else {
 					await interaction.reply({
-						content: ":warning: You need the `Manage Roles` permission in this server to use this command.",
+						content: ":warning: You need the `MANAGE_ROLES` permission in this server to use this command.",
 						flags: MessageFlags.Ephemeral,
 					});
 					logMessage(interaction, "insufficient permissions");
@@ -553,7 +566,7 @@ client.on("interactionCreate", async (interaction) => {
 					logMessage(interaction, `${filter} >>> ${roles.size}`);
 				} else {
 					await interaction.reply({
-						content: ":warning: You need the `Manage Roles` permission in this server to use this command.",
+						content: ":warning: You need the `MANAGE_ROLES` permission in this server to use this command.",
 						flags: MessageFlags.Ephemeral,
 					});
 					logMessage(interaction, "insufficient permissions");
@@ -570,10 +583,104 @@ client.on("interactionCreate", async (interaction) => {
 		}
 	}
 
-	// "/tag" - forum post tag editing
+	// "/tag" - forum post tag editing, list
 	if (commandName === "tag") {
 		try {
-			logMessage(interaction, "!!!");
+			if (interaction.channel.type == 11 && interaction.channel.parent.type == 15) {
+				const allowedParentChannels = ["1490825228472025340", "1460109477486268638", "1460119585461112894", "1461442205557457079"];
+				if (allowedParentChannels.includes(interaction.channel.parent.id)) {
+					if (interaction.channel.parent.availableTags.length > 0) {
+						const subcommand = interaction.options.getSubcommand();
+						if (subcommand == "list") {
+							let list = "";
+							for (let tag of interaction.channel.parent.availableTags)
+								list += `- ${tag.emoji.name == null ? `<:${tag.emoji.name}:${tag.emoji.id}>` : tag.emoji.name} \`${tag.name}\` ${interaction.channel.appliedTags.includes(tag.id) ? "— :white_check_mark:" : ""}\n`;
+							await interaction.reply(
+								`## :label: applicable tags :label:\n-# ${interaction.channel.parent.availableTags.length} tag${interaction.channel.parent.availableTags.length == 1 ? "" : "s"} can be applied to posts in <#${interaction.channel.parent.id}>\n${list}-# next, use \`/tag add\` or \`/tag remove\``,
+							);
+							logMessage(interaction, `LIST — ${interaction.channel.parent.availableTags.length} tags, ${(list.match(/— :white_check_mark:/g) || []).length} applied`);
+						}
+						if (subcommand == "add" || subcommand == "remove") {
+							const tagName = interaction.options.getString("tag");
+							const tagExists = interaction.channel.parent.availableTags.find((tag) => tag.name.toLowerCase() == tagName.toLowerCase());
+
+							if (tagExists) {
+								let appliedTags = interaction.channel.appliedTags;
+								let availableTags = [];
+								for (let tag of interaction.channel.parent.availableTags) availableTags.push(tag.id);
+
+								if (subcommand == "add") {
+									if (appliedTags.includes(tagExists.id)) {
+										await interaction.reply({
+											content: `:warning: That tag has already been applied to this post! Use \`/tag list\` to see applied tags.`,
+											flags: MessageFlags.Ephemeral,
+										});
+										logMessage(interaction, `ADD — ${tagName} (already applied)`);
+									} else {
+										if (appliedTags.length == 5) {
+											await interaction.reply({
+												content: `:warning: The maximum number of tags on a forum post (5) has been reached. Use \`/tag list\` to see applied tags.`,
+												flags: MessageFlags.Ephemeral,
+											});
+											logMessage(interaction, `ADD — ${tagName} (too many tags)`);
+										} else {
+											await interaction.channel.setAppliedTags([...appliedTags, tagExists.id]);
+											await interaction.reply(
+												`:label: <@${interaction.user.id}> **__ADDED__** the ${tagExists.emoji.name == null ? `<:${tagExists.emoji.name}:${tagExists.emoji.id}>` : tagExists.emoji.name} \`${tagExists.name}\` tag to this forum post.\n-# ${appliedTags.length + 1}/5 tags, ${interaction.channel.parent.availableTags.length} available`,
+											);
+											logMessage(interaction, `ADD — ${tagName}`);
+										}
+									}
+								}
+								if (subcommand == "remove") {
+									if (appliedTags.includes(tagExists.id)) {
+										if (interaction.channel.parent.flags.has(ChannelFlags.RequireTag) && appliedTags.length == 1) {
+											await interaction.reply({
+												content: `:warning: This forum requires that all posts have at least one tag. Add another before removing this one. Use \`/tag list\` to see your options.`,
+												flags: MessageFlags.Ephemeral,
+											});
+											logMessage(interaction, `REMOVE — ${tagName} (could not remove, at least one tag required)`);
+										} else {
+											await interaction.channel.setAppliedTags(appliedTags.filter((id) => id != tagExists.id));
+											await interaction.reply(
+												`:label: <@${interaction.user.id}> **__REMOVED__** the ${tagExists.emoji.name == null ? `<:${tagExists.emoji.name}:${tagExists.emoji.id}>` : tagExists.emoji.name} \`${tagExists.name}\` tag from this forum post.\n-# ${appliedTags.length - 1}/5 tags, ${interaction.channel.parent.availableTags.length} available`,
+											);
+											logMessage(interaction, `REMOVE — ${tagName} (successfully removed)`);
+										}
+									} else {
+										await interaction.reply({
+											content: `:warning: That tag has not been applied to this post! Use \`/tag list\` to see applied tags.`,
+											flags: MessageFlags.Ephemeral,
+										});
+										logMessage(interaction, `REMOVE — ${tagName} (not applied)`);
+									}
+								}
+							} else {
+								await interaction.reply({
+									content: `:warning: No such tag exists in this forum channel. Tags are case insensitive, but must otherwise be exact, minus the emoji. Use \`/tag list\` to get a list of this forum’s tags.`,
+									flags: MessageFlags.Ephemeral,
+								});
+								logMessage(interaction, `ADD or REMOVE — ${tagName} (not found)`);
+							}
+						}
+					} else {
+						await interaction.reply({
+							content: `:warning: There are no tags in this forum channel.`,
+							flags: MessageFlags.Ephemeral,
+						});
+						logMessage(interaction, "any — (no tags)");
+					}
+				} else {
+					await interaction.reply({
+						content: `:warning: This command is disabled by default on a per-forum basis due to limitations in Discord’s permissions system. To enable it here, please get in touch.`,
+						flags: MessageFlags.Ephemeral,
+					});
+					logMessage(interaction, "any — (not enabled)");
+				}
+			} else {
+				await interaction.reply({ content: `:warning: This command is currently only available in \`PUBLIC_THREAD\` channels within \`GUILD_FORUM\` channels.`, flags: MessageFlags.Ephemeral });
+				logMessage(interaction, "any — (unsupported channel type)");
+			}
 		} catch (error) {
 			errorMessage(interaction, error, false);
 		}
@@ -613,19 +720,6 @@ client.on("interactionCreate", async (interaction) => {
 				flags: MessageFlags.SuppressEmbeds,
 			});
 			logMessage(interaction, `${text}`);
-		} catch (error) {
-			errorMessage(interaction, error, false);
-		}
-	}
-
-	// "/text-space" - special text emphasis
-	if (commandName === "text-space") {
-		try {
-			const text = interaction.options.getString("text");
-			const newText = text.split("").join(" ");
-
-			await interaction.reply(newText);
-			logMessage(interaction, newText);
 		} catch (error) {
 			errorMessage(interaction, error, false);
 		}
