@@ -219,7 +219,7 @@ client.on("interactionCreate", async (interaction) => {
 				}
 			}
 
-			replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: not in service\n-# please confirm with GRT before reporting this as an error`;
+			replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: not in service\n- NORTHBOUND: not in service\n-# if you think this is incorrect, please confirm with GRT before reporting this as an error`;
 
 			if (southboundTime != Infinity && northboundTime != Infinity) {
 				replyText = `## :station: ION arrivals :station:\n-# to University of Waterloo Station\n- SOUTHBOUND: <t:${southboundTime}:R> (${formatTime(new Date(southboundTime * 1000))})\n- NORTHBOUND: <t:${northboundTime}:R> (${formatTime(
