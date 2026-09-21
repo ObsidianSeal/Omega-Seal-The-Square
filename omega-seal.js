@@ -751,7 +751,7 @@ client.on("guildMemberAdd", async (member) => {
 			],
 			"1193403835272679424": [
 				"1193403835914391557",
-				`## <:ITEUWcircle:1461539681769488587> Welcome to [ITE UW](https://ite.fyi/ite-uw) <@${memberID}>! <:ITEUWcircle:1461539681769488587>\n-# member #${memberCount} — thank you for reading the <#1193403835914391553> and completing the verification process\n<#1193403835914391554> | <#1196501729873756290> | <#1197756926503686254> | <#1421177984047513610>\n-# also, we recommend muting <#1461424829952426056>`,
+				`## <:ITEUWcircle:1461539681769488587> Welcome to [ITE UW](https://ite.fyi/ite-uw) <@${memberID}>! <:ITEUWcircle:1461539681769488587>\n-# member #${memberCount} — thank you for reading the <#1193403835914391553> and completing the verification process\n<#1193403835914391554> | <#1196501729873756290> | <#1197756926503686254>\n-# also, we recommend muting <#1461424829952426056>`,
 			],
 		};
 
