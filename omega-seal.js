@@ -1,9 +1,9 @@
 // VERSION
-const VERSION = "1.10.0";
+const VERSION = "1.10.1";
 
 // IMPORTS
 const { fApiKey, fAppId, fAuthDomain, fDatabaseURL, fMessagingSenderId, fProjectId, fStorageBucket, token } = require("./config.json");
-const { ActivityType, ChannelFlags, Client, EmbedBuilder, GatewayIntentBits, InteractionType, MessageFlags, PermissionFlagsBits } = require("discord.js");
+const { ActivityType, AuditLogEvent, ChannelFlags, Client, EmbedBuilder, GatewayIntentBits, InteractionType, MessageFlags, PermissionFlagsBits } = require("discord.js");
 const { initializeApp } = require("firebase/app");
 const { getDatabase, onValue, push, ref, set } = require("firebase/database");
 const { transit_realtime } = require("gtfs-realtime-bindings");
@@ -104,6 +104,9 @@ const roles = [
 	"998317032804200539",
 	"998317040538497044",
 ];
+
+// FORUM LIST (/tag)
+const allowedForumChannels = ["1490825228472025340", "1460109477486268638", "1460119585461112894", "1461442205557457079"];
 
 // RESPOND TO SLASH COMMANDS
 client.on("interactionCreate", async (interaction) => {
@@ -587,8 +590,7 @@ client.on("interactionCreate", async (interaction) => {
 	if (commandName === "tag") {
 		try {
 			if (interaction.channel.type == 11 && interaction.channel.parent.type == 15) {
-				const allowedParentChannels = ["1490825228472025340", "1460109477486268638", "1460119585461112894", "1461442205557457079"];
-				if (allowedParentChannels.includes(interaction.channel.parent.id)) {
+				if (allowedForumChannels.includes(interaction.channel.parent.id)) {
 					if (interaction.channel.parent.availableTags.length > 0) {
 						const subcommand = interaction.options.getSubcommand();
 						if (subcommand == "list") {
@@ -756,7 +758,10 @@ client.on("guildMemberAdd", async (member) => {
 		};
 
 		for (let serverID in joinMessages) {
-			if (member.guild.id == serverID) await client.channels.cache.get(joinMessages[serverID][0]).send(joinMessages[serverID][1]);
+			if (member.guild.id == serverID) {
+				await client.channels.cache.get(joinMessages[serverID][0]).send(joinMessages[serverID][1]);
+				otherLogMessage(`sent welcome message for member #${memberCount} in server ${serverID}`);
+			}
 		}
 	} catch (error) {
 		otherErrorMessage(error);
@@ -960,9 +965,44 @@ client.on("messageCreate", (message) => {
 	}
 });
 
-client.on("guildCreate", async (guild) => {
+// MONITOR CHANGES TO FORUM POST TAGS
+client.on("threadUpdate", async (oldThread, newThread) => {
 	try {
-		await guild.members.fetch();
+		sleep(1000);
+		if (newThread.type == 11 && newThread.parent.type == 15 && allowedForumChannels.includes(newThread.parent.id)) {
+			if (newThread.parent.availableTags.length > 0) {
+				const oldTags = oldThread.appliedTags;
+				const newTags = newThread.appliedTags;
+				if (!(oldTags.length == newTags.length && oldTags.every((tag, i) => newTags(i) == tag))) {
+					const removedTags = oldTags.filter((tag) => !newTags.includes(tag));
+					const addedTags = newTags.filter((tag) => !oldTags.includes(tag));
+					if (removedTags.length > 0 || addedTags.length > 0) {
+						const fetchedAuditLogs = await newThread.guild.fetchAuditLogs({ limit: 1, type: AuditLogEvent.ThreadUpdate });
+						const auditLogEntry = fetchedAuditLogs.entries.first();
+						let executor = null;
+						if (auditLogEntry && auditLogEntry.target?.id == newThread.id) {
+							if (Date.now() - auditLogEntry.createdTimestamp < 3000) executor = auditLogEntry.executor;
+						}
+						if (!auditLogEntry.executor.bot) {
+							for (let tag of removedTags) {
+								const tagDetails = newThread.parent.availableTags.find((tagSource) => tagSource.id == tag);
+								await newThread.send(
+									`:label: ${executor ? `<@${executor.id}>` : "Someone"} **__REMOVED__** the ${tagDetails.emoji.name == null ? `<:${tagDetails.emoji.name}:${tagDetails.emoji.id}>` : tagDetails.emoji.name} \`${tagDetails.name}\` tag from this forum post.\n-# ${newThread.appliedTags.length}/5 tags, ${newThread.parent.availableTags.length} available`,
+								);
+								otherLogMessage(`noted addition of tag ${tag} to forum post ${newThread.id} by ${executor?.id}`);
+							}
+							for (let tag of addedTags) {
+								const tagDetails = newThread.parent.availableTags.find((tagSource) => tagSource.id == tag);
+								await newThread.send(
+									`:label: ${executor ? `<@${executor.id}>` : "Someone"} **__ADDED__** the ${tagDetails.emoji.name == null ? `<:${tagDetails.emoji.name}:${tagDetails.emoji.id}>` : tagDetails.emoji.name} \`${tagDetails.name}\` tag to this forum post.\n-# ${newThread.appliedTags.length}/5 tags, ${newThread.parent.availableTags.length} available`,
+								);
+								otherLogMessage(`noted removal of tag ${tag} from forum post ${newThread.id} by ${executor?.id}`);
+							}
+						}
+					}
+				}
+			}
+		}
 	} catch (error) {
 		otherErrorMessage(error);
 	}
@@ -1085,6 +1125,7 @@ function wordleleleListener() {
 			if ([8, 11, 18].includes(receivedData.length)) n = "n";
 			try {
 				await client.channels.cache.get("1490729689239519312").send(`:bell: Someone set the [wordlelele](https://pinniped.page/w) <t:${Math.round(lastWordleleleTime / 1000)}:R> to a${n} ${receivedData.length}-letter word!`);
+				otherLogMessage("sent wordlelele alert");
 			} catch (error) {
 				otherErrorMessage(error);
 			}
@@ -1120,11 +1161,15 @@ function updateMembers() {
 	client.guilds.cache.forEach(async (guild) => {
 		try {
 			await guild.members.fetch();
+			otherLogMessage(`refreshed the guild member cache for server ${guild.id}`);
 		} catch (error) {
 			otherErrorMessage(error);
 		}
 	});
 }
+client.on("guildCreate", async () => {
+	updateMembers();
+});
 
 // UTILITY: FORMAT DATE STRING FROM DATE OBJECT
 function formatDate(date) {
@@ -1227,6 +1272,11 @@ async function databaseErrorMessage(error) {
 	console.log(error);
 }
 
+// UTILITY: OTHER LOG
+function otherLogMessage(message) {
+	console.log(`${message} [${formatDate(new Date())} ${formatTime(new Date())}]`);
+}
+
 // UTILITY: OTHER ERROR
 function otherErrorMessage(error) {
 	console.log(`\x1b[31mERROR!!\x1b[37m [${formatDate(new Date())} ${formatTime(new Date())}]`);
@@ -1241,7 +1291,7 @@ function otherErrorMessage(error) {
  * YELLOW = \x1b[33m (special)
  * GREEN = \x1b[32m (successes)
  * BLUE = \x1b[36m (database send)
- * PURPLE = \x1b[35m (command logs)
+ * PURPLE = \x1b[35m (logging)
  * reset = \x1b[37m
  */
 

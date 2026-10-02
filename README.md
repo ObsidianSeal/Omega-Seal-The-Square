@@ -8,7 +8,7 @@
 
 no `node_modules` (to reduce repository bloat) or `config.json` (for security)
 
-[DOCUMENTATION — v1.10.0](https://pinniped.page/projects/omega-seal)
+[DOCUMENTATION — v1.10.1](https://pinniped.page/projects/omega-seal)
 
 ---
 
