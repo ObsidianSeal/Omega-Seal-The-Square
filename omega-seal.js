@@ -630,7 +630,7 @@ client.on("interactionCreate", async (interaction) => {
 											await interaction.reply(
 												`:label: <@${interaction.user.id}> **__ADDED__** the ${tagExists.emoji.name == null ? `<:${tagExists.emoji.name}:${tagExists.emoji.id}>` : tagExists.emoji.name} \`${tagExists.name}\` tag to this forum post.\n-# ${appliedTags.length + 1}/5 tags, ${interaction.channel.parent.availableTags.length} available`,
 											);
-											logMessage(interaction, `ADD — ${tagName}`);
+											logMessage(interaction, `ADD — ${tagName} (successfully added)`);
 										}
 									}
 								}
@@ -973,7 +973,7 @@ client.on("threadUpdate", async (oldThread, newThread) => {
 			if (newThread.parent.availableTags.length > 0) {
 				const oldTags = oldThread.appliedTags;
 				const newTags = newThread.appliedTags;
-				if (!(oldTags.length == newTags.length && oldTags.every((tag, i) => newTags(i) == tag))) {
+				if (!(oldTags.length == newTags.length && oldTags.every((tag, i) => newTags[i] == tag))) {
 					const removedTags = oldTags.filter((tag) => !newTags.includes(tag));
 					const addedTags = newTags.filter((tag) => !oldTags.includes(tag));
 					if (removedTags.length > 0 || addedTags.length > 0) {
