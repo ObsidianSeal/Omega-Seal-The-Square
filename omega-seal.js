@@ -880,6 +880,7 @@ const mentionResponses = [
 	"https://ite.fyi/assets/png/omega-seal/this-might-have-been-a-mistake.png",
 	"https://ite.fyi/assets/png/omega-seal/monke.png",
 	"https://ite.fyi/assets/png/omega-seal/piano-fly.png",
+	"https://ite.fyi/assets/png/omega-seal/seal-of-approval.png",
 	// GIFs
 	"https://tenor.com/view/peak-peak-game-stare-roblox-funny-gif-14204149163935063245",
 	"https://tenor.com/view/dog-funny-dog-dog-nose-big-nose-smelling-gif-8587307285099365553",
